@@ -1,0 +1,17 @@
+.journal-container {
+    height: min-content;
+    display: flex;
+    flex-direction: row;
+
+    >* {
+        flex: 1;
+    }
+
+    .day-container {
+        height: 95vh;
+    }
+
+    @media (max-width:650px) {
+        flex-direction: column;
+    }
+}

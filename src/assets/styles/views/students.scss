@@ -1,0 +1,46 @@
+.students-container {
+    .student-list {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+
+        li {
+            flex: 1 0 auto;
+            border-radius: 10px;
+            margin: 0;
+            padding: 0;
+            margin: 1%;
+            width: calc(25% - 1%);
+            a {
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                color: white;
+
+                .student-name {
+                    font-size: 1.3rem;
+                    font-weight: 500;
+                }
+
+                .student-day {
+                    font-size: 0.8rem;
+                }
+
+                button {
+                    position: absolute;
+                    right: 5px;
+                    top: 5px;
+                }
+            }
+        }
+    }
+
+    @media (max-width:650px) {
+        .student-list {
+            li{
+                width: 100%;
+            }
+        }
+    }
+}

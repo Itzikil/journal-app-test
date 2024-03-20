@@ -1,0 +1,117 @@
+header {
+    display: flex;
+    flex-direction: column;
+    background-color: #e1eceb;
+
+    .loggedin-user {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        background-color: $clr7;
+        width: 100%;
+        border-start-end-radius: 50px;
+        height: 25%;
+
+        img {
+            width: 4em;
+            height: 4em;
+            border-radius: 50%;
+            object-fit: cover;
+
+        }
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        gap: 15px;
+        background-color: $clr8;
+        border-end-end-radius: 50px;
+        border-start-end-radius: 50px;
+        // background-color: #e1eceb;
+
+        a {
+            background-color: $clr8;
+            color: whitesmoke;
+            font-weight: 500;
+
+            &.upper-curve {
+                border-bottom-right-radius: 20px;
+            }
+
+            &.lower-curve {
+                border-top-right-radius: 20px;
+            }
+        }
+
+        .link-container {
+            width: 100%;
+            padding-inline-start: 40px;
+
+            .a-container {
+                display: flex;
+                gap: 20px;
+                align-items: center;
+                padding: 10px;
+                padding-inline: 20px;
+
+                img {
+                    width: 30px;
+                    height: 30px;
+                }
+
+                &:hover,
+                &.active {
+                    color: $clr1;
+                    background-color: #e1eceb;
+                    border-start-start-radius: 50px;
+                    border-end-start-radius: 50px;
+                    transition: background-color 0.5s;
+                }
+
+            }
+
+        }
+
+    }
+
+
+    @media (max-width:650px) {
+        z-index: 100;
+        img {
+            width: 30px !important;
+            height: 30px !important;
+        }
+
+        nav {
+            flex-direction: row;
+            border-radius: 0px;
+
+            .loggedin-user {
+
+                background-color: transparent;
+            }
+
+            .link-container {
+                padding-inline-start: 0px;
+                display: flex;
+                justify-content: center;
+                .a-container{
+                    &:hover,
+                    &.active {
+                        background-color: #e1ecebcb;
+                        border-radius: 5px;
+                        transition: background-color 0.5s;
+                    }
+                }
+                p {
+                    display: none;
+                }
+            }
+        }
+    }
+}

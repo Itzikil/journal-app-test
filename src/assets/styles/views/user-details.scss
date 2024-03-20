@@ -1,0 +1,89 @@
+.user-detail-container {
+    display: grid;
+    padding: 30px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 30px;
+    grid-template-areas:
+        "user monthly total"
+        "list list stats"
+        "list list stats"
+        "some student student"
+        "some student student"
+    ;
+
+    .user-details {
+        grid-area: user;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        img {
+            width: 100%;
+            max-width: 50px;
+            max-height: 50px;
+            align-self: center;
+            border-radius: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .students-list {
+        grid-area: list;
+    }
+
+    .stats {
+        grid-area: stats;
+    }
+
+    .student-info {
+        grid-area: student;
+    }
+
+    .monthly-income {
+        grid-area: monthly;
+    }
+
+    .total,
+    .monthly-income {
+        display: flex;
+        justify-content: space-around;
+        background-color: $clr1;
+        color: white;
+        font-weight: 500;
+
+        div {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        p:first-child {
+            font-size: 0.8rem;
+        }
+    }
+
+    .total {
+        grid-area: total;
+        flex-direction: column;
+    }
+
+    .some {
+        grid-area: some;
+    }
+
+    >* {
+        background-color: $clr6;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    @media (max-width:650px) {
+        display: flex;
+        flex-direction: column;
+
+        .stats {
+            height: 250px;
+        }
+    }
+}

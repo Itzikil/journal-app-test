@@ -1,0 +1,60 @@
+.student-details-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    // flex-direction: column;
+
+    .student-card {
+        display: flex;
+        flex-direction: column;
+        color: $clr6;
+        background-color: $clr1;
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: 500;
+
+        div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            align-self: center;
+        }
+    }
+
+    .last-lessons {
+        background-color: white;
+        padding: 10px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .lessons-list {
+            display: flex;
+            gap: 20px;
+
+            .lesson-list {
+                display: flex;
+                flex-direction: column;
+
+                li {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    p {
+                        margin: 0;
+                    }
+                }
+            }
+        }
+
+    }
+}

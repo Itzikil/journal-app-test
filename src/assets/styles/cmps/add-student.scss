@@ -1,0 +1,14 @@
+.add-student-container {
+    label {
+        display: flex;
+        justify-content: space-between;
+
+        input ,select{
+            width: 100px;
+            border-radius: 50px;
+            outline: none;
+            border: 1px solid gray;
+            padding-inline: 10px;
+        }
+    }
+}

@@ -1,0 +1,60 @@
+.calendar-container {
+    .calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-block: 15px;
+        gap: 15px;
+        text-align: center;
+
+        >* {
+            margin: 0;
+        }
+    }
+
+    .calendar {
+        // border-collapse: collapse;
+        width: 100%;
+
+        th,
+        td {
+            // border: 1px solid black;
+            // padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        td {
+            cursor: pointer;
+            padding: 5px;
+            .calendar-date {
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .students-count {
+                font-size: 0.6rem;
+            }
+
+            &.today {
+                background-color: lightblue;
+            }
+
+            &.empty-cell {
+                cursor: default;
+            }
+        }
+
+    }
+
+    @media (max-width:600px) {
+        .calendar {
+            td {
+                .students-in-day {
+                    display: none;
+                }
+
+            }
+        }
+    }
+}
