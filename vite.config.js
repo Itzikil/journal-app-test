@@ -42,7 +42,7 @@ export default defineConfig({
       ]
     }
   })],
-  base: "/work-journal/",
+  base: "/journal-app-test/",
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
