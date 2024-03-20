@@ -1,42 +1,25 @@
 <template>
     <div>
-      <!-- Your other Vue.js components and UI elements -->
-      <button v-if="showInstallButton" @click="installPWA">Install PWA</button>
+      <button @click="downloadPWA">Download PWA</button>
     </div>
   </template>
   
   <script>
   export default {
-    data() {
-      return {
-        deferredPrompt: null,
-        showInstallButton: false
-      };
-    },
-    mounted() {
-      window.addEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt);
-    },
-    beforeUnmount() {
-      window.removeEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt);
-    },
     methods: {
-      handleBeforeInstallPrompt(event) {
-        event.preventDefault();
-        this.deferredPrompt = event;
-        this.showInstallButton = true;
-      },
-      installPWA() {
-        if (this.deferredPrompt) {
-          this.deferredPrompt.prompt();
-          this.deferredPrompt.userChoice
-            .then(choiceResult => {
-              if (choiceResult.outcome === 'accepted') {
-                console.log('User accepted the PWA installation');
-              } else {
-                console.log('User dismissed the PWA installation');
-              }
-              this.deferredPrompt = null;
-            });
+      downloadPWA() {
+        if (window.navigator && window.navigator.userAgent.match(/Mobile/)) {
+          // Check if the user is on a mobile device
+          const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          if (isSafari) {
+            // For Safari on iOS
+            alert('Please tap the Share button below and then select "Add to Home Screen" to download the PWA.');
+          } else {
+            // For other mobile browsers
+            alert('Please use your browser\'s options menu to "Add to Home Screen" to download the PWA.');
+          }
+        } else {
+          alert('Please use your browser\'s options menu to "Install" or "Add to Home Screen" to download the PWA.');
         }
       }
     }

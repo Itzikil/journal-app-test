@@ -16,7 +16,7 @@ export default {
       this.alive = true
       window.scrollTo({top: 0, behavior: 'smooth'});
       setTimeout(() => {
-        this.alive = false
+        // this.alive = false
       }, delay)
     })
   },
