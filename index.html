@@ -8,8 +8,17 @@
   <title>Journal</title>
   <link rel="icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
-  <link rel="mask-icon" href="/mask-icon.svg" color="#FFFFFF"> 
+  <link rel="mask-icon" href="/mask-icon.svg" color="#FFFFFF">
   <meta name="theme-color" content="#ffffff">
+  <script>
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+      // Running in browser (not as a PWA), allow zooming
+      document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=yes');
+    } else {
+      // Running as a PWA, disable zooming
+      document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0, user-scalable=no');
+    }
+  </script>
 </head>
 
 <body>
