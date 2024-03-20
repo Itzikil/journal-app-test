@@ -9,7 +9,7 @@
           <option v-for="day in daysOfWeek" :value="day">{{ day }}</option>
         </select>
       </label>
-      <label>Time: <input type="time" name="time" v-model="studentToAdd.time" required></label>
+      <label>Time: <input type="time" name="time" min="08:00" max="20:00" v-model="studentToAdd.time" required></label>
       <label>Duration: <input type="number" name="duration" v-model="studentToAdd.duration" required></label>
       <label>price: <input type="number" name="price" v-model="studentToAdd.price" required></label>
 
@@ -17,7 +17,7 @@
     </form>
   </section>
 </template>
-  
+
 <script>
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
 import { studentService } from '../services/student.service.local';
@@ -37,13 +37,13 @@ export default {
   },
   created() {
     this.studentToAdd.teacher = { 'name': this.teacher.fullname, '_id': this.teacher._id }
-    console.log(this.editStudent);
   },
   methods: {
     async addStudent() {
       try {
         await this.$store.dispatch({ type: "addStudent", student: this.studentToAdd });
-        showSuccessMsg("Student added");
+        showSuccessMsg(this.studentToAdd.name + " added");
+        this.$emit('closeCmp')
         this.studentToAdd = studentService.getEmptyStudent();
       } catch (err) {
         console.log(err);
@@ -53,8 +53,7 @@ export default {
   }
 };
 </script>
-  
+
 <style>
 /* CSS styles */
 </style>
-  

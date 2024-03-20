@@ -11,12 +11,19 @@
         "some student student"
         "some student student"
     ;
+    >* {
+        background-color: $clr6;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    }
 
     .user-details {
         grid-area: user;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 
         img {
             width: 100%;
@@ -72,12 +79,7 @@
         grid-area: some;
     }
 
-    >* {
-        background-color: $clr6;
-        padding: 15px;
-        border-radius: 10px;
-    }
-
+ 
     @media (max-width:650px) {
         display: flex;
         flex-direction: column;

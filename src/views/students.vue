@@ -15,7 +15,7 @@
       </li>
     </ul>
     <button @click="openAddStudent = !openAddStudent">Add student</button>
-    <addStudent v-if="openAddStudent" />
+    <addStudent v-if="openAddStudent" @closeCmp="closeCmp"/>
   </section>
 </template>
 
@@ -45,16 +45,6 @@ export default {
     this.$store.dispatch({ type: "loadStudents" });
   },
   methods: {
-    async addStudent() {
-      try {
-        await this.$store.dispatch({ type: "addStudent", student: this.studentToAdd });
-        showSuccessMsg("Student added");
-        this.studentToAdd = studentService.getEmptyStudent();
-      } catch (err) {
-        console.log(err);
-        showErrorMsg("Cannot add student");
-      }
-    },
     async removeStudent(studentId) {
       try {
         await this.$store.dispatch(getActionRemoveStudent(studentId));
@@ -75,6 +65,9 @@ export default {
     },
     printStudentToConsole(student) {
       console.log("Student msgs:", student.msgs);
+    },
+    closeCmp() {
+      this.openAddStudent = false
     },
   },
   components: {

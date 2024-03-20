@@ -17,6 +17,8 @@
     </section>
 </template>
 <script>
+import { showSuccessMsg } from '../services/event-bus.service';
+
 export default {
     props: {
         day: {
@@ -78,10 +80,10 @@ export default {
 
             try {
                 await this.$store.dispatch({ type: "updateStudent", student: studentClone });
-                // showSuccessMsg("Student added");
+                showSuccessMsg(student.name + " " + status);
             } catch (err) {
                 console.log(err);
-                // showErrorMsg("Cannot add student");
+                showErrorMsg(`Cannot change ${student} ${status}`);
             }
         },
         deepClone(obj) {
