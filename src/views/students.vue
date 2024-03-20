@@ -1,5 +1,6 @@
 <template>
   <section class="students-container container">
+    <h2>Students</h2>
     <ul class="student-list">
       <li v-for="student in students" :key="student._id" >
         <router-link :to="`/student/${student._id}`" >

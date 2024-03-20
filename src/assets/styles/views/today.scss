@@ -1,5 +1,8 @@
-.today-container{
-    h1{
-        text-align: center;
+.today-container {
+    height: 100vh;
+
+    @media (max-width:650px) {
+
+        height: 90vh;
     }
 }
