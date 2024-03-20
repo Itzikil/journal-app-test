@@ -5,12 +5,14 @@
       Powered up Frontend 
     </h5>
     <img alt="Vue logo" src="../assets/logo.png">
+    <downloadBtn/>
   </section>
 
   
 </template>
 
 <script>
+import downloadBtn from '../cmps/download-btn.vue'
 export default {
   name: 'home',
   data() {
@@ -22,6 +24,9 @@ export default {
   created() {
   },
   methods: {
+  },
+  components:{
+    downloadBtn
   }
   
 }
