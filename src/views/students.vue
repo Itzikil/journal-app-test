@@ -14,8 +14,8 @@
         <!-- <router-link :to="`/student/${student._id}`">Details</router-link> -->
       </li>
     </ul>
-    <button @click="openAddStudent = !openAddStudent">Add student</button>
-    <addStudent v-if="openAddStudent" @closeCmp="closeCmp"/>
+    <button @click="editCmp = !editCmp">Add student</button>
+    <addStudent v-if="editCmp" @closeEdit="closeEdit"/>
   </section>
 </template>
 
@@ -30,7 +30,7 @@ export default {
     return {
       studentToAdd: studentService.getEmptyStudent(),
       daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      openAddStudent: false
+      editCmp: false
     };
   },
   computed: {
@@ -66,8 +66,8 @@ export default {
     printStudentToConsole(student) {
       console.log("Student msgs:", student.msgs);
     },
-    closeCmp() {
-      this.openAddStudent = false
+    closeEdit() {
+      this.editCmp = false
     },
   },
   components: {

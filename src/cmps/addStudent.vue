@@ -42,8 +42,9 @@ export default {
     async addStudent() {
       try {
         await this.$store.dispatch({ type: "addStudent", student: this.studentToAdd });
-        showSuccessMsg(this.studentToAdd.name + " added");
-        this.$emit('closeCmp')
+        var msg = this.studentToAdd._id ? " updated" : " added"
+        showSuccessMsg(this.studentToAdd.name + msg);
+        this.$emit('closeEdit')
         this.studentToAdd = studentService.getEmptyStudent();
       } catch (err) {
         console.log(err);

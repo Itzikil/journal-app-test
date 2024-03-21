@@ -1,7 +1,6 @@
 <template>
-  <div class="container about">
+  <section class="container about login-container">
     <p>{{ msg }}</p>
-
     <div v-if="loggedinUser">
       <h3>
         Loggedin User:
@@ -9,7 +8,7 @@
         <button @click="doLogout">Logout</button>
       </h3>
     </div>
-    <div v-else>
+    <div v-else  class="login-signup">
       <h2>Login</h2>
       <form @submit.prevent="doLogin">
         <select v-model="loginCred.username">
@@ -24,7 +23,6 @@
         /> -->
         <button>Login</button>
       </form>
-      <p class="mute">user1 or admin, pass:123 </p>
       <form @submit.prevent="doSignup">
         <h2>Signup</h2>
         <input type="text" v-model="signupCred.fullname" placeholder="Your full name" />
@@ -34,7 +32,6 @@
         <button>Signup</button>
       </form>
     </div>
-    <hr />
     <details>
       <summary>
         Admin Section
@@ -46,7 +43,7 @@
         </li>
       </ul>
     </details>
-  </div>
+  </section>
 </template>
 
 <script>

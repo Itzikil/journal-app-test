@@ -26,7 +26,7 @@
     </div>
     <div class="students-list">
       <h3>Students</h3>
-      <ul >
+      <ul>
         <li v-for="student in students" :key="student._id">
           <button @click="openStudentDetails(student)">{{ student.name }}</button>
           <router-link :to="`/student/${student._id}`"></router-link>
@@ -37,13 +37,13 @@
       <ul v-if="currStudent">
         <li>
           <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
-          <p>{{ currStudent.classes.length }} classes overall</p>
+          <!-- <p>{{ currStudent.classes.length }} classes overall</p> -->
           <p>{{ classesInMonth(currStudent).length }} classes this month</p>
-          <p>{{ paidThisMonth(currStudent).length }} classes paid this month (₪{{ paidThisMonth(currStudent).length *
-    currStudent.price }})
-          </p>
-          <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month (₪{{
-    arrivedThisMonth(currStudent).length * currStudent.price }})</p>
+          <p>{{ paidThisMonth(currStudent).length }} classes paid this month
+            (₪{{ paidThisMonth(currStudent).length * currStudent.price }})</p>
+          <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month 
+            (₪{{ arrivedThisMonth(currStudent).length * currStudent.price }})</p>
+          <button @click="openWhatsApp(currStudent)">Send bill on WhatsApp</button>
         </li>
       </ul>
     </div>
@@ -129,8 +129,6 @@ export default {
     },
     classesInMonth(student, selectedDate) {
       var date = selectedDate || `${this.currentMonth + 1}.${this.currentYear}`
-      // console.log(`${student.classes[0].date.split(".")[1]}.${student.classes[0].date.split(".")[2]}`);
-      // console.log(`${month + 1}.${this.currentYear}`);
       return student.classes.filter(lesson => `${lesson.date.split(".")[1]}.${lesson.date.split(".")[2]}` === date)
     },
     paidThisMonth(student, selectedDate) {
@@ -155,8 +153,17 @@ export default {
     },
     doLogout() {
       this.$store.dispatch({ type: 'logout' })
+      this.$router.push('/')
     },
-
+    openWhatsApp(student) {
+      var phoneNumber = student.phone || '+972 54-306-0864';
+      console.log(phoneNumber);
+      var unpaid =  this.arrivedThisMonth(student).length 
+      var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
+      console.log(message);
+      var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
+      window.open(whatsappUrl);
+    }
   },
   components: {
     statistic

@@ -20,7 +20,7 @@
       </div>
       <button @click="openEdit">Edit</button>
     </div>
-    <addStudent v-if="editable" :editStudent="student" />
+    <addStudent v-if="editCmp" :editStudent="student" @closeEdit="closeEdit"/>
     <div class="last-lessons">
       <div class="btn-container">
         <button @click="monthsBackwards('', -1)">&lt</button>
@@ -53,7 +53,7 @@ export default {
   data() {
     return {
       student: null,
-      editable: false,
+      editCmp: false,
       classes: [],
       classesForMonth: [],
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -138,13 +138,16 @@ export default {
       console.log(index);
       if (index !== -1 && index >= 2 && index < keys.length) {
         console.log('hi');
-        this.classesForMonth = keys.slice(index - 2, index + 1).map(key => lessonArray[key]);
+        this.classesForMonth = keys.slice(index - 1, index + 1).map(key => lessonArray[key]);
       } else {
         return [];
       }
     },
     openEdit() {
-      this.editable = !this.editable
+      this.editCmp = !this.editCmp
+    },
+    closeEdit() {
+      this.editCmp = false
     },
   },
   components: {
