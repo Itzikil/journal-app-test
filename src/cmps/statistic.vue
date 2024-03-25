@@ -3,7 +3,9 @@
         <h3>Statistic</h3>
         <div class="stats-container">
             <div v-for="month in months" class="month-stats">
-                <div class="candle" :style="candleHeight(month)"></div>
+                <div class="candle" :style="candleHeight(month)">
+                    <p class="earning">₪{{ month.earning }}</p>
+                </div>
                 <p>{{ month.name }}</p>
             </div>
         </div>
@@ -17,31 +19,10 @@ export default {
     },
     data() {
         return {
-            // months: [
-            //     {
-            //         name: 'jan',
-            //         earning: 1200
-            //     },
-            //     {
-            //         name: 'feb',
-            //         earning: 1000
-            //     },
-            //     {
-            //         name: 'mar',
-            //         earning: 500
-            //     },
-            //     {
-            //         name: 'apr',
-            //         earning: 2000
-            //     },
-            // ]
         }
     },
     created() {
-        console.log(
-            this.months
-
-        );
+        console.log(this.month);
     },
     methods: {
         highestEarn() {

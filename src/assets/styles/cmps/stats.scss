@@ -17,13 +17,34 @@
             align-items: center;
             width: 100%;
             height: 100%;
-        }
 
-        .candle {
-            border-top-right-radius: 5px;
-            border-top-left-radius: 5px;
-            width: 25%;
-            background-color: $clr7;
+            .candle {
+                position: relative;
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
+                width: 25%;
+                background-color: $clr7;
+
+                &:hover {
+                    background-color: #43726e;
+
+                    p.earning {
+                        display: block;
+                    }
+                }
+
+                .earning {
+                    position: absolute;
+                    left: 20px;
+                    background-color: white;
+                    border-radius: 5px;
+                    padding: 5px;
+                    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+                    top: -30px;
+                    display: none;
+                    z-index: 20;
+                }
+            }
         }
     }
 }

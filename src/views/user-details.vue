@@ -7,17 +7,22 @@
       </div>
       <img :src="user.imgUrl" alt="user" />
     </div>
-    <div class="monthly-income">
-      <div>
-        <button @click="prevMonth">&lt</button>
-        <p>Earning</p>
-        <p>₪ {{ totalMonthEarn().paid }}</p>
+    <div class="monthly-income-container">
+      <div class="monthly-income">
+        <div>
+          <button @click="prevMonth">&lt</button>
+          <p>Earning</p>
+          <p>₪ {{ totalMonthEarn().paid }}</p>
+        </div>
+        <p> {{ monthNames[currentMonth] }} </p>
+        <div>
+          <button @click="nextMonth">></button>
+          <p>Unpaid</p>
+          <p>₪ {{ totalMonthEarn().arrived }}</p>
+        </div>
       </div>
-      <p> {{ monthNames[currentMonth] }} </p>
-      <div>
-        <button @click="nextMonth">></button>
-        <p>Unpaid</p>
-        <p>₪ {{ totalMonthEarn().arrived }}</p>
+      <div class="stat">
+        <div class="stat-fill" :style="{width: `${fillColor() *100}%`}"></div>
       </div>
     </div>
     <div class="total">
@@ -27,27 +32,33 @@
     <div class="students-list">
       <h3>Students</h3>
       <ul>
-        <li v-for="student in students" :key="student._id">
+        <li v-for="  student   in   students  " :key=" student._id ">
           <button @click="openStudentDetails(student)">{{ student.name }}</button>
-          <router-link :to="`/student/${student._id}`"></router-link>
+          <router-link :to=" `/student/${student._id}` "></router-link>
         </li>
       </ul>
     </div>
     <div class="student-info">
-      <ul v-if="currStudent">
+      <ul v-if=" currStudent ">
         <li>
-          <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
+          <router-link :to=" `/student/${currStudent._id}` ">{{ currStudent.name }}</router-link>
           <!-- <p>{{ currStudent.classes.length }} classes overall</p> -->
           <p>{{ classesInMonth(currStudent).length }} classes this month</p>
           <p>{{ paidThisMonth(currStudent).length }} classes paid this month
             (₪{{ paidThisMonth(currStudent).length * currStudent.price }})</p>
-          <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month 
+          <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month
             (₪{{ arrivedThisMonth(currStudent).length * currStudent.price }})</p>
+          <div class="lessons-imgs">
+            <div v-for="  lesson   in   classesInMonth(currStudent)  " :key=" lesson.date ">
+              <!-- <pre>{{ lesson }}</pre> -->
+              <img :src=" `src/assets/imgs/${lesson.status}.svg` " alt="">
+            </div>
+          </div>
           <button @click="openWhatsApp(currStudent)">Send bill on WhatsApp</button>
         </li>
       </ul>
     </div>
-    <statistic class="stats" :months="months" />
+    <statistic class="stats" :months=" months " />
     <div class="some">
       <p>Total earning this month ₪{{ totalMonthEarn().paid }} from ₪{{ totalMonthEarn().arrived + totalMonthEarn().paid
         }}
@@ -59,10 +70,12 @@
 <script>
 // import {userService} from '../services/user.service'
 import statistic from '../cmps/statistic.vue';
+import hevriz from '../assets/imgs/hevriz.svg'
 
 export default {
   data() {
     return {
+      hevriz: '../assets/imgs/hevriz.svg',
       currStudent: null,
       currentMonth: new Date().getMonth(),
       currentYear: new Date().getFullYear(),
@@ -151,6 +164,12 @@ export default {
       var sum = this.totalMonthEarn(selectedDate)
       return sum.arrived + sum.paid
     },
+    fillColor() {
+      var full = this.monthlySum()
+      var paid = this.totalMonthEarn().paid
+      console.log(paid / full);
+      return paid / full
+    },
     doLogout() {
       this.$store.dispatch({ type: 'logout' })
       this.$router.push('/')
@@ -158,7 +177,7 @@ export default {
     openWhatsApp(student) {
       var phoneNumber = student.phone || '+972 54-306-0864';
       console.log(phoneNumber);
-      var unpaid =  this.arrivedThisMonth(student).length 
+      var unpaid = this.arrivedThisMonth(student).length
       var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       console.log(message);
       var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);

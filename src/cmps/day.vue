@@ -8,8 +8,8 @@
                 :style="calculateStudentStyle(student)">
                 <p>{{ student.name }}</p> 
                 <div class="btns-container">
-                    <button @click="addClass(student, 'hevriz')"><img src="../assets/imgs/x.svg" alt="didnt come"></button>
-                    <button @click="addClass(student, 'arrived')"><img src="../assets/imgs/v.svg" alt="arrived"></button>
+                    <button @click="addClass(student, 'hevriz')"><img src="../assets/imgs/hevriz.svg" alt="didnt come"></button>
+                    <button @click="addClass(student, 'arrived')"><img src="../assets/imgs/arrived.svg" alt="arrived"></button>
                     <button @click="addClass(student, 'paid')"><img src="../assets/imgs/paid.svg" alt="paid"></button>
                 </div>
             </div>
