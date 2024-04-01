@@ -1,29 +1,51 @@
-
 <template>
     <section class="day-container container">
         <p class="day-header">{{ day.dayName }} {{ day.date }}.{{ day.month + 1 }}.{{ day.year }}</p>
         <div class="hour" v-for="hour in hours" :key="hour">
             <div class="hour-label">{{ hour }}:00</div>
-            <div class="student-slot student" v-for="student in studentsByHour[hour]" :key="student.id"
-                :style="calculateStudentStyle(student)">
-                <p>{{ student.name }}</p> 
+            <button class="student-slot student" v-for="student in studentsByHour[hour]" :key="student.id"
+                :style="calculateStudentStyle(student)" @click="showLesson(student)">
+                <p>{{ student.name }}</p>
                 <div class="btns-container">
-                    <button @click="addClass(student, 'hevriz')"><img src="../assets/imgs/hevriz.svg" alt="didnt come"></button>
-                    <button @click="addClass(student, 'arrived')"><img src="../assets/imgs/arrived.svg" alt="arrived"></button>
-                    <button @click="addClass(student, 'paid')"><img src="../assets/imgs/paid.svg" alt="paid"></button>
+                    <button @click.stop="addClass(student, 'hevriz')">
+                        <img src="../assets/imgs/hevriz.svg" alt="didnt come" :class="activeStatus(student, 'hevriz')">
+                    </button>
+                    <button @click.stop="addClass(student, 'arrived')">
+                        <img src="../assets/imgs/arrived.svg" alt="arrived" :class="activeStatus(student, 'arrived')">
+                    </button>
+                    <button @click.stop="addClass(student, 'paid')">
+                        <img src="../assets/imgs/paid.svg" alt="paid" :class="activeStatus(student, 'paid')">
+                    </button>
                 </div>
-            </div>
+            </button>
+        </div>
+        <div v-if="lessonShown" class="lesson-info" @click="closeLesson()">
+            <p>{{ lessonShown.name }}</p>
+            <p>{{ lessonShown.time }} - {{ calculateEndTime(lessonShown.time, lessonShown.duration) }}</p>
+            <p></p>
         </div>
     </section>
 </template>
+
 <script>
 import { showSuccessMsg } from '../services/event-bus.service';
+import { utilService } from '../services/util.service';
 
 export default {
     props: {
         day: {
             type: Object,
             required: true
+        }
+    },
+    data() {
+        return {
+            lessonShown: ''
+        };
+    },
+    watch: {
+        day(newValue, oldValue) {
+            this.lessonShown = '';
         }
     },
     computed: {
@@ -44,7 +66,7 @@ export default {
                 }
             }
             return studentsByHour;
-        }
+        },
     },
     methods: {
         calculateStudentStyle(student) {
@@ -55,7 +77,6 @@ export default {
 
             const marginTop = slotHeight; // Calculate top margin for start time
             const height = lessonDuration * 1.6666666666; // Calculate height for lesson duration
-            console.log(this.day);
             return {
                 top: `${marginTop}%`,
                 height: `${height}%`
@@ -65,7 +86,7 @@ export default {
 
             const { date, month, year } = this.day
             var todayClass = { date: `${date}.${month + 1}.${year}`, status }
-            var studentClone = this.deepClone(student)
+            var studentClone = utilService.deepClone(student)
 
             const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
 
@@ -86,24 +107,24 @@ export default {
                 showErrorMsg(`Cannot change ${student} ${status}`);
             }
         },
-        deepClone(obj) {
-            if (typeof obj !== 'object' || obj === null) {
-                return obj; // Return primitive types and null as is
-            }
-
-            // Create an empty object/array of the same type as the original
-            const clone = Array.isArray(obj) ? [] : {};
-
-            // Recursively clone each property of the object/array
-            for (let key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                    clone[key] = this.deepClone(obj[key]);
-                }
-            }
-
-            return clone;
+        activeStatus(student, status) {
+            var today = `${this.day.date}.${this.day.month + 1}.${this.day.year}`
+            var todaysClass = student.classes.filter(lesson => lesson.date === today)
+            if (todaysClass[0]?.status === status) return 'active-status'
+        },
+        showLesson(student) {
+            this.lessonShown = this.lessonShown._id === student._id ? '' : student
+        },
+        closeLesson() {
+            this.lessonShown = ''
+        },
+        calculateEndTime(startTime, duration) {
+            const [startHour, startMinute] = startTime.split(':').map(Number);
+            let endHour = startHour + Math.floor((startMinute + duration) / 60);
+            let endMinute = (startMinute + duration) % 60;
+            const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
+            return endTime;
         }
     }
 }
 </script>
-  

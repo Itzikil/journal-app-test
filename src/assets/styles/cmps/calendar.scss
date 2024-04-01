@@ -2,10 +2,26 @@
     .calendar-header {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-around;
         margin-block: 15px;
         gap: 15px;
         text-align: center;
+
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            flex: 1;
+        }
+
+        h2 {
+            flex: 4;
+        }
+
+        img {
+            width: 20px;
+        }
 
         >* {
             margin: 0;
@@ -13,13 +29,10 @@
     }
 
     .calendar {
-        // border-collapse: collapse;
         width: 100%;
 
         th,
         td {
-            // border: 1px solid black;
-            // padding: 10px;
             border-radius: 10px;
             text-align: center;
         }
@@ -27,6 +40,7 @@
         td {
             cursor: pointer;
             padding: 5px;
+
             .calendar-date {
                 font-weight: 600;
                 margin: 0;
@@ -40,6 +54,10 @@
                 background-color: lightblue;
             }
 
+            &.chosen-day {
+                background-color: rgb(73, 150, 175);
+            }
+
             &.empty-cell {
                 cursor: default;
             }
@@ -48,6 +66,12 @@
     }
 
     @media (max-width:600px) {
+        .calendar-header {
+            button {
+                flex: 0;
+            }
+        }
+
         .calendar {
             td {
                 .students-in-day {

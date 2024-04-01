@@ -26,6 +26,7 @@ async function query(filterBy = { txt: '', price: 0 }) {
     if (filterBy.price) {
         students = students.filter(student => student.price <= filterBy.price)
     }
+    students = utilService.sortByName(students)
     return students
 }
 
@@ -36,7 +37,7 @@ function getById(studentId) {
 async function getStudentByTeacher(teacherId) {
     var students = await storageService.query(STORAGE_KEY)
     return students.filter(student => student.teacher._id === teacherId)
-    
+
 }
 
 async function remove(studentId) {
@@ -77,10 +78,10 @@ function getEmptyStudent() {
         name: '',
         price: 0,
         day: '',
-        time:'',
+        time: '',
         duration: 0,
-        teacher:'',
-        classes:[]
+        teacher: '',
+        classes: []
     }
 }
 

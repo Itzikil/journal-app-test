@@ -1,9 +1,9 @@
 <template>
     <section class="calendar-container">
         <div class="calendar-header">
-            <button @click="prevMonth">Previous Month</button>
+            <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt=""></button>
             <h2>{{ monthNames[currentMonth] }} {{ currentYear }}</h2>
-            <button @click="nextMonth">Next Month</button>
+            <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt=""></button>
         </div>
         <table class="calendar">
             <tr>
@@ -11,9 +11,9 @@
             </tr>
             <tr v-for="week in calendar">
                 <td v-for="day in week" :key="day.date" @click="showDay(day)"
-                    :class="{ 'today': isToday(day), 'empty-cell': emptyCell(day) }">
+                    :class="{ 'today': isToday(day), 'empty-cell': emptyCell(day) ,'chosen-day': chosenDay(day)}">
                     <p class="calendar-date">{{ day.date ? day.date : '' }}</p>
-                    <p class="students-count">{{ day.students?.length  }}</p>
+                    <p class="students-count">{{ day.students?.length }}</p>
                     <!-- <ul class="students-in-day">
                         <li v-for="student in day.students" :key="student.id">{{ student.name }}</li>
                     </ul> -->
@@ -21,11 +21,9 @@
             </tr>
         </table>
     </section>
-    <!-- <arrivalConfirm @changeStatus="changeStatus"/> -->
 </template>
-  
+
 <script>
-// import arrivalConfirm from '../cmps/arrival-confirm.vue'
 
 export default {
     data() {
@@ -34,7 +32,8 @@ export default {
             currentYear: currentDate.getFullYear(),
             currentMonth: currentDate.getMonth(), // Note: Month is zero-indexed (0 for January, 1 for February, etc.)
             daysOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            dayShown: ''
         };
     },
     created() {
@@ -103,21 +102,18 @@ export default {
             day.month = this.currentMonth
             day.year = this.currentYear
             this.$emit('showDay', day)
+            this.dayShown = day
+        },
+        chosenDay(day) {
+            return day.date === this.dayShown.date && this.currentMonth === this.dayShown.month && this.currentYear === this.dayShown.year;
         },
         getStudentsForDay(dayName) {
             return this.students.filter(student => {
                 return student.day === dayName
             });
         },
-        // changeStatus(student){
-        //     student.status = true
-        // }
     },
     components: {
-        // arrivalConfirm
     }
 };
 </script>
-  
-<style scoped></style>
-  

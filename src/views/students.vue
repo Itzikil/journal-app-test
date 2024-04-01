@@ -2,26 +2,30 @@
   <section class="students-container container">
     <h2>Students</h2>
     <ul class="student-list">
-      <li v-for="student in students" :key="student._id" >
-        <router-link :to="`/student/${student._id}`" >
-        <p class="student-name">{{ student.name }}</p>
-        <div class="flex justify-space align-center">
-          <p class="student-day">{{ student.day }}</p>
-          <p class="student-price">₪{{ student.price?.toLocaleString() }}</p>
-        </div>
-        <button @click.prevent="removeStudent(student._id)">x</button>
+      <li v-for="student in students" :key="student._id">
+        <router-link :to="`/student/${student._id}`">
+          <p class="student-name">{{ student.name }}</p>
+          <div class="flex justify-space align-center">
+            <p class="student-day">{{ student.day }}</p>
+            <div class="lessons-imgs">
+              <div v-for="lesson in classesInMonth(student)" :key="lesson.date">
+                <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
+              </div>
+            </div>
+          </div>
+          <button @click.prevent="removeStudent(student._id)">x</button>
         </router-link>
-        <!-- <router-link :to="`/student/${student._id}`">Details</router-link> -->
       </li>
     </ul>
     <button @click="editCmp = !editCmp">Add student</button>
-    <addStudent v-if="editCmp" @closeEdit="closeEdit"/>
+    <addStudent v-if="editCmp" @closeEdit="closeEdit" />
   </section>
 </template>
 
 <script>
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service";
 import { studentService } from "../services/student.service.local";
+import { utilService } from "../services/util.service";
 import { getActionRemoveStudent, getActionAddStudentMsg } from "../store/student.store";
 import addStudent from '../cmps/addStudent.vue'
 
@@ -62,6 +66,11 @@ export default {
         console.log(err);
         showErrorMsg("Cannot add student msg");
       }
+    },
+    classesInMonth(student) {
+      var copiedStudent = utilService.deepClone(student)
+      var sortedLessons = utilService.sortByDate(copiedStudent.classes)
+      return sortedLessons.slice(-4)
     },
     printStudentToConsole(student) {
       console.log("Student msgs:", student.msgs);

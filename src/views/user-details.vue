@@ -10,38 +10,40 @@
     <div class="monthly-income-container">
       <div class="monthly-income">
         <div>
-          <button @click="prevMonth">&lt</button>
+          <!-- <button @click="prevMonth">&lt</button> -->
+          <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
           <p>Earning</p>
           <p>₪ {{ totalMonthEarn().paid }}</p>
         </div>
-        <p> {{ monthNames[currentMonth] }} </p>
+        <p class="month-name"> {{ monthNames[currentMonth] }} </p>
         <div>
-          <button @click="nextMonth">></button>
+          <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
           <p>Unpaid</p>
           <p>₪ {{ totalMonthEarn().arrived }}</p>
         </div>
       </div>
       <div class="stat">
-        <div class="stat-fill" :style="{width: `${fillColor() *100}%`}"></div>
+        <div class="stat-fill" :style="{ width: `${fillColor() * 100}%` }"></div>
       </div>
     </div>
     <div class="total">
+      <p>{{ currentYear }}</p>
       <p>Total monthly earn </p>
       <p>₪ {{ totalMonthEarn().arrived + totalMonthEarn().paid }}</p>
     </div>
     <div class="students-list">
       <h3>Students</h3>
       <ul>
-        <li v-for="  student   in   students  " :key=" student._id ">
+        <li v-for="student in students" :key="student._id">
           <button @click="openStudentDetails(student)">{{ student.name }}</button>
-          <router-link :to=" `/student/${student._id}` "></router-link>
+          <router-link :to="`/student/${student._id}`"></router-link>
         </li>
       </ul>
     </div>
     <div class="student-info">
-      <ul v-if=" currStudent ">
+      <ul v-if="currStudent">
         <li>
-          <router-link :to=" `/student/${currStudent._id}` ">{{ currStudent.name }}</router-link>
+          <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
           <!-- <p>{{ currStudent.classes.length }} classes overall</p> -->
           <p>{{ classesInMonth(currStudent).length }} classes this month</p>
           <p>{{ paidThisMonth(currStudent).length }} classes paid this month
@@ -49,20 +51,24 @@
           <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month
             (₪{{ arrivedThisMonth(currStudent).length * currStudent.price }})</p>
           <div class="lessons-imgs">
-            <div v-for="  lesson   in   classesInMonth(currStudent)  " :key=" lesson.date ">
+            <div v-for="lesson in classesInMonth(currStudent)" :key="lesson.date">
               <!-- <pre>{{ lesson }}</pre> -->
-              <img :src=" `src/assets/imgs/${lesson.status}.svg` " alt="">
+              <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
             </div>
           </div>
           <button @click="openWhatsApp(currStudent)">Send bill on WhatsApp</button>
         </li>
       </ul>
     </div>
-    <statistic class="stats" :months=" months " />
+    <statistic class="stats" :months="months" />
     <div class="some">
-      <p>Total earning this month ₪{{ totalMonthEarn().paid }} from ₪{{ totalMonthEarn().arrived + totalMonthEarn().paid
-        }}
-      </p>
+      <h4>Students that didnt pay yet</h4>
+      <div v-for="student in students">
+        <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
+          <p>{{ student.name }}</p>
+          <p>{{ arrivedThisMonth(student).length }}</p>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -70,7 +76,6 @@
 <script>
 // import {userService} from '../services/user.service'
 import statistic from '../cmps/statistic.vue';
-import hevriz from '../assets/imgs/hevriz.svg'
 
 export default {
   data() {
@@ -167,7 +172,7 @@ export default {
     fillColor() {
       var full = this.monthlySum()
       var paid = this.totalMonthEarn().paid
-      console.log(paid / full);
+      if (full === 0 && paid === 0) return 0
       return paid / full
     },
     doLogout() {

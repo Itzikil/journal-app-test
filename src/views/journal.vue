@@ -1,7 +1,7 @@
 <template>
   <section class="journal-container container">
     <calendar @showDay="showDay"/>
-    <day v-if="selectedDay" :day="selectedDay" />
+    <day v-if="selectedDay" :day="today" />
   </section>
 </template>
 
@@ -15,6 +15,9 @@ export default {
     };
   },
   computed: {
+    today(){
+      return this.selectedDay
+    }
   },
   created() {
   },

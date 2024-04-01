@@ -15,7 +15,6 @@ export default {
     },
     created() {
         this.$store.dispatch({ type: "loadStudents" });
-        console.log(this.currentDate);
     },
     computed: {
         students() {
