@@ -9,7 +9,7 @@
             <p class="student-day">{{ student.day }}</p>
             <div class="lessons-imgs">
               <div v-for="lesson in classesInMonth(student)" :key="lesson.date">
-                <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
+                <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="" :title="lesson.date">
               </div>
             </div>
           </div>

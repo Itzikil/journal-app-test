@@ -13,13 +13,13 @@
           <!-- <button @click="prevMonth">&lt</button> -->
           <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
           <p>Earning</p>
-          <p>₪ {{ totalMonthEarn().paid }}</p>
+          <p>₪ {{ totalMonthEarn().paid.toLocaleString() }}</p>
         </div>
         <p class="month-name"> {{ monthNames[currentMonth] }} </p>
         <div>
           <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
           <p>Unpaid</p>
-          <p>₪ {{ totalMonthEarn().arrived }}</p>
+          <p>₪ {{ totalMonthEarn().arrived.toLocaleString() }}</p>
         </div>
       </div>
       <div class="stat">
@@ -29,7 +29,7 @@
     <div class="total">
       <p>{{ currentYear }}</p>
       <p>Total monthly earn </p>
-      <p>₪ {{ totalMonthEarn().arrived + totalMonthEarn().paid }}</p>
+      <p>₪ {{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
     </div>
     <div class="students-list">
       <h3>Students</h3>
@@ -45,24 +45,23 @@
         <li>
           <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
           <!-- <p>{{ currStudent.classes.length }} classes overall</p> -->
-          <p>{{ classesInMonth(currStudent).length }} classes this month</p>
+          <!-- <p>{{ classesInMonth(currStudent).length }} classes this month</p> -->
           <p>{{ paidThisMonth(currStudent).length }} classes paid this month
-            (₪{{ paidThisMonth(currStudent).length * currStudent.price }})</p>
+            - ₪{{ paidThisMonth(currStudent).length * currStudent.price }}</p>
           <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month
-            (₪{{ arrivedThisMonth(currStudent).length * currStudent.price }})</p>
-          <div class="lessons-imgs">
+            - ₪{{ arrivedThisMonth(currStudent).length * currStudent.price }}</p>
+          <!-- <div class="lessons-imgs">
             <div v-for="lesson in classesInMonth(currStudent)" :key="lesson.date">
-              <!-- <pre>{{ lesson }}</pre> -->
               <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
             </div>
-          </div>
+          </div> -->
           <button @click="openWhatsApp(currStudent)">Send bill on WhatsApp</button>
         </li>
       </ul>
     </div>
     <statistic class="stats" :months="months" />
     <div class="some">
-      <h4>Students that didnt pay yet</h4>
+      <h4>Didnt pay yet</h4>
       <div v-for="student in students">
         <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
           <p>{{ student.name }}</p>

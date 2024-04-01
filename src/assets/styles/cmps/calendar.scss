@@ -35,8 +35,9 @@
         td {
             border-radius: 10px;
             text-align: center;
+            width: calc(100%/7);
         }
-
+        
         td {
             cursor: pointer;
             padding: 5px;

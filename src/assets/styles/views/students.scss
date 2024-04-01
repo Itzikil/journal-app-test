@@ -13,6 +13,7 @@
             margin: 0;
             padding: 0;
             width: calc(25% - 1%);
+            max-width: 24%;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
             background-color: $clr4;
 
@@ -48,7 +49,8 @@
             }
 
             img {
-                width: 20px;
+                width: 17px;
+                height: 17px;
                 align-self: center;
             }
         }
@@ -58,6 +60,8 @@
         .student-list {
             li {
                 width: 100%;
+                max-width: 100%;
+
             }
         }
     }
