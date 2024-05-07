@@ -8,11 +8,11 @@
         <button @click="doLogout">Logout</button>
       </h3>
     </div>
-    <div v-else  class="login-signup">
+    <div v-else class="login-signup">
       <h2>Login</h2>
       <form @submit.prevent="doLogin">
-        <select v-model="loginCred.username">
-          <option value="">Select User</option>
+        <select v-model="loginCred.username" >
+        <!-- <option value="">Select User</option> -->
           <option v-for="user in users" :key="user._id" :value="user.username">{{ user.fullname }}</option>
         </select>
         <!-- <input type="text" v-model="loginCred.username" placeholder="User name" />
@@ -28,7 +28,7 @@
         <input type="text" v-model="signupCred.fullname" placeholder="Your full name" />
         <input type="text" v-model="signupCred.password" placeholder="Password" />
         <input type="text" v-model="signupCred.username" placeholder="Username" />
-        <img-uploader @uploaded="onUploaded"></img-uploader>
+        <!-- <img-uploader @uploaded="onUploaded"></img-uploader> -->
         <button>Signup</button>
       </form>
     </div>
@@ -36,10 +36,12 @@
       <summary>
         Admin Section
       </summary>
-      <ul>
+      <ul class="admin-only">
         <li v-for="user in users" :key="user._id">
-          <pre>{{ user }}</pre>
-          <button @click="removeUser(user._id)">x</button>
+          <p>username: {{ user.username }}</p>
+          <p>password: {{ user.password }}</p>
+          <p>id: {{ user._id }}</p>
+          <button @click="removeUser(user._id)">Remove</button>
         </li>
       </ul>
     </details>
@@ -56,7 +58,7 @@ export default {
     return {
       msg: '',
       loginCred: { username: 'user1', password: '123' },
-      signupCred: { username: '', password: '', fullname: '', imgUrl : '' },
+      signupCred: { username: '', password: '', fullname: '', imgUrl: '' },
     }
   },
   computed: {

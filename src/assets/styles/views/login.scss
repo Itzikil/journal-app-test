@@ -9,4 +9,31 @@
         flex-direction: column;
         gap: 10px;
     }
+
+    .admin-only {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    input , select{
+        padding: 8px;
+        border: 1px solid rgb(197, 197, 197);
+        border-radius: 5px;
+        option{
+            color: rgb(151, 149, 149);
+        }
+    }
+
+    button {
+        font-weight: 700;
+        padding: 8px;
+
+        transition: 0.3s;
+        &:hover {
+            opacity: 0.9;
+        }
+    }
 }

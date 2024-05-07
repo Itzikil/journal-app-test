@@ -68,12 +68,17 @@ async function signup(userCred) {
     // userCred.score = 10000
     if (!userCred.imgUrl) userCred.imgUrl = 'https://res.cloudinary.com/dtgejpwv9/image/upload/v1670834784/gigerr/user-img/shacar_inrgw1.jpg'
     const user = await storageService.post('user', userCred)
+    console.log('====================================');
+    console.log(user);
+    console.log('====================================');
     // const user = await httpService.post('auth/signup', userCred)
     socketService.login(user._id)
     return saveLocalUser(user)
 }
 async function logout() {
-    sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
+    // sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
+    var user = await getLoggedinUser()
+    storageService.remove(STORAGE_KEY_LOGGEDIN_USER , user._id)
     socketService.logout()
     // return await httpService.post('auth/logout')
 }
@@ -88,13 +93,15 @@ async function changeScore(by) {
 
 
 function saveLocalUser(user) {
-    user = {_id: user._id, fullname: user.fullname, imgUrl: user.imgUrl, score: user.score}
-    sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
+    user = { _id: user._id, fullname: user.fullname, imgUrl: user.imgUrl }
+    // sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
+    storageService.post('loggedinUser', user)
     return user
 }
 
-function getLoggedinUser() {
-    return JSON.parse(sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER))
+async function getLoggedinUser() {
+    var loggedinUser = await storageService.query(STORAGE_KEY_LOGGEDIN_USER)
+    return loggedinUser[0]
 }
 
 
