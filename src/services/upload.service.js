@@ -1,22 +1,32 @@
 export const uploadService = {
   uploadImg
 }
-function uploadImg(ev) {
-  const CLOUD_NAME = "dcwibf9o5"
-  const UPLOAD_PRESET = "vt0iqgff"
-  const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`
 
-  const formData = new FormData();
-  formData.append('upload_preset', UPLOAD_PRESET);
-  formData.append('file', ev.target.files[0])
+async function uploadImg(ev) {
+  try {
+    const cloudName = "dtgejpwv9"
+    const apiKey = "585279116812262"
+    const uploadPreset = "itziklevi"
+    const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
 
-  return fetch(UPLOAD_URL, {
-    method: 'POST',
-    body: formData
-  })
-    .then(res => res.json())
-    .then(res => {
-      return res
-    })
-    .catch(err => console.error(err))
+    const formData = new FormData();
+    formData.append('upload_preset', uploadPreset);
+    formData.append('file', ev.target.files[0]);
+    formData.append('api_key', apiKey);
+
+    const response = await fetch(UPLOAD_URL, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload image');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    throw error; // Rethrow the error to propagate it to the caller
+  }
 }

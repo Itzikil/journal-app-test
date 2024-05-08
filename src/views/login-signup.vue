@@ -11,8 +11,8 @@
     <div v-else class="login-signup">
       <h2>Login</h2>
       <form @submit.prevent="doLogin">
-        <select v-model="loginCred.username" >
-        <!-- <option value="">Select User</option> -->
+        <select v-model="loginCred.username">
+          <!-- <option value="">Select User</option> -->
           <option v-for="user in users" :key="user._id" :value="user.username">{{ user.fullname }}</option>
         </select>
         <!-- <input type="text" v-model="loginCred.username" placeholder="User name" />
@@ -23,12 +23,12 @@
         /> -->
         <button>Login</button>
       </form>
+      <h2>Signup</h2>
       <form @submit.prevent="doSignup">
-        <h2>Signup</h2>
         <input type="text" v-model="signupCred.fullname" placeholder="Your full name" />
-        <input type="text" v-model="signupCred.password" placeholder="Password" />
         <input type="text" v-model="signupCred.username" placeholder="Username" />
-        <!-- <img-uploader @uploaded="onUploaded"></img-uploader> -->
+        <input type="text" v-model="signupCred.password" placeholder="Password" />
+        <img-uploader @uploaded="onUploaded"></img-uploader>
         <button>Signup</button>
       </form>
     </div>
@@ -96,7 +96,6 @@ export default {
       }
       await this.$store.dispatch({ type: 'signup', userCred: this.signupCred })
       this.$router.push('/')
-
     },
     loadUsers() {
       this.$store.dispatch({ type: "loadUsers" })
@@ -109,10 +108,10 @@ export default {
         this.msg = 'Failed to remove user'
       }
     },
-    onUploaded(imgUrl) {
-      this.signupCred.imgUrl = imgUrl
-    }
-
+    onUploaded(img) {
+      if (!img) return
+      this.signupCred.imgUrl = img
+    },
   },
   components: {
     imgUploader

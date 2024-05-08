@@ -65,7 +65,7 @@ async function addStudentMsg(studentId, txt) {
 function getEmptyStudent() {
     return {
         name: '',
-        price: 0,
+        price: '0',
     }
 }
 

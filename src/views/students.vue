@@ -1,6 +1,10 @@
 <template>
   <section class="students-container container">
-    <h2>Students</h2>
+    <div class="students-header">
+      <button @click="editCmp = !editCmp">{{ editCmp ? '-' : '+' }}</button>
+      <h2>{{ students.length }} Students</h2>
+    </div>
+    <addStudent v-if="editCmp" @closeEdit="closeEdit" />
     <ul class="student-list">
       <li v-for="student in students" :key="student._id">
         <router-link :to="`/student/${student._id}`">
@@ -17,8 +21,6 @@
         </router-link>
       </li>
     </ul>
-    <button @click="editCmp = !editCmp">Add student</button>
-    <addStudent v-if="editCmp" @closeEdit="closeEdit" />
   </section>
 </template>
 

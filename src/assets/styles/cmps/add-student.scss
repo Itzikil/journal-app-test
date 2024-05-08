@@ -1,14 +1,65 @@
 .add-student-container {
-    label {
-        display: flex;
-        justify-content: space-between;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
 
-        input ,select{
-            width: 100px;
-            border-radius: 50px;
-            outline: none;
-            border: 1px solid gray;
-            padding-inline: 10px;
+    form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        >* {
+            margin: 5px;
         }
+
+        button {
+            padding: 8px;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+
+            option {
+                padding: 5px;
+                // border-radius: 21px;
+                // background-color: aqua;
+            }
+
+            .custom-select,
+            input {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                background-color: #ffffff;
+                border: 1px solid #ccc;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 16px;
+                width: 150px;
+                position: relative;
+
+                &:focus {
+                    outline: none;
+                    border-color: #757b83;
+                }
+            }
+
+            /* Style the select on hover */
+            .custom-select:hover {
+                border-color: #aaa;
+            }
+        }
+    }
+
+    @media (max-width:650px) {
+        width: 100%;
     }
 }

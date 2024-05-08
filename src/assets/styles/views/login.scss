@@ -4,6 +4,10 @@
     align-items: center;
     gap: 20px;
 
+    h2 {
+        align-self: center;
+    }
+
     .login-signup {
         display: flex;
         flex-direction: column;
@@ -18,11 +22,13 @@
         flex-wrap: wrap;
     }
 
-    input , select{
+    input,
+    select {
         padding: 8px;
         border: 1px solid rgb(197, 197, 197);
         border-radius: 5px;
-        option{
+
+        option {
             color: rgb(151, 149, 149);
         }
     }
@@ -32,8 +38,14 @@
         padding: 8px;
 
         transition: 0.3s;
+
         &:hover {
             opacity: 0.9;
         }
     }
+}
+
+.loader-gif {
+    border-radius: 15px;
+    max-width: 100%;
 }

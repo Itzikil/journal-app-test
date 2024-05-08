@@ -1,19 +1,20 @@
 <template>
   <section class="add-student-container">
-    <h2>Add Student</h2>
+    <h3>Student info</h3>
     <form @submit.prevent="addStudent()">
       <!-- <label>teacher: <input type="text" name="teacher" v-model="studentToAdd.teacher.name" required></label> -->
-      <label>Name: <input type="text" name="name" v-model="studentToAdd.name" placeholder="name" required /></label>
-      <label>Day:
-        <select v-model="studentToAdd.day" name="day" required>
-          <option v-for="day in daysOfWeek" :value="day">{{ day }}</option>
-        </select>
+      <label>Name <input type="text" name="name" v-model="studentToAdd.name" placeholder="name" required /></label>
+      <label>Day
+        <div class="select-wrapper">
+          <select v-model="studentToAdd.day" name="day" required class="custom-select">
+            <option v-for="day in daysOfWeek" :value="day">{{ day }}</option>
+          </select>
+        </div>
       </label>
-      <label>Time: <input type="time" name="time" min="08:00" max="20:00" v-model="studentToAdd.time" required></label>
-      <label>Duration: <input type="number" name="duration" v-model="studentToAdd.duration" required></label>
-      <label>price: <input type="number" name="price" v-model="studentToAdd.price" required></label>
-
-      <button type="submit">Save</button>
+      <label>time <input modern-time-input type="time" name="time" min="08:00" max="20:00" v-model="studentToAdd.time" required></label>
+      <label>Duration <input type="number" name="duration" v-model="studentToAdd.duration" required></label>
+      <label>price <input type="number" name="price" v-model="studentToAdd.price" required></label>
+      <button type="submit">Add student</button>
     </form>
   </section>
 </template>
