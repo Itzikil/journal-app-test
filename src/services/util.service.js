@@ -38,7 +38,6 @@ function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive 
 }
 
-
 function randomPastTime() {
     const HOUR = 1000 * 60 * 60
     const DAY = 1000 * 60 * 60 * 24
@@ -65,12 +64,12 @@ function loadFromStorage(key) {
     return (data) ? JSON.parse(data) : undefined
 }
 
-function sortByDate(lessons) {
-
+function sortByDate(lessons, backwards) {
     return lessons.sort((a, b) => {
         const dateA = parseDate(a.date);
         const dateB = parseDate(b.date);
-        return dateA - dateB;
+        if (!backwards) return dateA - dateB;
+        else return dateB - dateA 
     });
 }
 

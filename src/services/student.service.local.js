@@ -53,7 +53,7 @@ async function save(student) {
         savedStudent = await storageService.put(STORAGE_KEY, student)
     } else {
         // Later, owner is set by the backend
-        student.owner = userService.getLoggedinUser()
+        // student.owner = userService.getLoggedinUser()
         savedStudent = await storageService.post(STORAGE_KEY, student)
     }
     return savedStudent

@@ -34,11 +34,55 @@
         .btn-container {
             display: flex;
             justify-content: space-between;
+            margin-bottom: 20px;
+            h3 {
+                margin-bottom: 0;
+                align-self: center;
+            }
         }
 
         .lessons-list {
             display: flex;
             gap: 20px;
+            justify-content: center;
+            flex-direction: column;
+
+            .lesson-item {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .btns-container {
+                display: flex;
+                gap: 20px;
+                height: 100%;
+
+                button {
+                    background-color: transparent;
+                    padding: 0;
+                    margin: 0;
+                    height: 100%;
+
+                    img {
+                        height: 100%;
+                        width: 100%;
+                        max-width: 25px;
+                        height: 25px;
+                        border-radius: 25px;
+                        opacity: 0.4;
+                        transition: 0.6s;
+
+                        &:hover {
+                            opacity: 0.8;
+                        }
+
+                        &.active-status {
+                            opacity: 1;
+                            // box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+                        }
+                    }
+                }
+            }
 
             .lesson-list {
                 display: flex;

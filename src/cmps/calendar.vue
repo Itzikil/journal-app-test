@@ -62,7 +62,9 @@ export default {
                         const dayName = dayNames[(day + firstDayOfMonth - 1) % 7]; // Calculate day name
                         var studentsForDay = this.getStudentsForDay(dayName);
                         const clonedStudents = studentsForDay.map(student => ({ ...student }));
+                        //what is this?
                         clonedStudents.map(student => student.status = 'pending')
+                        //
                         week.push({ date, dayName, students: clonedStudents }); // Include day name and students
                         day++;
                     }

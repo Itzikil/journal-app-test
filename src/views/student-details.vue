@@ -20,21 +20,36 @@
       </div>
       <button @click="openEdit">Edit</button>
     </div>
-    <addStudent v-if="editCmp" :editStudent="student" @closeEdit="closeEdit"/>
+    <addStudent v-if="editCmp" :editStudent="student" @closeEdit="closeEdit" />
     <div class="last-lessons">
       <div class="btn-container">
-        <button @click="monthsBackwards('', -1)">&lt</button>
+        <button @click="changeMonth(1)">&lt</button>
         <h3>Last months</h3>
-        <button @click="monthsBackwards('', 1)">></button>
+        <button @click="changeMonth(-1)">></button>
       </div>
       <div class="lessons-list">
-        <ul v-if="student.classes" v-for="lessons in classesForMonth" class="lesson-list">
-          <h3>{{ monthNames[lessons[0].date.split('.')[1] - 1] }}</h3>
-          <li v-for="lesson in lessons">
-            <p>{{ lesson.date }} </p>
-            <button>{{ lesson.status }}</button>
-          </li>
+        <ul v-if="student.classes" v-for="(lessons,idx) in slicedClasses" class="lesson-list" :key="idx">
+          <h4 class="text-center ">{{ getMonthName(lessons[0].date) }}</h4>
+          <div v-for="lesson in lessons" :key="lesson.date">
+            <div class="lesson-item">
+              <p>{{ lesson.date }} </p>
+              <div class="btns-container">
+                <button @click.stop="addClass(lesson, 'hevriz')">
+                  <img src="../assets/imgs/hevriz.svg" alt="didnt come" :class="activeStatus(lesson.status, 'hevriz')">
+                </button>
+                <button @click.stop="addClass(lesson, 'arrived')">
+                  <img src="../assets/imgs/arrived.svg" alt="arrived" :class="activeStatus(lesson.status, 'arrived')">
+                </button>
+                <button @click.stop="addClass(lesson, 'paid')">
+                  <img src="../assets/imgs/paid.svg" alt="paid" :class="activeStatus(lesson.status, 'paid')">
+                </button>
+              </div>
+            </div>
+          </div>
         </ul>
+        <div v-else>
+          <p>No classes yet</p>
+        </div>
       </div>
     </div>
     <div>
@@ -48,6 +63,9 @@
 <script>
 import { studentService } from '../services/student.service.local'
 import addStudent from '../cmps/addStudent.vue'
+import { utilService } from '../services/util.service'
+import { showSuccessMsg } from '../services/event-bus.service';
+import { showErrorMsg } from '../services/event-bus.service';
 
 export default {
   data() {
@@ -55,41 +73,16 @@ export default {
       student: null,
       editCmp: false,
       classes: [],
-      classesForMonth: [],
+      classesForDisplay: [],
+      monthNumber: 0,
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-      currMonth: new Date().getMonth(),
-      currYear: new Date().getFullYear(),
-      monthNumber: 0
     }
   },
   async created() {
     const id = this.$route.params.id
     this.student = await studentService.getById(id)
-    this.classes = this.student.classes.sort((a, b) => {
-      const [dayA, monthA, yearA] = a.date.split('.').map(Number);
-      const [dayB, monthB, yearB] = b.date.split('.').map(Number);
-
-      if (yearA !== yearB) {
-        return yearA - yearB;
-      }
-      if (monthA !== monthB) {
-        return monthA - monthB;
-      }
-      return dayA - dayB;
-    })
-    const classesByMonth = {};
-    this.classes.forEach(lesson => {
-      const [day, month, year] = lesson.date.split('.').map(Number);
-      const monthKey = `${year}-${month}`;
-      if (!classesByMonth[monthKey]) {
-        classesByMonth[monthKey] = [];
-      }
-      classesByMonth[monthKey].push(lesson);
-    });
-    // this.classes = classesByMonth
-    console.log(classesByMonth);
-    console.log(this.classes);
-    this.monthsBackwards(classesByMonth)
+    this.classes = utilService.sortByDate(this.student.classes , 'backwards')
+    this.groupClassesByMonth()
   },
   computed: {
     classesSum() {
@@ -112,42 +105,55 @@ export default {
     paidClassesSum() {
       return this.calculateClassSum("paid");
     },
+    slicedClasses(){
+      return this.classesForDisplay.slice(this.monthNumber, this.monthNumber + 2)
+    }
   },
   methods: {
-    // displayClasses() {
-    //   const classesByMonth = {};
-    //   this.classes.forEach(lesson => {
-    //     const [day, month, year] = lesson.date.split('.').map(Number);
-    //     const monthKey = `${year}-${month}`;
-    //     if (!classesByMonth[monthKey]) {
-    //       classesByMonth[monthKey] = [];
-    //     }
-    //     classesByMonth[monthKey].push(lesson);
-    //   });
-    //   this.monthsBackwards(classesByMonth)
-    //   return classesByMonth
-    // },
-    monthsBackwards(sortedObj, chosenDate = 0) {
-      console.log(sortedObj);
-      let lessonArray = sortedObj || this.classes
-      const keys = Object.keys(lessonArray);
-      if (this.monthNumber === 0 && chosenDate === 1 || this.monthNumber <= -(keys.length - 3) && chosenDate === -1) return
-      else this.monthNumber += chosenDate
-      // const index = keys.indexOf(`${this.currYear}-${this.currMonth + 1}`) + this.monthNumber;
-      const index = keys.indexOf(`2024-2`) + this.monthNumber;
-      console.log(index);
-      if (index !== -1 && index >= 2 && index < keys.length) {
-        console.log('hi');
-        this.classesForMonth = keys.slice(index - 1, index + 1).map(key => lessonArray[key]);
-      } else {
-        return [];
-      }
+    groupClassesByMonth() {
+      const groupedClasses = {};
+      this.classes.forEach(cls => {
+        const [day, month, year] = cls.date.split('.');
+        const monthKey = `${parseInt(month)}.${year}`; // Combine month and year as key
+        if (!groupedClasses[monthKey]) {
+          groupedClasses[monthKey] = [];
+        }
+        groupedClasses[monthKey].push(cls);
+      });
+      const keys = Object.keys(groupedClasses);
+      this.classesForDisplay = keys.map(key => groupedClasses[key])
+      return groupedClasses
+    },
+    getMonthName(monthKey) {
+      const [day, month, year] = monthKey.split('.');
+      return `${this.monthNames[month - 1]} ${year}`
+    },
+    changeMonth(idx) {
+      if ((this.monthNumber === 0 && idx === -1) || (this.monthNumber === this.classesForDisplay.length - 2 && idx === 1)) return
+      this.monthNumber += idx
     },
     openEdit() {
       this.editCmp = !this.editCmp
     },
     closeEdit() {
       this.editCmp = false
+    },
+    async addClass(lesson, status) {
+      if (lesson.status === status) return
+      lesson.status = status
+      var studentClone = utilService.deepClone(this.student)
+      const existingIndex = studentClone.classes.findIndex((c) => c.date === lesson.date);
+      studentClone.classes.splice(existingIndex, 1, lesson);
+      try {
+        await this.$store.dispatch({ type: "updateStudent", student: studentClone });
+        showSuccessMsg(studentClone.name + " " + status);
+      } catch (err) {
+        console.log(err);
+        showErrorMsg(`Cannot change ${studentClone} ${status}`);
+      }
+    },
+    activeStatus(student, status) {
+      if (student === status) return 'active-status'
     },
   },
   components: {
