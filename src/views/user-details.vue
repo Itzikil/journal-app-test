@@ -185,16 +185,16 @@ export default {
       var unpaid = this.arrivedThisMonth(student).length
       var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       console.log(message);
-      var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
+      var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      var urlStart = isMobileDevice ? 'https://api.whatsapp.com/send?phone=' : 'https://web.whatsapp.com/send?phone=' 
+      var whatsappUrl = urlStart + phoneNumber + '&text=' + encodeURIComponent(message);
       window.open(whatsappUrl);
     },
     formatPhoneNumber(phoneNumber, countryCode) {
       var countryCode = '+972'
       // Remove any non-digit characters from the phone number
       phoneNumber = phoneNumber.replace(/\D/g, '');
-      // Check if the phone number starts with '0' (indicating it's a local number)
       if (phoneNumber.startsWith('0')) {
-        // Remove the leading '0' and prepend the country code
         phoneNumber = countryCode + phoneNumber.slice(1);
       }
       console.log(phoneNumber);
