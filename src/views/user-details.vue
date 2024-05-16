@@ -179,26 +179,13 @@ export default {
       this.$router.push('/')
     },
     openWhatsApp(student) {
-      var phoneNumber = student.phone || '+972 54-306-0864';
+      var phoneNumber = student.phone || '+97254-306-0864';
       console.log(phoneNumber);
       var unpaid = this.arrivedThisMonth(student).length
       var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       console.log(message);
-
-      // Check if the user is on a mobile device
-      var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      // Construct the WhatsApp URL with both phone number and message
-      var whatsappUrl;
-      if (isMobileDevice) {
-        whatsappUrl = 'https://wa.me/' + phoneNumber + '&text=' + encodeURIComponent(message);
-      } else {
-        whatsappUrl = 'https://web.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
-      }
-
-      // Open the WhatsApp URL
+      var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
       window.open(whatsappUrl);
-
     }
   },
   components: {
