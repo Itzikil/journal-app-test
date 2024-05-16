@@ -3,7 +3,7 @@
         <h3>Statistic</h3>
         <div class="stats-container">
             <div v-for="month in months" class="month-stats">
-                <div class="candle" :style="candleHeight(month)">
+                <div class="candle" :style="candleHeight(month)" @click="showEarn">
                     <p class="earning">₪{{ month.earning }}</p>
                 </div>
                 <p>{{ month.name }}</p>
@@ -19,12 +19,15 @@ export default {
     },
     data() {
         return {
+            showingEarn: false
         }
     },
     created() {
-        console.log(this.month);
     },
     methods: {
+        showEarn(){
+
+        },
         highestEarn() {
             var highest = 0
             this.months.forEach(month => month.earning > highest ? highest = month.earning : '')
