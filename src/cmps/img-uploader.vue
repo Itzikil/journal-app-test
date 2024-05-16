@@ -5,7 +5,7 @@
     <label v-if="!isUploading && !imgUrl" class="pointer" :class="{ 'drag-zone': isDragover }" @drop.prevent="uploadImg"
       @dragover.prevent="isDragover = true" @dragleave="isDragover = false">
       <uploadIcon />
-      <input type="file" @change="uploadImg" accept="image/*" capture="enviroment" id="imgUpload" hidden />
+      <input type="file" @change="uploadImg" accept="image/*" capture="false" id="imgUpload" hidden />
     </label>
     <img v-if="isUploading && !imgUrl" src="../assets/imgs/loader.gif" alt="" class="loader-gif">
 
