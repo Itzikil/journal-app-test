@@ -185,7 +185,7 @@ export default {
       var unpaid = this.arrivedThisMonth(student).length
       var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       console.log(message);
-      var whatsappUrl = 'https://web.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
+      var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
       window.open(whatsappUrl);
     },
     formatPhoneNumber(phoneNumber, countryCode) {
