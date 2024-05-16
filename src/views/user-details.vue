@@ -184,16 +184,8 @@ export default {
       var unpaid = this.arrivedThisMonth(student).length
       var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       console.log(message);
-      // Check if the user is on a mobile device
-      var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      // Define the base WhatsApp URL
-      var whatsappBaseUrl = isMobileDevice ? 'whatsapp://' : 'https://web.whatsapp.com/send?phone=';
-      // If it's a mobile device, use the WhatsApp app URL with only the phone number
-      var whatsappUrl = whatsappBaseUrl + phoneNumber;
-      // If it's not a mobile device, append the message to the URL
-      if (!isMobileDevice) {
-        whatsappUrl += '&text=' + encodeURIComponent(message);
-      }
+      // Construct the WhatsApp URL with both phone number and message
+      var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
       // Open the WhatsApp URL
       window.open(whatsappUrl);
     }
