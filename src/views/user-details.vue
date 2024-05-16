@@ -55,7 +55,7 @@
               <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
             </div>
           </div> -->
-          <button @click="openWhatsApp(currStudent, '+972543060864')">'+972543060864'</button>
+          <button @click="openWhatsApp(currStudent, '0543060864')">'0543060864'</button>
         </li>
       </ul>
     </div>
@@ -178,8 +178,8 @@ export default {
       this.$store.dispatch({ type: 'logout' })
       this.$router.push('/')
     },
-    openWhatsApp(student , num) {
-      var phoneNumber = student.phone || num;
+    openWhatsApp(student, num) {
+      var phoneNumber = this.formatPhoneNumber(student.phone || num)
       // var phoneNumber = student.phone || '+97254-306-0864';
       console.log(phoneNumber);
       var unpaid = this.arrivedThisMonth(student).length
@@ -187,6 +187,18 @@ export default {
       console.log(message);
       var whatsappUrl = 'https://web.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
       window.open(whatsappUrl);
+    },
+    formatPhoneNumber(phoneNumber, countryCode) {
+      var countryCode = '+972'
+      // Remove any non-digit characters from the phone number
+      phoneNumber = phoneNumber.replace(/\D/g, '');
+      // Check if the phone number starts with '0' (indicating it's a local number)
+      if (phoneNumber.startsWith('0')) {
+        // Remove the leading '0' and prepend the country code
+        phoneNumber = countryCode + phoneNumber.slice(1);
+      }
+      console.log(phoneNumber);
+      return phoneNumber;
     }
   },
   components: {

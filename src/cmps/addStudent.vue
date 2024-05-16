@@ -11,9 +11,10 @@
           </select>
         </div>
       </label>
-      <label>time <input modern-time-input type="time" name="time" min="08:00" max="20:00" v-model="studentToAdd.time" required></label>
+      <label>Time <input modern-time-input type="time" name="time" min="08:00" max="20:00" v-model="studentToAdd.time" required></label>
       <label>Duration <input type="number" name="duration" v-model="studentToAdd.duration" required></label>
-      <label>price <input type="number" name="price" v-model="studentToAdd.price" required></label>
+      <label>Price <input type="number" name="price" v-model="studentToAdd.price" required></label>
+      <label>Phone<input type="text" name="phone" v-model="studentToAdd.phone"></label>
       <button type="submit">Add student</button>
     </form>
   </section>

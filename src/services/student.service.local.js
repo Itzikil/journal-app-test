@@ -83,6 +83,7 @@ function getEmptyStudent() {
         time: '',
         duration: '',
         teacher: '',
+        phone: '',
         classes: []
     }
 }
