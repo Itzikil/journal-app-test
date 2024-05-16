@@ -191,7 +191,7 @@ export default {
       // Construct the WhatsApp URL with both phone number and message
       var whatsappUrl;
       if (isMobileDevice) {
-        whatsappUrl = 'whatsapp://send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
+        whatsappUrl = 'https://wa.me/' + phoneNumber + '&text=' + encodeURIComponent(message);
       } else {
         whatsappUrl = 'https://web.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
       }
