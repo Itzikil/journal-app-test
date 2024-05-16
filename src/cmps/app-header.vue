@@ -8,13 +8,11 @@
       <router-link v-if="!loggedInUser" to="/login" class="loggedin-user">
         <div :class="['a-container', { active: $route.path === '/about' }]">
           <img src="../assets/imgs/header/login.svg" alt="login">
-          <!-- <p>Login / Signup</p> -->
         </div>
       </router-link>
       <!-- <router-link to="/">
         <span role="img" aria-label="logo">Home</span>
       </router-link> -->
-      <!-- <div> -->
       <router-link v-if="loggedInUser" to="/today" class="link-container upper-curve">
         <div :class="['a-container', { active: $route.path === '/today' }]">
           <img :src=dayPic alt="day">
@@ -41,7 +39,6 @@
           <p>About</p>
         </div>
       </router-link> -->
-      <!-- </div> -->
     </nav>
   </header>
 </template>
@@ -59,16 +56,12 @@ export default {
     loggedInUser() {
       return this.$store.getters.loggedinUser
     },
-    // console.log(`../assets/imgs/header/day-${new Date().getDay()}.svg`);
     dayPic() {
       var days = [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday]
       return days[new Date().getDay()]
     },
   },
   methods: {
-    // dayPic() {
-    //   return `@/assets/imgs/header/day-1.svg`
-    // },
   }
 }
 </script>

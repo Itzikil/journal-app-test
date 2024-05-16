@@ -13,7 +13,11 @@
             <p class="student-day">{{ student.day }}</p>
             <div class="lessons-imgs">
               <div v-for="lesson in classesInMonth(student)" :key="lesson.date">
-                <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="" :title="lesson.date">
+                <img :src='`src/assets/imgs/${lesson.status}.svg`' alt="1" title="1">
+                <img :src='`@/assets/imgs/${lesson.status}.svg`' alt="2" title="2">
+                <!-- <img :src="`src/assets/imgs/arrived.svg`" alt="" :title="lesson.date"> -->
+                <!-- <img :src="`src/assets/imgs/paid.svg`" alt="" :title="lesson.date"> -->
+                <img :src="loadImage(lesson.status)" alt="3" title="3">
               </div>
             </div>
           </div>
@@ -30,6 +34,9 @@ import { studentService } from "../services/student.service.local";
 import { utilService } from "../services/util.service";
 import { getActionRemoveStudent, getActionAddStudentMsg } from "../store/student.store";
 import addStudent from '../cmps/addStudent.vue'
+import arrived from '@/assets/imgs/arrived.svg'
+import hevriz from '@/assets/imgs/hevriz.svg'
+import paid from '@/assets/imgs/paid.svg'
 
 export default {
   data() {
@@ -39,6 +46,9 @@ export default {
       editCmp: false
     };
   },
+  created() {
+    this.$store.dispatch({ type: "loadStudents" });
+  },
   computed: {
     loggedInUser() {
       return this.$store.getters.loggedinUser;
@@ -47,10 +57,11 @@ export default {
       return this.$store.getters.students;
     },
   },
-  created() {
-    this.$store.dispatch({ type: "loadStudents" });
-  },
   methods: {
+    loadImage(status) {
+      var imgs = { arrived, paid, hevriz }
+      return imgs[status]
+    },
     async removeStudent(studentId) {
       try {
         await this.$store.dispatch(getActionRemoveStudent(studentId));
