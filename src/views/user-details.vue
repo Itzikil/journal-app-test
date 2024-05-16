@@ -55,7 +55,7 @@
               <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
             </div>
           </div> -->
-          <button @click="openWhatsApp(currStudent, '0543060864')">'0543060864'</button>
+          <button @click="openWhatsApp(currStudent)">Send bill with whatsapp</button>
         </li>
       </ul>
     </div>
@@ -178,8 +178,8 @@ export default {
       this.$store.dispatch({ type: 'logout' })
       this.$router.push('/')
     },
-    openWhatsApp(student, num) {
-      var phoneNumber = this.formatPhoneNumber(student.phone || num)
+    openWhatsApp(student) {
+      var phoneNumber = this.formatPhoneNumber(student.phone || '0543060864')
       // var phoneNumber = student.phone || '+97254-306-0864';
       console.log(phoneNumber);
       var unpaid = this.arrivedThisMonth(student).length
