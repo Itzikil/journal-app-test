@@ -184,10 +184,21 @@ export default {
       var unpaid = this.arrivedThisMonth(student).length
       var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       console.log(message);
+
+      // Check if the user is on a mobile device
+      var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
       // Construct the WhatsApp URL with both phone number and message
-      var whatsappUrl = 'https://api.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
+      var whatsappUrl;
+      if (isMobileDevice) {
+        whatsappUrl = 'whatsapp://send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
+      } else {
+        whatsappUrl = 'https://web.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
+      }
+
       // Open the WhatsApp URL
       window.open(whatsappUrl);
+
     }
   },
   components: {
