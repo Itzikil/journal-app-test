@@ -178,14 +178,14 @@ export default {
       this.$store.dispatch({ type: 'logout' })
       this.$router.push('/')
     },
-    openWhatsApp(student, num) {
+    openWhatsApp(student , num) {
       var phoneNumber = student.phone || num;
       // var phoneNumber = student.phone || '+97254-306-0864';
+      console.log(phoneNumber);
       var unpaid = this.arrivedThisMonth(student).length
       var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
-      var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      var startOfUrl = isMobileDevice ? 'https://wa.me/' : 'https://web.whatsapp.com/send?phone='
-      var whatsappUrl = startOfUrl + phoneNumber + '&text=' + encodeURIComponent(message);
+      console.log(message);
+      var whatsappUrl = 'https://web.whatsapp.com/send?phone=' + phoneNumber + '&text=' + encodeURIComponent(message);
       window.open(whatsappUrl);
     }
   },
