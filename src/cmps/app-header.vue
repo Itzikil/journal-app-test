@@ -15,20 +15,19 @@
         <span role="img" aria-label="logo">Home</span>
       </router-link> -->
       <!-- <div> -->
-      <router-link to="/today" class="link-container upper-curve">
+      <router-link v-if="loggedInUser" to="/today" class="link-container upper-curve">
         <div :class="['a-container', { active: $route.path === '/today' }]">
-          <!-- <img :src=sunday alt=""> -->
           <img :src=dayPic alt="day">
           <p>Today</p>
         </div>
       </router-link>
-      <router-link to="/journal" class="link-container">
+      <router-link v-if="loggedInUser" to="/journal" class="link-container">
         <div :class="['a-container', { active: $route.path === '/journal' }]">
           <img src="../assets/imgs/header/calendar.svg" alt="calendar">
           <p>Journal</p>
         </div>
       </router-link>
-      <router-link to="/students" class="link-container lower-curve">
+      <router-link v-if="loggedInUser" to="/students" class="link-container lower-curve">
         <div :class="['a-container', { active: $route.path === '/students' }]">
           <img src="../assets/imgs/header/students.svg" alt="students">
           <p>Students</p>
@@ -36,7 +35,6 @@
       </router-link>
       <!-- <router-link to="/review">Reviews</router-link> -->
       <!-- <router-link to="/chat">Chat</router-link> -->
-
       <!-- <router-link to="/about" class="link-container">
         <div :class="['a-container', {active: $route.path === '/about'}]">
           <img src="../assets/imgs/header/about.svg" alt="">

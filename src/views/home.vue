@@ -2,7 +2,11 @@
   <section class="container home text-center">
     <h1>Work Journal</h1>
     <h2 class="text-center">Orgnaize your work </h2>
-    <img alt="Vue logo" src="../assets/logo.png">
+    <img alt="Vue logo" src="/journal-app-test/pwa-192x192.png">
+    <p>Download the app</p>
+    <p>Signup</p>
+    <p>Add students</p>
+    <p>Organize your schedule</p>
     <downloadBtn />
   </section>
 

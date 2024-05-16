@@ -80,7 +80,7 @@ export default {
       }
       try {
         await this.$store.dispatch({ type: "login", userCred: this.loginCred })
-        this.$router.push('/')
+        this.$router.push('/journal')
       } catch (err) {
         console.log(err)
         this.msg = 'Failed to login'
@@ -95,7 +95,7 @@ export default {
         return
       }
       await this.$store.dispatch({ type: 'signup', userCred: this.signupCred })
-      this.$router.push('/')
+      this.$router.push('/journal')
     },
     loadUsers() {
       this.$store.dispatch({ type: "loadUsers" })

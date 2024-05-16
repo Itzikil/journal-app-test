@@ -1,6 +1,6 @@
 <template>
     <div>
-      <button @click="downloadPWA">Download PWA</button>
+      <button @click="downloadPWA">Download App</button>
     </div>
   </template>
   
@@ -13,13 +13,13 @@
           const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
           if (isSafari) {
             // For Safari on iOS
-            alert('Please tap the Share button below and then select "Add to Home Screen" to download the PWA.');
+            alert('Please tap the Share button below and then select "Add to Home Screen" to download the App.');
           } else {
             // For other mobile browsers
-            alert('Please use your browser\'s options menu to "Add to Home Screen" to download the PWA.');
+            alert('Please use your browser\'s options menu to "Add to Home Screen" to download the App.');
           }
         } else {
-          alert('Please use your browser\'s options menu to "Install" or "Add to Home Screen" to download the PWA.');
+          alert('Please use your browser\'s options menu to "Install" or "Add to Home Screen" to download the App.');
         }
       }
     }
