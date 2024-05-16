@@ -13,6 +13,10 @@
       <img v-if="imgUrl" :src="imgUrl" :style="{ maxWidth: '95px', maxHeight: '95px', float: 'right' }" />
     </div>
   </div>
+  <input type="file" accept="image/*">
+  <input type="file" accept="image/*" capture="false">
+  <input type="file" accept="image/*" capture="environment">
+
 </template>
 
 <script>
@@ -39,6 +43,8 @@ export default {
   },
   methods: {
     async uploadImg(ev) {
+      const file = ev.target.files[0];
+      console.log(file);
       this.isUploading = true
       const { secure_url, height, width } = await uploadService.uploadImg(ev)
       this.isUploading = false
