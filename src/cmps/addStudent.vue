@@ -11,7 +11,8 @@
           </select>
         </div>
       </label>
-      <label>Time <input modern-time-input type="time" name="time" min="08:00" max="20:00" v-model="studentToAdd.time" required></label>
+      <label>Time <input modern-time-input type="time" name="time" min="08:00" max="20:00" v-model="studentToAdd.time"
+          required></label>
       <label>Duration <input type="number" name="duration" v-model="studentToAdd.duration" required></label>
       <label>Price <input type="number" name="price" v-model="studentToAdd.price" required></label>
       <label>Phone<input type="text" name="phone" v-model="studentToAdd.phone"></label>
@@ -23,6 +24,7 @@
 <script>
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
 import { studentService } from '../services/student.service.local';
+import { utilService } from '../services/util.service';
 
 export default {
   props: {
@@ -43,6 +45,7 @@ export default {
   methods: {
     async addStudent() {
       try {
+        if (utilService.checkForConflict(this.studentToAdd , this.$store.getters.students)) return showErrorMsg('That time is taken');
         await this.$store.dispatch({ type: "addStudent", student: this.studentToAdd });
         var msg = this.studentToAdd._id ? " updated" : " added"
         showSuccessMsg(this.studentToAdd.name + msg);
@@ -56,7 +59,3 @@ export default {
   }
 };
 </script>
-
-<style>
-/* CSS styles */
-</style>

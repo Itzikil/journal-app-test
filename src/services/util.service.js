@@ -8,7 +8,8 @@ export const utilService = {
     loadFromStorage,
     sortByDate,
     sortByName,
-    deepClone
+    deepClone,
+    checkForConflict
 }
 
 function makeId(length = 6) {
@@ -69,7 +70,7 @@ function sortByDate(lessons, backwards) {
         const dateA = parseDate(a.date);
         const dateB = parseDate(b.date);
         if (!backwards) return dateA - dateB;
-        else return dateB - dateA 
+        else return dateB - dateA
     });
 }
 
@@ -103,4 +104,36 @@ function deepClone(obj) {
         }
     }
     return clone;
+}
+
+function isConflict(existingStudent, newStudent) {
+    // Convert time strings to minutes for easier comparison
+    const existingTime = convertTimeToMinutes(existingStudent.time);
+    const newTime = convertTimeToMinutes(newStudent.time);
+    
+    // Calculate end time for existing and new students
+    const existingEndTime = existingTime + existingStudent.duration;
+    const newEndTime = newTime + newStudent.duration;
+
+    // Check if there's an overlap in time range
+    return ((existingTime >= newTime && existingTime < newEndTime) ||
+        (newTime >= existingTime && newTime < existingEndTime));
+}
+
+function convertTimeToMinutes(timeString) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+function checkForConflict(newStudent, existingStudents) {
+    for (let i = 0; i < existingStudents.length; i++) {
+        if (existingStudents[i]._id === newStudent._id) {
+            continue;
+          }
+        if (existingStudents[i].day === newStudent.day &&
+            isConflict(existingStudents[i], newStudent)) {
+            return true;
+        }
+    }
+    return false;
 }
