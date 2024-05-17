@@ -14,6 +14,7 @@ export default defineConfig({
       short_name: 'Journal',
       description: 'Journal app to make your job easier',
       theme_color: '#ffffff',
+      display: "standalone",
       icons: [
         {
           "src": "/journal-app-test/pwa-192x192.png",
@@ -40,18 +41,7 @@ export default defineConfig({
           "purpose": "maskable"
         }
       ],
-      start_url: '/'
     },
-    workbox: {
-      manifestIcons: [
-        // Specify the icon specifically for the splash screen
-        {
-          src: "/journal-app-test/pwa-maskable-512x512.png",
-          sizes: '512x512',
-          purpose: 'maskable any'
-        }
-      ]
-    }
   })],
   base: "/journal-app-test/",
   resolve: {
