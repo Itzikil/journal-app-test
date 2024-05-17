@@ -14,7 +14,7 @@ export default defineConfig({
       short_name: 'Journal',
       description: 'Journal app to make your job easier',
       theme_color: '#ffffff',
-      display: "standalone",
+      "display": "standalone",
       icons: [
         {
           "src": "/journal-app-test/pwa-192x192.png",
