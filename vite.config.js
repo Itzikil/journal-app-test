@@ -9,8 +9,8 @@ export default defineConfig({
   plugins: [vue(), VitePWA({
     registerType: 'autoUpdate',
     includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-    display: "standalone",
     manifest: {
+      display: "standalone",
       name: 'Journal',
       short_name: 'Journal',
       description: 'Journal app to make your job easier',
@@ -41,6 +41,7 @@ export default defineConfig({
           "purpose": "maskable"
         }
       ],
+      "start_url": "."
     },
   })],
   base: "/journal-app-test/",
