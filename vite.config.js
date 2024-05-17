@@ -39,16 +39,18 @@ export default defineConfig({
           "type": "image/png",
           "purpose": "maskable"
         }
-      ]
+      ],
+      start_url: '/'
     },
     workbox: {
-      // Configure the splash screen
-      manifestStartURL: '/index.html', // Specify the start URL for the splash screen
-      manifestBackgroundColor: '#ffffff', // Specify the background color of the splash screen
-      manifestThemeColor: '#ffffff', // Specify the theme color of the splash screen
-      manifestDisplay: 'standalone', // Specify the display mode of the splash screen
-      manifestIcons: [], // Specify icons for the splash screen (if different from app icons)
-      cleanupOutdatedCaches: true // Specify whether to clean up outdated caches
+      manifestIcons: [
+        // Specify the icon specifically for the splash screen
+        {
+          src: "/journal-app-test/pwa-maskable-512x512.png",
+          sizes: '512x512',
+          purpose: 'maskable any'
+        }
+      ]
     }
   })],
   base: "/journal-app-test/",
