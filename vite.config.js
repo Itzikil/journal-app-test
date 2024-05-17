@@ -40,6 +40,15 @@ export default defineConfig({
           "purpose": "maskable"
         }
       ]
+    },
+    workbox: {
+      // Configure the splash screen
+      manifestStartURL: '/index.html', // Specify the start URL for the splash screen
+      manifestBackgroundColor: '#ffffff', // Specify the background color of the splash screen
+      manifestThemeColor: '#ffffff', // Specify the theme color of the splash screen
+      manifestDisplay: 'standalone', // Specify the display mode of the splash screen
+      manifestIcons: [], // Specify icons for the splash screen (if different from app icons)
+      cleanupOutdatedCaches: true // Specify whether to clean up outdated caches
     }
   })],
   base: "/journal-app-test/",
