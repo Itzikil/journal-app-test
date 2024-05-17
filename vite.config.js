@@ -9,12 +9,12 @@ export default defineConfig({
   plugins: [vue(), VitePWA({
     registerType: 'autoUpdate',
     includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+    display: "standalone",
     manifest: {
       name: 'Journal',
       short_name: 'Journal',
       description: 'Journal app to make your job easier',
       theme_color: '#ffffff',
-      "display": "standalone",
       icons: [
         {
           "src": "/journal-app-test/pwa-192x192.png",
