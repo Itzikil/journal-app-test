@@ -40,8 +40,8 @@ export default {
             const distance = this.currentY - this.startY;
             if (distance > 0) {
                 document.documentElement.style.scrollBehavior = 'auto';
-                // window.scrollTo(0, -distance);
-                event.preventDefault();
+                window.scrollTo(0, -distance);
+                // event.preventDefault();
             }
         },
         endTouch() {
