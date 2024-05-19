@@ -10,7 +10,8 @@ export const utilService = {
     sortByName,
     deepClone,
     checkForConflict,
-    isRunningAsPWA
+    isRunningAsPWA,
+    isRunningAsPWAOnDesktop
 }
 
 function makeId(length = 6) {
@@ -142,4 +143,10 @@ function checkForConflict(newStudent, existingStudents) {
 function isRunningAsPWA() {
     return window.matchMedia('(display-mode: standalone)').matches ||
         window.navigator.standalone === true;
+}
+
+function isRunningAsPWAOnDesktop() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const isDesktop = !(/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+    return isStandalone && isDesktop;
 }

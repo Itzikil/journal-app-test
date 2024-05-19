@@ -33,7 +33,8 @@ export default {
   },
   computed: {
     IsPwa() {
-      return utilService.isRunningAsPWA()
+      console.log(isRunningAsPWAOnDesktop());
+      return utilService.isRunningAsPWA() || utilService.isRunningAsPWAOnDesktop()
     },
     loggedInUser() {
       return this.$store.getters.loggedinUser
