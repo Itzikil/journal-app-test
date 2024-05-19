@@ -9,7 +9,8 @@ export const utilService = {
     sortByDate,
     sortByName,
     deepClone,
-    checkForConflict
+    checkForConflict,
+    isRunningAsPWA
 }
 
 function makeId(length = 6) {
@@ -110,7 +111,7 @@ function isConflict(existingStudent, newStudent) {
     // Convert time strings to minutes for easier comparison
     const existingTime = convertTimeToMinutes(existingStudent.time);
     const newTime = convertTimeToMinutes(newStudent.time);
-    
+
     // Calculate end time for existing and new students
     const existingEndTime = existingTime + existingStudent.duration;
     const newEndTime = newTime + newStudent.duration;
@@ -129,11 +130,16 @@ function checkForConflict(newStudent, existingStudents) {
     for (let i = 0; i < existingStudents.length; i++) {
         if (existingStudents[i]._id === newStudent._id) {
             continue;
-          }
+        }
         if (existingStudents[i].day === newStudent.day &&
             isConflict(existingStudents[i], newStudent)) {
             return true;
         }
     }
     return false;
+}
+
+function isRunningAsPWA() {
+    return window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true;
 }

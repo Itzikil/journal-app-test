@@ -4,7 +4,17 @@
     align-items: center;
     gap: 10px;
 
+    a {
+        list-style: none;
+        color: $clr1;
+    }
+
     img {
         border-radius: 10px;
+    }
+
+    .vi-image {
+        width: 25px;
+        margin-inline-end: 10px;
     }
 }

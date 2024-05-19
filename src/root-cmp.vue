@@ -1,11 +1,11 @@
 <template>
   <section class="main-page">
-      <PullToRefresh @refresh="handleRefresh">
+    <!-- <PullToRefresh v-if="runningAsPwa"> -->
       <user-msg />
       <app-header />
       <router-view />
-    </PullToRefresh>
-    </section>
+    <!-- </PullToRefresh> -->
+  </section>
 </template>
 
 <script>
@@ -14,15 +14,12 @@ import appHeader from './cmps/app-header.vue'
 import userMsg from './cmps/user-msg.vue'
 import { userService } from './services/user.service'
 import PullToRefresh from './cmps/PullToRefresh.vue';
+import { utilService } from './services/util.service';
+
 export default {
   async created() {
     const user = await userService.getLoggedinUser()
     if (user) store.commit({ type: 'setLoggedinUser', user })
-  },
-  methods: {
-    handleRefresh() {
-      window.location.reload();
-    },
   },
   components: {
     appHeader,

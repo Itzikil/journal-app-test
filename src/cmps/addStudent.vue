@@ -13,10 +13,12 @@
       </label>
       <label>Time <input modern-time-input type="time" name="time" min="08:00" max="20:00" v-model="studentToAdd.time"
           required></label>
-      <label>Duration <input type="number" name="duration" v-model="studentToAdd.duration" required></label>
-      <label>Price <input type="number" name="price" v-model="studentToAdd.price" required></label>
-      <label>Phone<input type="text" name="phone" v-model="studentToAdd.phone"></label>
-      <button type="submit">Add student</button>
+      <label>Duration <input type="number" name="duration" v-model="studentToAdd.duration" placeholder="30 / 45 / 60"
+          required></label>
+      <label>Price <input type="number" name="price" v-model="studentToAdd.price" placeholder="50 / 100 / 200"
+          required></label>
+      <label>Phone<input type="text" name="phone" placeholder="xxx-xxxxxxx" v-model="studentToAdd.phone"></label>
+      <button type="submit">{{ addEdit }}</button>
     </form>
   </section>
 </template>
@@ -42,10 +44,15 @@ export default {
   created() {
     this.studentToAdd.teacher = { 'name': this.teacher.fullname, '_id': this.teacher._id }
   },
+  computed: {
+    addEdit() {
+      return this.$route.path === '/students' ? 'Add student' : 'Update student'
+    }
+  },
   methods: {
     async addStudent() {
       try {
-        if (utilService.checkForConflict(this.studentToAdd , this.$store.getters.students)) return showErrorMsg('That time is taken');
+        if (utilService.checkForConflict(this.studentToAdd, this.$store.getters.students)) return showErrorMsg('That time is taken');
         await this.$store.dispatch({ type: "addStudent", student: this.studentToAdd });
         var msg = this.studentToAdd._id ? " updated" : " added"
         showSuccessMsg(this.studentToAdd.name + msg);

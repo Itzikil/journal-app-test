@@ -1,5 +1,6 @@
 <template>
-    <div class="pull-to-refresh" v-if="isMobile" @touchstart="startTouch" @touchmove="moveTouch" @touchend="endTouch">
+    <div class="pull-to-refresh" v-if="isMobile && runningAsPwa" @touchstart="startTouch" @touchmove="moveTouch"
+        @touchend="endTouch">
         <slot></slot>
         <div ref="spinner" class="spinner-container" :class="{ active: isRefreshing }">
             <div class="spinner"></div>
@@ -8,6 +9,7 @@
 </template>
 
 <script>
+import { utilService } from '../services/util.service'
 export default {
     data() {
         return {
@@ -24,6 +26,10 @@ export default {
     methods: {
         detectMobile() {
             return /Mobi|Android/i.test(navigator.userAgent);
+        },
+        runningAsPwa() {
+            console.log(utilService.isRunningAsPWA());
+            return utilService.isRunningAsPWA()
         },
         startTouch(event) {
             if (window.scrollY === 0) {
@@ -51,10 +57,9 @@ export default {
             }
         },
         refreshPage() {
-            this.isRefreshing = false;
             setTimeout(() => {
-                this.$emit('refresh'); // Notify the parent component to refresh content
-            }, 600); // Adjust this duration based on your needs
+                window.location.reload();
+            }, 600);
         },
     },
 };
