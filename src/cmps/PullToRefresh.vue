@@ -28,9 +28,9 @@ export default {
         startTouch(event) {
             if (window.scrollY === 0) {
                 this.startY = event.touches[0].pageY;
+                console.log(this.startY);
                 if (this.startY > 200) return
                 this.currentY = this.startY;
-                console.log(this.currentY);
                 this.isTouching = true;
             }
         },
@@ -38,14 +38,9 @@ export default {
             if (!this.isTouching || window.scrollY > 0) return;
             this.currentY = event.touches[0].pageY;
             const distance = this.currentY - this.startY;
-            // if (distance > 0) {
-            // document.documentElement.style.scrollBehavior = 'auto';
-            // window.scrollTo(0, -distance);
             if (distance > 50) {
                 this.isRefreshing = true;
             }
-            // event.preventDefault();
-            // }
         },
         endTouch() {
             this.isTouching = false;
@@ -53,23 +48,13 @@ export default {
             if (distance > 50) {
                 this.isRefreshing = true;
                 this.refreshPage();
-            } else {
-                this.reset();
             }
         },
         refreshPage() {
-            // Simulate a refresh action
+            this.isRefreshing = false;
             setTimeout(() => {
-                this.isRefreshing = false;
-                this.reset();
                 this.$emit('refresh'); // Notify the parent component to refresh content
-            }, 2000); // Adjust this duration based on your needs
-        },
-        reset() {
-            this.startY = 0;
-            this.currentY = 0;
-            document.documentElement.style.scrollBehavior = '';
-            window.scrollTo(0, 0);
+            }, 1000); // Adjust this duration based on your needs
         },
     },
 };
@@ -82,19 +67,22 @@ export default {
 
 .spinner-container {
     position: fixed;
-    top: 0;
+    top: -100px;
     left: 50%;
     transform: translateX(-50%);
     margin-top: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    display: none;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: 0.3s;
 }
 
 .spinner-container.active {
     opacity: 1;
+    display: block;
+    transform: translate(-50%, 120px);
 }
 
 .spinner {
