@@ -6,10 +6,10 @@
       @touchmove="moveTouch"
       @touchend="endTouch"
     >
-      <div ref="indicator" :class="['refresh-indicator', { active: isRefreshing }]">
+      <slot></slot>
+      <div ref="spinner" class="spinner-container" :class="{ active: isRefreshing }">
         <div class="spinner"></div>
       </div>
-      <slot></slot>
     </div>
   </template>
   
@@ -21,6 +21,7 @@
         currentY: 0,
         isRefreshing: false,
         isMobile: false,
+        isTouching: false,
       };
     },
     mounted() {
@@ -34,22 +35,24 @@
         if (window.scrollY === 0) {
           this.startY = event.touches[0].pageY;
           this.currentY = this.startY;
+          this.isTouching = true;
         }
       },
       moveTouch(event) {
-        if (this.startY === 0) return;
+        if (!this.isTouching) return;
         this.currentY = event.touches[0].pageY;
         const distance = this.currentY - this.startY;
-        if (distance > 50) {
-          this.$refs.indicator.style.height = `${distance}px`;
+        if (distance > 0) {
+          document.documentElement.style.scrollBehavior = 'auto';
+          window.scrollTo(0, -distance);
           event.preventDefault();
         }
       },
       endTouch() {
+        this.isTouching = false;
         const distance = this.currentY - this.startY;
         if (distance > 50) {
           this.isRefreshing = true;
-          this.$refs.indicator.style.height = '50px';
           this.refreshPage();
         } else {
           this.reset();
@@ -60,13 +63,14 @@
         setTimeout(() => {
           this.isRefreshing = false;
           this.reset();
-          this.$emit('refresh');
-        }, 2000); // Adjust this duration based on your needs
+          this.$emit('refresh'); // Notify the parent component to refresh content
+        }, 600); // Adjust this duration based on your needs
       },
       reset() {
         this.startY = 0;
         this.currentY = 0;
-        this.$refs.indicator.style.height = '0';
+        document.documentElement.style.scrollBehavior = '';
+        window.scrollTo(0, 0);
       },
     },
   };
@@ -75,22 +79,21 @@
   <style scoped>
   .pull-to-refresh {
     position: relative;
-    overflow: hidden;
   }
-  .refresh-indicator {
-    position: absolute;
+  .spinner-container {
+    position: fixed;
     top: 0;
-    left: 0;
-    right: 0;
-    height: 0;
-    background-color: #f3f3f3;
-    transition: height 0.3s;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
   }
-  .refresh-indicator.active {
-    height: 50px; /* Adjust this height to match the design */
+  .spinner-container.active {
+    opacity: 1;
   }
   .spinner {
     border: 4px solid rgba(0, 0, 0, 0.1);
