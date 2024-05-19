@@ -1,10 +1,11 @@
 <template>
-  <section class="main-page">
-    <user-msg />
-    <app-header />
-    <router-view />
-    <PullToRefresh />
-  </section>
+  <PullToRefresh @refresh="handleRefresh">
+    <section class="main-page">
+      <user-msg />
+      <app-header />
+      <router-view />
+    </section>
+  </PullToRefresh>
 </template>
 
 <script>
@@ -17,6 +18,17 @@ export default {
   async created() {
     const user = await userService.getLoggedinUser()
     if (user) store.commit({ type: 'setLoggedinUser', user })
+  },
+  methods: {
+    handleRefresh() {
+      console.log('Refreshing...');
+      // Handle the refresh logic here, e.g., fetching data or reloading the page
+      this.refreshContent();
+    },
+    refreshContent() {
+      // Replace this with your data fetching logic if needed
+      window.location.reload();
+    },
   },
   components: {
     appHeader,

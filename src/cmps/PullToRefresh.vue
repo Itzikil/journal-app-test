@@ -1,11 +1,12 @@
 <template>
     <div
       class="pull-to-refresh"
+      v-if="isMobile"
       @touchstart="startTouch"
       @touchmove="moveTouch"
       @touchend="endTouch"
     >
-      <div :class="['refresh-indicator', { active: isRefreshing }]">
+      <div ref="indicator" :class="['refresh-indicator', { active: isRefreshing }]">
         <div class="spinner"></div>
       </div>
       <slot></slot>
@@ -19,9 +20,16 @@
         startY: 0,
         currentY: 0,
         isRefreshing: false,
+        isMobile: false,
       };
     },
+    mounted() {
+      this.isMobile = this.detectMobile();
+    },
     methods: {
+      detectMobile() {
+        return /Mobi|Android/i.test(navigator.userAgent);
+      },
       startTouch(event) {
         if (window.scrollY === 0) {
           this.startY = event.touches[0].pageY;
@@ -34,12 +42,14 @@
         const distance = this.currentY - this.startY;
         if (distance > 50) {
           this.$refs.indicator.style.height = `${distance}px`;
+          event.preventDefault();
         }
       },
       endTouch() {
         const distance = this.currentY - this.startY;
         if (distance > 50) {
           this.isRefreshing = true;
+          this.$refs.indicator.style.height = '50px';
           this.refreshPage();
         } else {
           this.reset();

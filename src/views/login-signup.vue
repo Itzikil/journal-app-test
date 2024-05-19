@@ -95,7 +95,7 @@ export default {
         return
       }
       await this.$store.dispatch({ type: 'signup', userCred: this.signupCred })
-      this.$router.push('/journal')
+      this.$router.push('/students')
     },
     loadUsers() {
       this.$store.dispatch({ type: "loadUsers" })
