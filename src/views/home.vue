@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     IsPwa() {
-      console.log(isRunningAsPWAOnDesktop());
+      console.log(utilService.isRunningAsPWAOnDesktop());
       return utilService.isRunningAsPWA() || utilService.isRunningAsPWAOnDesktop()
     },
     loggedInUser() {
