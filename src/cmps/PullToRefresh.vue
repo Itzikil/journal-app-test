@@ -45,8 +45,8 @@ export default {
         endTouch() {
             this.isTouching = false;
             const distance = this.currentY - this.startY;
+            this.isRefreshing = false;
             if (distance > 50) {
-                this.isRefreshing = true;
                 this.refreshPage();
             }
         },
@@ -54,7 +54,7 @@ export default {
             this.isRefreshing = false;
             setTimeout(() => {
                 this.$emit('refresh'); // Notify the parent component to refresh content
-            }, 1000); // Adjust this duration based on your needs
+            }, 600); // Adjust this duration based on your needs
         },
     },
 };
