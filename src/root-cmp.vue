@@ -3,6 +3,7 @@
     <user-msg />
     <app-header />
     <router-view />
+    <PullToRefresh />
   </section>
 </template>
 
@@ -11,7 +12,7 @@ import { store } from './store/store'
 import appHeader from './cmps/app-header.vue'
 import userMsg from './cmps/user-msg.vue'
 import { userService } from './services/user.service'
-
+import PullToRefresh from './cmps/PullToRefresh.vue';
 export default {
   async created() {
     const user = await userService.getLoggedinUser()
@@ -19,7 +20,8 @@ export default {
   },
   components: {
     appHeader,
-    userMsg
+    userMsg,
+    PullToRefresh
   },
 }
 </script>

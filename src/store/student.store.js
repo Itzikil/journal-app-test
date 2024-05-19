@@ -42,8 +42,7 @@ export const studentStore = {
             state.students.push(student)
         },
         updateStudent(state, { student }) {
-            console.log(student);
-            const idx = state.students.findIndex(c => c.id === student._id)
+            const idx = state.students.findIndex(c => c._id === student._id)
             state.students.splice(idx, 1, student)
         },
         removeStudent(state, { studentId }) {

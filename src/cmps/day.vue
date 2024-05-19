@@ -89,7 +89,6 @@ export default {
             var studentClone = utilService.deepClone(student)
 
             const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
-
             if (existingIndex !== -1 && studentClone.classes[existingIndex].status === todayClass.status) {
                 return console.log('same');
             }
