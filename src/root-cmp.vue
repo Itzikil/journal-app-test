@@ -1,11 +1,11 @@
 <template>
-  <PullToRefresh @refresh="handleRefresh">
-    <section class="main-page">
+  <section class="main-page">
+      <PullToRefresh @refresh="handleRefresh">
       <user-msg />
       <app-header />
       <router-view />
+    </PullToRefresh>
     </section>
-  </PullToRefresh>
 </template>
 
 <script>
@@ -21,12 +21,6 @@ export default {
   },
   methods: {
     handleRefresh() {
-      console.log('Refreshing...');
-      // Handle the refresh logic here, e.g., fetching data or reloading the page
-      this.refreshContent();
-    },
-    refreshContent() {
-      // Replace this with your data fetching logic if needed
       window.location.reload();
     },
   },
