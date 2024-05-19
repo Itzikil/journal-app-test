@@ -41,6 +41,9 @@ export default {
             if (distance > 0) {
                 document.documentElement.style.scrollBehavior = 'auto';
                 window.scrollTo(0, -distance);
+                if (distance > 50) {
+                this.isRefreshing = true;
+                }
                 // event.preventDefault();
             }
         },
