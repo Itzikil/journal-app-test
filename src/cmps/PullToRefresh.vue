@@ -38,14 +38,14 @@ export default {
             if (!this.isTouching || window.scrollY > 0) return;
             this.currentY = event.touches[0].pageY;
             const distance = this.currentY - this.startY;
-            if (distance > 0) {
-                document.documentElement.style.scrollBehavior = 'auto';
-                window.scrollTo(0, -distance);
-                if (distance > 50) {
+            // if (distance > 0) {
+            // document.documentElement.style.scrollBehavior = 'auto';
+            // window.scrollTo(0, -distance);
+            if (distance > 50) {
                 this.isRefreshing = true;
-                }
-                // event.preventDefault();
             }
+            // event.preventDefault();
+            // }
         },
         endTouch() {
             this.isTouching = false;
