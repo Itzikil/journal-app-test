@@ -5,7 +5,8 @@
     <img alt="Vue logo" src="/pwa-192x192.png">
     <div class="flex gap-10">
       <img src="../assets/imgs/arrived.svg" alt="V" v-if="IsPwa" class="vi-image">
-      <p> Download the app</p>
+      <!-- <p> Download the app</p> -->
+      <downloadBtn />
     </div>
     <div class="flex gap-10">
       <img src="../assets/imgs/arrived.svg" alt="V" v-if="loggedInUser" class="vi-image">
@@ -15,7 +16,6 @@
     </div>
     <p>Add students</p>
     <p>Organize your schedule</p>
-    <downloadBtn />
   </section>
 
 
