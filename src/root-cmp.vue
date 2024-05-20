@@ -19,7 +19,7 @@ import { utilService } from './services/util.service';
 export default {
   async created() {
     const user = await userService.getLoggedinUser()
-    if (user) store.commit({ type: 'setLoggedinUser', user })
+    if (user) await store.commit({ type: 'setLoggedinUser', user })
   },
   components: {
     appHeader,

@@ -31,6 +31,12 @@
           <p>Students</p>
         </div>
       </router-link>
+      <router-link v-if="loggedInUser" to="/dashboard" class="link-container lower-curve">
+        <div :class="['a-container', { active: $route.path === '/dashboard' }]">
+          <img src="../assets/imgs/header/dashboard.svg" alt="dashboard">
+          <p>Dashboard</p>
+        </div>
+      </router-link>
       <!-- <router-link to="/review">Reviews</router-link> -->
       <!-- <router-link to="/chat">Chat</router-link> -->
       <!-- <router-link to="/about" class="link-container">

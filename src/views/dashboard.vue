@@ -50,12 +50,12 @@
           <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month
             - ₪{{ arrivedThisMonth(currStudent).length * currStudent.price }}</p>
           <!-- <div class="lessons-imgs">
-            <div v-for="lesson in classesInMonth(currStudent)" :key="lesson.date">
-              <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
-            </div>
-          </div> -->
+              <div v-for="lesson in classesInMonth(currStudent)" :key="lesson.date">
+                <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
+              </div>
+            </div> -->
           <button @click="openWhatsApp(currStudent)">Send bill with whatsapp</button>
-          <invoice :student="currStudent" :classesAmount="paidThisMonth(currStudent).length"/>
+          <invoice :student="currStudent" :classesAmount="paidThisMonth(currStudent).length" />
         </li>
       </ul>
     </div>
@@ -67,19 +67,18 @@
           <p>{{ student.name }}</p>
           <p>{{ arrivedThisMonth(student).length }}</p>
         </div>
+        <!-- <p v-else>Everyone paid this month</p> -->
       </div>
     </div>
   </section>
 </template>
 
 <script>
-// import {userService} from '../services/user.service'
 import statistic from '../cmps/statistic.vue';
 import invoice from '../cmps/invoice.vue';
 export default {
   data() {
     return {
-      hevriz: '../assets/imgs/hevriz.svg',
       currStudent: null,
       currentMonth: new Date().getMonth(),
       currentYear: new Date().getFullYear(),
@@ -87,27 +86,12 @@ export default {
     }
   },
   async created() {
-    this.$store.dispatch({ type: "getStudentByTeacher", teacherId: this.userId });
+    await this.$store.dispatch({ type: "loadStudents" });
     this.currStudent = this.students[0]
-    // const user = await userService.getById(id)
-    // this.user = user
-  },
-  watch: {
-    userId: {
-      handler() {
-        if (this.userId) {
-          this.$store.dispatch({ type: "loadAndWatchUser", userId: this.userId })
-        }
-      },
-      immediate: true,
-    },
   },
   computed: {
     user() {
-      return this.$store.getters.watchedUser
-    },
-    userId() {
-      return this.$route.params.id
+      return this.$store.getters.loggedinUser
     },
     students() {
       return this.$store.getters.students;
@@ -197,7 +181,6 @@ export default {
       if (phoneNumber.startsWith('0')) {
         phoneNumber = countryCode + phoneNumber.slice(1);
       }
-      console.log(phoneNumber);
       return phoneNumber;
     }
   },
