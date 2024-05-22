@@ -2,7 +2,6 @@
   <section class="add-student-container">
     <h3>Student info</h3>
     <form @submit.prevent="addStudent()">
-      <!-- <label>teacher: <input type="text" name="teacher" v-model="studentToAdd.teacher.name" required></label> -->
       <label>Name <input type="text" name="name" v-model="studentToAdd.name" placeholder="name" required /></label>
       <label>Day
         <div class="select-wrapper">
@@ -18,6 +17,9 @@
       <label>Price <input type="number" name="price" v-model="studentToAdd.price" placeholder="50 / 100 / 200"
           required></label>
       <label>Phone<input type="text" name="phone" placeholder="xxx-xxxxxxx" v-model="studentToAdd.phone"></label>
+      <label>First lesson
+        <input type="text" ref="datePicker" class="custom-date-input" v-model="studentToAdd.start"/>
+      </label>
       <button type="submit">{{ addEdit }}</button>
     </form>
   </section>
@@ -27,6 +29,8 @@
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
 import { studentService } from '../services/student.service.local';
 import { utilService } from '../services/util.service';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 export default {
   props: {
@@ -43,6 +47,11 @@ export default {
   },
   created() {
     this.studentToAdd.teacher = { 'name': this.teacher.fullname, '_id': this.teacher._id }
+  },
+  mounted() {
+    flatpickr(this.$refs.datePicker, {
+      dateFormat: 'j.n.Y',
+    });
   },
   computed: {
     addEdit() {
@@ -63,6 +72,6 @@ export default {
         showErrorMsg("Cannot add student");
       }
     },
-  }
+  },
 };
 </script>

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-
+import { utilService } from '../services/util.service';
 export default {
     data() {
         const currentDate = new Date();
@@ -60,7 +60,7 @@ export default {
                     } else {
                         const date = day;
                         const dayName = dayNames[(day + firstDayOfMonth - 1) % 7]; // Calculate day name
-                        var studentsForDay = this.getStudentsForDay(dayName);
+                        var studentsForDay = this.getStudentsForDay(dayName, date);
                         const clonedStudents = studentsForDay.map(student => ({ ...student }));
                         //what is this?
                         clonedStudents.map(student => student.status = 'pending')
@@ -109,9 +109,9 @@ export default {
         chosenDay(day) {
             return day.date === this.dayShown.date && this.currentMonth === this.dayShown.month && this.currentYear === this.dayShown.year;
         },
-        getStudentsForDay(dayName) {
+        getStudentsForDay(dayName,date) {
             return this.students.filter(student => {
-                return student.day === dayName
+                return student.day === dayName && utilService.biggerDate( student.start , `${date}.${this.currentMonth + 1}.${this.currentYear}`)  
             });
         },
     },

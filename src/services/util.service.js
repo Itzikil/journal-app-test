@@ -11,7 +11,8 @@ export const utilService = {
     deepClone,
     checkForConflict,
     isRunningAsPWA,
-    isRunningAsPWAOnDesktop
+    isRunningAsPWAOnDesktop,
+    biggerDate
 }
 
 function makeId(length = 6) {
@@ -76,9 +77,15 @@ function sortByDate(lessons, backwards) {
     });
 }
 
+function biggerDate(a, b) {
+    const dateA = parseDate(a);
+    const dateB = parseDate(b);
+    return dateA < dateB
+}
+
 function parseDate(dateString) {
     const [day, month, year] = dateString.split('.').map(Number);
-    return new Date(year, month - 1, day); // Month is 0-indexed in JavaScript Date objects
+    return new Date(year, month - 1, day);
 };
 
 function sortByName(items) {

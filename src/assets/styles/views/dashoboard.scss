@@ -1,0 +1,202 @@
+.dashboard-container {
+    display: grid;
+    padding: 30px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 30px;
+    grid-template-areas:
+        "user monthly total"
+        "list list stats"
+        "list list stats"
+        "some student student"
+        "some student student"
+    ;
+
+    >* {
+        background-color: $clr6;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    }
+
+    .normal-font {
+        font-size: rem(14px);
+        font-weight: 400;
+    }
+
+    .bold-font {
+        font-size: rem(18px);
+        font-weight: 500;
+    }
+
+    .user-details {
+        grid-area: user;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+
+        img {
+            width: 100%;
+            max-width: 50px;
+            max-height: 50px;
+            align-self: center;
+            border-radius: 100%;
+            object-fit: cover;
+        }
+
+        .user-details-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+
+            button {
+                padding: 10px;
+                font-size: 14px;
+                font-weight: 500;
+                margin: 0;
+            }
+        }
+    }
+
+    .students-list {
+        grid-area: list;
+
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+
+            li {
+                flex: 1 1 20%;
+                padding: 5px;
+                max-width: 25%;
+
+                button {
+                    margin: 0;
+                    width: 100%;
+                    min-width: 100px;
+                    padding: 15px;
+                }
+            }
+        }
+    }
+
+    .stats {
+        grid-area: stats;
+    }
+
+    .student-info {
+        grid-area: student;
+
+        li {
+            display: flex;
+            flex-direction: column;
+            align-items: baseline;
+            // gap: 5px;
+        }
+
+        a {
+            color: $clr4;
+            font-weight: 600;
+        }
+
+        button {
+            padding: 10px;
+            margin: 0;
+            margin-bottom: 3px;
+        }
+    }
+
+    .monthly-income-container {
+        grid-area: monthly;
+        background-color: $clr1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        button {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+
+            img {
+                width: 10px;
+                margin-bottom: 8px;
+            }
+        }
+
+        .stat {
+            width: 90%;
+            background-color: rgba(77, 184, 184, 0.493);
+            height: 10px;
+            border-radius: 10px;
+            align-self: center;
+
+            .stat-fill {
+                background-color: aqua;
+                height: 10px;
+                border-radius: 10px;
+                width: 20%;
+            }
+        }
+    }
+
+    .total,
+    .monthly-income {
+        display: flex;
+        align-items: baseline;
+        width: 100%;
+        background-color: $clr1;
+        color: white;
+        font-weight: 500;
+
+        .month-name {
+            flex: 2;
+            text-align: center;
+            font-size: rem(20px);
+        }
+
+        div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 62px;
+        }
+
+        p:first-child {
+            // font-size: 0.8rem;
+        }
+    }
+
+    .total {
+        grid-area: total;
+        flex-direction: column;
+        // justify-content: space-around;
+    }
+
+    .some {
+        grid-area: some;
+    }
+
+    @media (max-width:650px) {
+        display: flex;
+        flex-direction: column;
+
+        .students-list {
+            ul {
+                li {
+                    max-width: 50%;
+                }
+            }
+        }
+
+        .stats {
+            height: 250px;
+        }
+    }
+}

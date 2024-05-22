@@ -28,7 +28,7 @@
         <button @click="changeMonth(-1)">></button>
       </div>
       <div class="lessons-list">
-        <ul v-if="student.classes" v-for="(lessons,idx) in slicedClasses" class="lesson-list" :key="idx">
+        <ul v-if="student.classes" v-for="(lessons, idx) in slicedClasses" class="lesson-list" :key="idx">
           <h4 class="text-center ">{{ getMonthName(lessons[0].date) }}</h4>
           <div v-for="lesson in lessons" :key="lesson.date">
             <div class="lesson-item">
@@ -81,7 +81,7 @@ export default {
   async created() {
     const id = this.$route.params.id
     this.student = await studentService.getById(id)
-    this.classes = utilService.sortByDate(this.student.classes , 'backwards')
+    this.classes = utilService.sortByDate(this.student.classes, 'backwards')
     this.groupClassesByMonth()
   },
   computed: {
@@ -105,7 +105,7 @@ export default {
     paidClassesSum() {
       return this.calculateClassSum("paid");
     },
-    slicedClasses(){
+    slicedClasses() {
       return this.classesForDisplay.slice(this.monthNumber, this.monthNumber + 2)
     }
   },
@@ -129,7 +129,8 @@ export default {
       return `${this.monthNames[month - 1]} ${year}`
     },
     changeMonth(idx) {
-      if ((this.monthNumber === 0 && idx === -1) || (this.monthNumber === this.classesForDisplay.length - 2 && idx === 1)) return
+      if ((this.monthNumber === 0 && idx === -1) || (this.monthNumber === this.classesForDisplay.length - 2 && idx === 1) ||
+        (this.classesForDisplay.length < 2)) return
       this.monthNumber += idx
     },
     openEdit() {

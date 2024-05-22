@@ -1,8 +1,9 @@
 <template>
-  <section v-if="user" class="user-detail-container container">
+  <section v-if="user" class="dashboard-container container">
     <div class="user-details">
-      <div>
-        <h2>User Details - {{ user.fullname }}</h2>
+      <div class="user-details-container" >
+        <h2>Dashboard</h2>
+        <!-- <p class="fs20">{{ user.fullname }}</p> -->
         <button @click="doLogout">Logout</button>
       </div>
       <img :src="user.imgUrl" alt="user" />
@@ -11,14 +12,14 @@
       <div class="monthly-income">
         <div>
           <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
-          <p>Earning</p>
           <p>₪ {{ totalMonthEarn().paid.toLocaleString() }}</p>
+          <p class="normal-font">Earning</p>
         </div>
         <p class="month-name"> {{ monthNames[currentMonth] }} </p>
         <div>
           <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
-          <p>Unpaid</p>
           <p>₪ {{ totalMonthEarn().arrived.toLocaleString() }}</p>
+          <p class="normal-font">Unpaid</p>
         </div>
       </div>
       <div class="stat">
@@ -26,9 +27,9 @@
       </div>
     </div>
     <div class="total">
-      <p>{{ currentYear }}</p>
-      <p>Total monthly earn </p>
+      <p class="text-center fs20">{{ currentYear }}</p>
       <p>₪ {{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
+      <p class="normal-font">Total monthly earn </p>
     </div>
     <div class="students-list">
       <h3>Students</h3>
@@ -45,10 +46,14 @@
           <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
           <!-- <p>{{ currStudent.classes.length }} classes overall</p> -->
           <!-- <p>{{ classesInMonth(currStudent).length }} classes this month</p> -->
-          <p>{{ paidThisMonth(currStudent).length }} classes paid this month
-            - ₪{{ paidThisMonth(currStudent).length * currStudent.price }}</p>
-          <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month
-            - ₪{{ arrivedThisMonth(currStudent).length * currStudent.price }}</p>
+          <p class="bold-font">{{ paidThisMonth(currStudent).length }}
+            <span class="normal-font">classes paid this month</span>
+            ₪{{ paidThisMonth(currStudent).length * currStudent.price }}
+          </p>
+          <p class="bold-font">{{ arrivedThisMonth(currStudent).length }}
+            <span class="normal-font"> classes unpaid this month</span>
+            ₪{{ arrivedThisMonth(currStudent).length * currStudent.price }}
+          </p>
           <!-- <div class="lessons-imgs">
               <div v-for="lesson in classesInMonth(currStudent)" :key="lesson.date">
                 <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
@@ -64,8 +69,8 @@
       <h4>Didnt pay yet</h4>
       <div v-for="student in students">
         <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
-          <p>{{ student.name }}</p>
-          <p>{{ arrivedThisMonth(student).length }}</p>
+          <p class="normal-font">{{ student.name }}</p>
+          <p class="bold-font">{{ arrivedThisMonth(student).length }}</p>
         </div>
         <!-- <p v-else>Everyone paid this month</p> -->
       </div>

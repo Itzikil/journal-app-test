@@ -11,7 +11,7 @@
                 <!-- <div class="candle" :style="candleHeight(month)" @click="showEarn"> -->
                     <p class="earning">₪{{ month.earning }}</p>
                 </div>
-                <p>{{ month.name }}</p>
+                <p class="fs14">{{ month.name }}</p>
             </div>
         </div>
     </section>
