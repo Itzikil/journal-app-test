@@ -4,7 +4,7 @@
     <div v-if="loggedinUser">
       <h3>
         Loggedin User:
-        {{ loggedinUser.fullname }}
+        {{ loggedinUser.username }}
         <button @click="doLogout">Logout</button>
       </h3>
     </div>
@@ -25,7 +25,6 @@
       </form>
       <h2>Signup</h2>
       <form @submit.prevent="doSignup">
-        <input type="text" v-model="signupCred.fullname" placeholder="Your full name" />
         <input type="text" v-model="signupCred.username" placeholder="Username" />
         <input type="text" v-model="signupCred.password" placeholder="Password" />
         <img-uploader @uploaded="onUploaded"></img-uploader>
@@ -58,7 +57,7 @@ export default {
     return {
       msg: '',
       loginCred: { username: 'user1', password: '123' },
-      signupCred: { username: '', password: '', fullname: '', imgUrl: '' },
+      signupCred: { username: '', password: '', imgUrl: '' , pref:{msg:''} },
     }
   },
   computed: {
@@ -90,7 +89,7 @@ export default {
       this.$store.dispatch({ type: 'logout' })
     },
     async doSignup() {
-      if (!this.signupCred.fullname || !this.signupCred.password || !this.signupCred.username) {
+      if (!this.signupCred.password || !this.signupCred.username) {
         this.msg = 'Please fill up the form'
         return
       }

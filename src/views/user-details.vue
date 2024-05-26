@@ -1,209 +1,75 @@
 <template>
-  <section v-if="user" class="user-detail-container container">
-    <div class="user-details">
-      <div>
-        <h2>User Details - {{ user.fullname }}</h2>
-        <button @click="doLogout">Logout</button>
-      </div>
-      <img :src="user.imgUrl" alt="user" />
-    </div>
-    <div class="monthly-income-container">
-      <div class="monthly-income">
-        <div>
-          <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
-          <p>Earning</p>
-          <p>₪ {{ totalMonthEarn().paid.toLocaleString() }}</p>
-        </div>
-        <p class="month-name"> {{ monthNames[currentMonth] }} </p>
-        <div>
-          <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
-          <p>Unpaid</p>
-          <p>₪ {{ totalMonthEarn().arrived.toLocaleString() }}</p>
-        </div>
-      </div>
-      <div class="stat">
-        <div class="stat-fill" :style="{ width: `${fillColor() * 100}%` }"></div>
-      </div>
-    </div>
-    <div class="total">
-      <p>{{ currentYear }}</p>
-      <p>Total monthly earn </p>
-      <p>₪ {{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
-    </div>
-    <div class="students-list">
-      <h3>Students</h3>
-      <ul>
-        <li v-for="student in students" :key="student._id">
-          <button @click="openStudentDetails(student)">{{ student.name }}</button>
-          <router-link :to="`/student/${student._id}`"></router-link>
-        </li>
-      </ul>
-    </div>
-    <div class="student-info">
-      <ul v-if="currStudent">
-        <li>
-          <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
-          <!-- <p>{{ currStudent.classes.length }} classes overall</p> -->
-          <!-- <p>{{ classesInMonth(currStudent).length }} classes this month</p> -->
-          <p>{{ paidThisMonth(currStudent).length }} classes paid this month
-            - ₪{{ paidThisMonth(currStudent).length * currStudent.price }}</p>
-          <p>{{ arrivedThisMonth(currStudent).length }} classes unpaid this month
-            - ₪{{ arrivedThisMonth(currStudent).length * currStudent.price }}</p>
-          <!-- <div class="lessons-imgs">
-            <div v-for="lesson in classesInMonth(currStudent)" :key="lesson.date">
-              <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
-            </div>
-          </div> -->
-          <button @click="openWhatsApp(currStudent)">Send bill with whatsapp</button>
-          <invoice :student="currStudent" :classesAmount="paidThisMonth(currStudent).length"/>
-        </li>
-      </ul>
-    </div>
-    <statistic class="stats" :months="months" />
-    <div class="some">
-      <h4>Didnt pay yet</h4>
-      <div v-for="student in students">
-        <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
-          <p>{{ student.name }}</p>
-          <p>{{ arrivedThisMonth(student).length }}</p>
-        </div>
-      </div>
+  <section class="user-detail-container container">
+    <div>
+      <p>Edit your whatsapp message</p>
+      <form @submit.prevent="updateMessage()">
+        <input type="text" placeholder="Add your text" v-model="firstLine">
+        <p>(Number of lessons)</p>
+        <input type="text" placeholder="Add your text" v-model="secondLine">
+        <p>(sum the price)</p>
+        <input type="text" placeholder="Add your text" v-model="thirdLine">
+        <button>Update</button>
+      </form>
+      <p>{{ fullMessage }}</p>
     </div>
   </section>
 </template>
 
 <script>
-// import {userService} from '../services/user.service'
-import statistic from '../cmps/statistic.vue';
-import invoice from '../cmps/invoice.vue';
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
+import { utilService } from '../services/util.service';
+
 export default {
   data() {
     return {
-      hevriz: '../assets/imgs/hevriz.svg',
-      currStudent: null,
-      currentMonth: new Date().getMonth(),
-      currentYear: new Date().getFullYear(),
-      monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      firstLine: '',
+      secondLine: '',
+      thirdLine: '',
+      user: null,
     }
   },
   async created() {
-    this.$store.dispatch({ type: "getStudentByTeacher", teacherId: this.userId });
-    this.currStudent = this.students[0]
-    // const user = await userService.getById(id)
-    // this.user = user
-  },
-  watch: {
-    userId: {
-      handler() {
-        if (this.userId) {
-          this.$store.dispatch({ type: "loadAndWatchUser", userId: this.userId })
+    try {
+      const userId = this.$store.getters.loggedinUser?._id;
+      if (userId) {
+        console.log(`Fetching user with ID: ${userId}`);
+        this.user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId });
+        console.log(this.user);
+        if (this.user && this.user.pref && this.user.pref.msg) {
+          this.firstLine = this.user.pref.msg[0] || '';
+          this.secondLine = this.user.pref.msg[1] || '';
+          this.thirdLine = this.user.pref.msg[2] || '';
         }
-      },
-      immediate: true,
-    },
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
   },
   computed: {
-    user() {
-      return this.$store.getters.watchedUser
-    },
-    userId() {
-      return this.$route.params.id
-    },
-    students() {
-      return this.$store.getters.students;
-    },
-    months() {
-      var stats = []
-      var month
-      for (let i = 0; i < 4; i++) {
-        month = this.currentMonth - i
-        if (month < 0) {
-          month = 12 + (this.currentMonth - i)
-        }
-        stats.unshift({
-          name: this.monthNames[month].slice(0, 3),
-          earning: this.monthlySum(`${month + 1}.${this.currentYear}`)
-        }
-        )
-      }
-      return stats
+    fullMessage() {
+      return `${this.firstLine} 3 ${this.secondLine} 300 ${this.thirdLine}`
     }
   },
   methods: {
-    prevMonth() {
-      this.currentMonth -= 1;
-      if (this.currentMonth < 0) {
-        this.currentMonth = 11;
-        this.currentYear -= 1;
+    async updateUser(user) {
+      try {
+        console.log(user);
+        await this.$store.dispatch({ type: "updateUser", user });
+        showSuccessMsg("User msg added");
+      } catch (err) {
+        console.log(err);
+        showErrorMsg("Cannot add User msg");
       }
     },
-    nextMonth() {
-      this.currentMonth += 1;
-      if (this.currentMonth > 11) {
-        this.currentMonth = 0;
-        this.currentYear += 1;
-      }
-    },
-    classesInMonth(student, selectedDate) {
-      var date = selectedDate || `${this.currentMonth + 1}.${this.currentYear}`
-      return student.classes.filter(lesson => `${lesson.date.split(".")[1]}.${lesson.date.split(".")[2]}` === date)
-    },
-    paidThisMonth(student, selectedDate) {
-      return this.classesInMonth(student, selectedDate).filter(lesson => lesson.status === 'paid')
-    },
-    arrivedThisMonth(student, selectedDate) {
-      return this.classesInMonth(student, selectedDate).filter(lesson => lesson.status === 'arrived')
-    },
-    openStudentDetails(student) {
-      this.currStudent = student
-    },
-    totalMonthEarn(selectedDate) {
-      return this.students.reduce((acc, student) => {
-        acc.arrived += this.arrivedThisMonth(student, selectedDate).length * student.price;
-        acc.paid += this.paidThisMonth(student, selectedDate).length * student.price;
-        return acc;
-      }, { arrived: 0, paid: 0 });
-    },
-    monthlySum(selectedDate) {
-      var sum = this.totalMonthEarn(selectedDate)
-      return sum.arrived + sum.paid
-    },
-    fillColor() {
-      var full = this.monthlySum()
-      var paid = this.totalMonthEarn().paid
-      if (full === 0 && paid === 0) return 0
-      return paid / full
-    },
-    doLogout() {
-      this.$store.dispatch({ type: 'logout' })
-      this.$router.push('/')
-    },
-    openWhatsApp(student) {
-      var phoneNumber = this.formatPhoneNumber(student.phone || '0543060864')
-      // var phoneNumber = student.phone || '+97254-306-0864';
-      console.log(phoneNumber);
-      var unpaid = this.arrivedThisMonth(student).length
-      var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
-      console.log(message);
-      var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      var urlStart = isMobileDevice ? 'https://api.whatsapp.com/send?phone=' : 'https://web.whatsapp.com/send?phone='
-      var whatsappUrl = urlStart + phoneNumber + '&text=' + encodeURIComponent(message);
-      window.open(whatsappUrl);
-    },
-    formatPhoneNumber(phoneNumber, countryCode) {
-      var countryCode = '+972'
-      // Remove any non-digit characters from the phone number
-      phoneNumber = phoneNumber.replace(/\D/g, '');
-      if (phoneNumber.startsWith('0')) {
-        phoneNumber = countryCode + phoneNumber.slice(1);
-      }
-      console.log(phoneNumber);
-      return phoneNumber;
+    updateMessage() {
+      var currUser = utilService.deepClone(this.user)
+      currUser.pref = {}
+      currUser.pref.msg = []
+      currUser.pref.msg = [this.firstLine, this.secondLine, this.thirdLine]
+      this.updateUser(currUser)
     }
   },
   components: {
-    statistic,
-    invoice
   }
 }
 </script>

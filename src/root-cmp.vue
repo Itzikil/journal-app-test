@@ -1,10 +1,13 @@
 <template>
-  <section class="main-page">
+  <section class="main-page" v-if="!loading">
     <!-- <PullToRefresh v-if="runningAsPwa"> -->
-      <user-msg />
-      <app-header />
-      <router-view />
+    <user-msg />
+    <app-header />
+    <router-view />
     <!-- </PullToRefresh> -->
+  </section>
+  <section v-else>
+    <h2>Loading</h2>
   </section>
 </template>
 
@@ -14,12 +17,17 @@ import appHeader from './cmps/app-header.vue'
 import userMsg from './cmps/user-msg.vue'
 import { userService } from './services/user.service'
 import PullToRefresh from './cmps/PullToRefresh.vue';
-import { utilService } from './services/util.service';
 
 export default {
+  data() {
+    return {
+      loading: true
+    }
+  },
   async created() {
     const user = await userService.getLoggedinUser()
     if (user) await store.commit({ type: 'setLoggedinUser', user })
+    this.loading = false
   },
   components: {
     appHeader,

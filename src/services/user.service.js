@@ -68,9 +68,6 @@ async function signup(userCred) {
     // userCred.score = 10000
     if (!userCred.imgUrl) userCred.imgUrl = 'https://res.cloudinary.com/dtgejpwv9/image/upload/v1670834784/gigerr/user-img/shacar_inrgw1.jpg'
     const user = await storageService.post('user', userCred)
-    console.log('====================================');
-    console.log(user);
-    console.log('====================================');
     // const user = await httpService.post('auth/signup', userCred)
     socketService.login(user._id)
     return saveLocalUser(user)
@@ -93,7 +90,7 @@ async function changeScore(by) {
 
 
 function saveLocalUser(user) {
-    user = { _id: user._id, fullname: user.fullname, imgUrl: user.imgUrl }
+    user = { _id: user._id, username: user.username, imgUrl: user.imgUrl }
     // sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     storageService.post('loggedinUser', user)
     return user
@@ -103,13 +100,3 @@ async function getLoggedinUser() {
     var loggedinUser = await storageService.query(STORAGE_KEY_LOGGEDIN_USER)
     return loggedinUser[0]
 }
-
-
-// ;(async ()=>{
-//     await userService.signup({fullname: 'Puki Norma', username: 'puki', password:'123',score: 10000, isAdmin: false})
-//     await userService.signup({fullname: 'Master Adminov', username: 'admin', password:'123', score: 10000, isAdmin: true})
-//     await userService.signup({fullname: 'Muki G', username: 'muki', password:'123', score: 10000})
-// })()
-
-
-

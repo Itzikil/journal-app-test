@@ -98,6 +98,9 @@ export default {
     user() {
       return this.$store.getters.loggedinUser
     },
+    watchedUser() {
+      return this.$store.getters.watchedUser
+    },
     students() {
       return this.$store.getters.students;
     },
@@ -169,9 +172,10 @@ export default {
     },
     openWhatsApp(student) {
       var phoneNumber = this.formatPhoneNumber(student.phone || '0543060864')
-      // var phoneNumber = student.phone || '+97254-306-0864';
       console.log(phoneNumber);
       var unpaid = this.arrivedThisMonth(student).length
+      // let user = this.watchedUser
+      // var message = user.pref.msg[0] ? `${user.pref.msg[0]} ${unpaid} ${user.pref.msg[1]} ${unpaid * student.price} ${user.pref.msg[2]}` : `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       console.log(message);
       var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);

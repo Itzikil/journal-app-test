@@ -3,7 +3,7 @@
     <nav>
       <router-link :to="`/user/${loggedInUser._id}`" class="loggedin-user" v-if="loggedInUser">
         <img :src="loggedInUser.imgUrl" alt="user image" />
-        <p>{{ loggedInUser.fullname }}</p>
+        <p>{{ loggedInUser.username }}</p>
       </router-link>
       <router-link v-if="!loggedInUser" to="/login" class="loggedin-user">
         <div :class="['a-container', { active: $route.path === '/about' }]">

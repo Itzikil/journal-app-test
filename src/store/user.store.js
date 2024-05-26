@@ -76,9 +76,10 @@ export const userStore = {
         },        
         async loadAndWatchUser({ commit }, { userId }) {
             try {
+                console.log(userId);
                 const user = await userService.getById(userId)
                 commit({ type: 'setWatchedUser', user })
-                
+                return user
             } catch (err) {
                 console.log('userStore: Error in loadAndWatchUser', err)
                 throw err
@@ -95,8 +96,9 @@ export const userStore = {
         },
         async updateUser({ commit }, { user }) {
             try {
+                console.log('hi');
                 user = await userService.update(user)
-                commit({ type: 'setUser', user })
+                // commit({ type: 'setUser', user })
             } catch (err) {
                 console.log('userStore: Error in updateUser', err)
                 throw err

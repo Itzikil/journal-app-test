@@ -80,7 +80,7 @@ function sortByDate(lessons, backwards) {
 function biggerDate(a, b) {
     const dateA = parseDate(a);
     const dateB = parseDate(b);
-    return dateA < dateB
+    return dateA <= dateB
 }
 
 function parseDate(dateString) {
