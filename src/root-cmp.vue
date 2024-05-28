@@ -7,7 +7,7 @@
     <!-- </PullToRefresh> -->
   </section>
   <section v-else>
-    <h2>Loading</h2>
+    <h2 class="text-center">Loading</h2>
   </section>
 </template>
 

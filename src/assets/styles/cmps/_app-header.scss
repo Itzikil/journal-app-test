@@ -2,7 +2,7 @@ header {
     display: flex;
     flex-direction: column;
     background-color: #e1eceb;
-    
+
     .loggedin-user {
         display: flex;
         align-items: center;
@@ -35,7 +35,7 @@ header {
         // background-color: #e1eceb;
 
         a {
-            background-color: $clr8;
+            // background-color: $clr8;
             color: whitesmoke;
             font-weight: 500;
 
@@ -93,6 +93,7 @@ header {
             border-radius: 0px;
             border-top-left-radius: 25px;
             border-top-right-radius: 25px;
+
             .loggedin-user {
                 background-color: rgb(57, 70, 65);
                 position: absolute;

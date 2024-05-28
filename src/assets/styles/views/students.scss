@@ -1,16 +1,33 @@
 .students-container {
-    // width: 100%;
 
     .students-header {
         display: flex;
         align-items: center;
+        flex-direction: column;
         margin-block: 20px;
-        gap: 20px;
+        gap: 10px;
 
-        >* {
-            margin: 0;
+        .sub-students-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+
+            h3 {
+                margin: 0;
+            }
         }
 
+        input {
+            width: 100%;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
     }
 
     .student-list {
@@ -58,6 +75,7 @@
         .lessons-imgs {
             display: flex;
             gap: 5px;
+
             div {
                 display: flex;
             }
@@ -71,6 +89,21 @@
     }
 
     @media (max-width:650px) {
+        .students-header {
+            // flex-direction: column;
+
+            // .sub-students-header {
+            //     display: flex;
+            //     align-items: center;
+            //     justify-content: space-between;
+            //     width: 100%;
+            // }
+
+            // input {
+            //     width: 100%;
+            // }
+        }
+
         .student-list {
             li {
                 width: 100%;

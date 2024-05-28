@@ -1,8 +1,11 @@
 <template>
   <section class="students-container container">
     <div class="students-header">
-      <button @click="editCmp = !editCmp">{{ editCmp ? '-' : '+' }}</button>
-      <h2>{{ students.length }} Students</h2>
+      <div class="sub-students-header">
+        <h3>{{ students.length }} <span class="fs14">Students</span></h3>
+        <button @click="editCmp = !editCmp">{{ editCmp ? '-' : '+' }}</button>
+      </div>
+      <input type="text" name="" id="">
     </div>
     <addStudent v-if="editCmp" @closeEdit="closeEdit" />
     <ul class="student-list">
@@ -59,7 +62,7 @@ export default {
     },
     async removeStudent(studentId) {
       try {
-        await this.$store.dispatch({ type: 'removeStudent' ,studentId })
+        await this.$store.dispatch({ type: 'removeStudent', studentId })
         showSuccessMsg("Student removed");
       } catch (err) {
         console.log(err);
@@ -68,7 +71,7 @@ export default {
     },
     async addStudentMsg(studentId) {
       try {
-        await this.$store.dispatch({ type: 'addStudent' ,studentId })
+        await this.$store.dispatch({ type: 'addStudent', studentId })
         showSuccessMsg("Student msg added");
       } catch (err) {
         console.log(err);

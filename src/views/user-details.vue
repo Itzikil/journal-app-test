@@ -1,8 +1,26 @@
 <template>
   <section class="user-detail-container container">
     <div>
-      <p @click="openPref = 'msg'">Edit your whatsapp message</p>
-      <div v-if="openPref">
+      <p @click="togglePref('info')">Your info</p>
+      <!-- <transition name="expand"> -->
+      <div class="content" :class="{ active: openPref === 'info' }">
+        <p>{{ user.username }}</p>
+        <img :src="user.imgUrl" alt="your img" style="height: 100px; border-radius: 5px;">
+        <!-- <form @submit.prevent="updateMessage()">
+          <input type="text" placeholder="Add your text" v-model="firstLine">
+          <p>(Number of lessons)</p>
+          <input type="text" placeholder="Add your text" v-model="secondLine">
+          <p>(sum the price)</p>
+          <input type="text" placeholder="Add your text" v-model="thirdLine">
+          <button>Update</button>
+        </form> -->
+      </div>
+      <!-- </transition> -->
+    </div>
+    <div>
+      <p @click="togglePref('msg')">Edit your whatsapp message</p>
+      <!-- <transition name="expand"> -->
+      <div class="content" :class="{ active: openPref === 'msg' }">
         <form @submit.prevent="updateMessage()">
           <input type="text" placeholder="Add your text" v-model="firstLine">
           <p>(Number of lessons)</p>
@@ -13,12 +31,28 @@
         </form>
         <p>{{ fullMessage }}</p>
       </div>
+      <!-- </transition> -->
     </div>
     <div>
-      <p>Work hours</p>
+      <p @click="togglePref('hours')">Work hours</p>
+      <transition name="expand">
+        <!-- <div v-if="openPref === 'hours'" class="content" :class="{active: openPref === 'hours'}"> -->
+        <div class="content" :class="{ active: openPref === 'hours' }">
+          <p>choose the hours in a day you want to work</p>
+          <input type="text" placeholder="from">
+          <input type="text" placeholder="to">
+        </div>
+      </transition>
     </div>
     <div>
-      <p>Work days</p>
+      <p @click="togglePref('days')">Work days</p>
+      <transition name="expand" :class="{ active: openPref === 'days' }">
+        <div class="content">
+          <p>choose the days in a week you want to work</p>
+          <input type="text" placeholder="from">
+          <input type="text" placeholder="to">
+        </div>
+      </transition>
     </div>
   </section>
 </template>
@@ -74,9 +108,24 @@ export default {
       currUser.pref.msg = []
       currUser.pref.msg = [this.firstLine, this.secondLine, this.thirdLine]
       this.updateUser(currUser)
+    },
+    togglePref(name) {
+      this.openPref = this.openPref === name ? null : name;
     }
   },
   components: {
   }
 }
 </script>
+
+<style>
+.content {
+  max-height: 0px;
+  transition: 1s;
+  overflow: hidden;
+}
+
+.active {
+  max-height: 250px;
+}
+</style>
