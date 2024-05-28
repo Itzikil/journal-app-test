@@ -1,16 +1,24 @@
 <template>
   <section class="user-detail-container container">
     <div>
-      <p>Edit your whatsapp message</p>
-      <form @submit.prevent="updateMessage()">
-        <input type="text" placeholder="Add your text" v-model="firstLine">
-        <p>(Number of lessons)</p>
-        <input type="text" placeholder="Add your text" v-model="secondLine">
-        <p>(sum the price)</p>
-        <input type="text" placeholder="Add your text" v-model="thirdLine">
-        <button>Update</button>
-      </form>
-      <p>{{ fullMessage }}</p>
+      <p @click="openPref = 'msg'">Edit your whatsapp message</p>
+      <div v-if="openPref">
+        <form @submit.prevent="updateMessage()">
+          <input type="text" placeholder="Add your text" v-model="firstLine">
+          <p>(Number of lessons)</p>
+          <input type="text" placeholder="Add your text" v-model="secondLine">
+          <p>(sum the price)</p>
+          <input type="text" placeholder="Add your text" v-model="thirdLine">
+          <button>Update</button>
+        </form>
+        <p>{{ fullMessage }}</p>
+      </div>
+    </div>
+    <div>
+      <p>Work hours</p>
+    </div>
+    <div>
+      <p>Work days</p>
     </div>
   </section>
 </template>
@@ -26,15 +34,14 @@ export default {
       secondLine: '',
       thirdLine: '',
       user: null,
+      openPref: '',
     }
   },
   async created() {
     try {
       const userId = this.$store.getters.loggedinUser?._id;
       if (userId) {
-        console.log(`Fetching user with ID: ${userId}`);
         this.user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId });
-        console.log(this.user);
         if (this.user && this.user.pref && this.user.pref.msg) {
           this.firstLine = this.user.pref.msg[0] || '';
           this.secondLine = this.user.pref.msg[1] || '';

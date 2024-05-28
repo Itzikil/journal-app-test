@@ -2,7 +2,7 @@ header {
     display: flex;
     flex-direction: column;
     background-color: #e1eceb;
-
+    
     .loggedin-user {
         display: flex;
         align-items: center;
@@ -91,7 +91,8 @@ header {
         nav {
             flex-direction: row;
             border-radius: 0px;
-
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
             .loggedin-user {
                 background-color: rgb(57, 70, 65);
                 position: absolute;
@@ -102,6 +103,7 @@ header {
                 transform: translateX(-50%);
                 border-radius: 70px;
                 outline: 4px solid white;
+
                 p {
                     font-size: 0.7rem;
                 }

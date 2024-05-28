@@ -28,7 +28,6 @@
 import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service";
 import { studentService } from "../services/student.service.local";
 import { utilService } from "../services/util.service";
-import { getActionRemoveStudent, getActionAddStudentMsg } from "../store/student.store";
 import addStudent from '../cmps/addStudent.vue'
 import arrived from '@/assets/imgs/arrived.svg'
 import hevriz from '@/assets/imgs/hevriz.svg'
@@ -60,7 +59,7 @@ export default {
     },
     async removeStudent(studentId) {
       try {
-        await this.$store.dispatch(getActionRemoveStudent(studentId));
+        await this.$store.dispatch({ type: 'removeStudent' ,studentId })
         showSuccessMsg("Student removed");
       } catch (err) {
         console.log(err);
@@ -69,7 +68,7 @@ export default {
     },
     async addStudentMsg(studentId) {
       try {
-        await this.$store.dispatch(getActionAddStudentMsg(studentId));
+        await this.$store.dispatch({ type: 'addStudent' ,studentId })
         showSuccessMsg("Student msg added");
       } catch (err) {
         console.log(err);

@@ -18,7 +18,7 @@
           required></label>
       <label>Phone<input type="text" name="phone" placeholder="xxx-xxxxxxx" v-model="studentToAdd.phone"></label>
       <label>First lesson
-        <input type="text" ref="datePicker" class="custom-date-input" v-model="studentToAdd.start"/>
+        <input type="text" ref="datePicker" class="custom-date-input" v-model="studentToAdd.start" />
       </label>
       <button type="submit">{{ addEdit }}</button>
     </form>
@@ -62,7 +62,7 @@ export default {
     async addStudent() {
       try {
         if (utilService.checkForConflict(this.studentToAdd, this.$store.getters.students)) return showErrorMsg('That time is taken');
-        await this.$store.dispatch({ type: "addStudent", student: this.studentToAdd });
+        await this.$store.dispatch({ type: this.studentToAdd._id ? "updateStudent" : "addStudent", student: this.studentToAdd });
         var msg = this.studentToAdd._id ? " updated" : " added"
         showSuccessMsg(this.studentToAdd.name + msg);
         this.$emit('closeEdit')

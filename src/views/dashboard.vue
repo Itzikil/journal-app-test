@@ -1,7 +1,7 @@
 <template>
   <section v-if="user" class="dashboard-container container">
     <div class="user-details">
-      <div class="user-details-container" >
+      <div class="user-details-container">
         <h2>Dashboard</h2>
         <!-- <p class="fs20">{{ user.fullname }}</p> -->
         <button @click="doLogout">Logout</button>
@@ -87,19 +87,19 @@ export default {
       currStudent: null,
       currentMonth: new Date().getMonth(),
       currentYear: new Date().getFullYear(),
-      monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      fullUser: null,
     }
   },
   async created() {
     await this.$store.dispatch({ type: "loadStudents" });
     this.currStudent = this.students[0]
+    const userId = this.$store.getters.loggedinUser?._id;
+    if (userId) this.fullUser = await this.$store.dispatch({ type: 'loadAndWatchUser', userId })
   },
   computed: {
     user() {
       return this.$store.getters.loggedinUser
-    },
-    watchedUser() {
-      return this.$store.getters.watchedUser
     },
     students() {
       return this.$store.getters.students;
@@ -172,12 +172,12 @@ export default {
     },
     openWhatsApp(student) {
       var phoneNumber = this.formatPhoneNumber(student.phone || '0543060864')
-      console.log(phoneNumber);
       var unpaid = this.arrivedThisMonth(student).length
-      // let user = this.watchedUser
-      // var message = user.pref.msg[0] ? `${user.pref.msg[0]} ${unpaid} ${user.pref.msg[1]} ${unpaid * student.price} ${user.pref.msg[2]}` : `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
-      var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
-      console.log(message);
+      let userPref = this.fullUser.pref
+      if (userPref.msg[0] || userPref.msg[1] || userPref.msg[2]) {
+        var message = `${userPref.msg[0]} ${unpaid} ${userPref.msg[1]} ${unpaid * student.price} ${userPref.msg[2]}`
+      }
+      else var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
       var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       var urlStart = isMobileDevice ? 'https://api.whatsapp.com/send?phone=' : 'https://web.whatsapp.com/send?phone='
       var whatsappUrl = urlStart + phoneNumber + '&text=' + encodeURIComponent(message);

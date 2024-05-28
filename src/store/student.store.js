@@ -1,32 +1,5 @@
 import { studentService } from '../services/student.service.local'
 
-export function getActionRemoveStudent(studentId) {
-    return {
-        type: 'removeStudent',
-        studentId
-    }
-}
-export function getActionAddStudent(student) {
-    return {
-        type: 'addStudent',
-        student
-    }
-}
-export function getActionUpdateStudent(student) {
-    return {
-        type: 'updateStudent',
-        student
-    }
-}
-
-export function getActionAddStudentMsg(studentId) {
-    return {
-        type: 'addStudentMsg',
-        studentId,
-        txt: 'Stam txt'
-    }
-}
-
 export const studentStore = {
     state: {
         students: []
@@ -40,9 +13,11 @@ export const studentStore = {
         },
         addStudent(state, { student }) {
             state.students.push(student)
+            console.log(state.students);
         },
         updateStudent(state, { student }) {
             const idx = state.students.findIndex(c => c._id === student._id)
+            console.log(idx);
             state.students.splice(idx, 1, student)
         },
         removeStudent(state, { studentId }) {
@@ -58,7 +33,7 @@ export const studentStore = {
         async addStudent(context, { student }) {
             try {
                 student = await studentService.save(student)
-                context.commit(getActionAddStudent(student))
+                context.commit({ type: 'addStudent', student })
                 return student
             } catch (err) {
                 console.log('studentStore: Error in addStudent', err)
@@ -67,11 +42,8 @@ export const studentStore = {
         },
         async updateStudent(context, { student }) {
             try {
-                console.log(student);
                 student = await studentService.save(student)
                 context.commit({ type: 'updateStudent', student })
-                // commit({ type: 'setLoggedinUser', user })
-
                 return student
             } catch (err) {
                 console.log('studentStore: Error in updateStudent', err)
@@ -87,7 +59,7 @@ export const studentStore = {
                 throw err
             }
         },
-        async getStudentByTeacher(context, {teacherId }) {
+        async getStudentByTeacher(context, { teacherId }) {
             try {
                 const students = await studentService.getStudentByTeacher(teacherId)
                 context.commit({ type: 'setStudents', students })
@@ -99,7 +71,7 @@ export const studentStore = {
         async removeStudent(context, { studentId }) {
             try {
                 await studentService.remove(studentId)
-                context.commit(getActionRemoveStudent(studentId))
+                context.commit({ type: 'removeStudent', studentId })
             } catch (err) {
                 console.log('studentStore: Error in removeStudent', err)
                 throw err
