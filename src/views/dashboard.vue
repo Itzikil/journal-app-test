@@ -12,13 +12,13 @@
       <div class="monthly-income">
         <div>
           <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
-          <p>₪ {{ totalMonthEarn().paid.toLocaleString() }}</p>
+          <p><span class="fs12">₪</span>{{ totalMonthEarn().paid.toLocaleString() }}</p>
           <p class="normal-font">Earning</p>
         </div>
         <p class="month-name"> {{ monthNames[currentMonth] }} </p>
         <div>
           <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
-          <p>₪ {{ totalMonthEarn().arrived.toLocaleString() }}</p>
+          <p><span class="fs12">₪</span>{{ totalMonthEarn().arrived.toLocaleString() }}</p>
           <p class="normal-font">Unpaid</p>
         </div>
       </div>
@@ -28,7 +28,7 @@
     </div>
     <div class="total">
       <p class="text-center fs20">{{ currentYear }}</p>
-      <p>₪ {{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
+      <p><span class="fs12">₪</span>{{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
       <p class="normal-font">Total monthly earn </p>
     </div>
     <div class="students-list">
@@ -44,23 +44,17 @@
       <ul v-if="currStudent">
         <li>
           <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
-          <!-- <p>{{ currStudent.classes.length }} classes overall</p> -->
-          <!-- <p>{{ classesInMonth(currStudent).length }} classes this month</p> -->
           <p class="bold-font">{{ paidThisMonth(currStudent).length }}
             <span class="normal-font">classes paid this month</span>
-            ₪{{ paidThisMonth(currStudent).length * currStudent.price }}
+            <span class="fs12"> ₪</span>{{ sumPaidThisMonth(currStudent) }}
           </p>
           <p class="bold-font">{{ arrivedThisMonth(currStudent).length }}
             <span class="normal-font"> classes unpaid this month</span>
-            ₪{{ arrivedThisMonth(currStudent).length * currStudent.price }}
+            <span class="fs12"> ₪</span>{{ sumArrivedThisMonth(currStudent) }}
           </p>
-          <!-- <div class="lessons-imgs">
-              <div v-for="lesson in classesInMonth(currStudent)" :key="lesson.date">
-                <img :src="`src/assets/imgs/${lesson.status}.svg`" alt="">
-              </div>
-            </div> -->
           <button @click="openWhatsApp(currStudent)">Send bill with whatsapp</button>
-          <invoice :student="currStudent" :classesAmount="paidThisMonth(currStudent).length" />
+          <invoice :student="currStudent" :classesAmount="paidThisMonth(currStudent).length"
+            :classesSum="sumPaidThisMonth(currStudent)" />
         </li>
       </ul>
     </div>
@@ -140,6 +134,12 @@ export default {
       var date = selectedDate || `${this.currentMonth + 1}.${this.currentYear}`
       return student.classes.filter(lesson => `${lesson.date.split(".")[1]}.${lesson.date.split(".")[2]}` === date)
     },
+    sumPaidThisMonth(student, selectedDate) {
+      return this.paidThisMonth(student, selectedDate).reduce((acc, lesson) => acc + lesson.price, 0)
+    },
+    sumArrivedThisMonth(student, selectedDate) {
+      return this.arrivedThisMonth(student, selectedDate).reduce((acc, lesson) => acc + lesson.price, 0)
+    },
     paidThisMonth(student, selectedDate) {
       return this.classesInMonth(student, selectedDate).filter(lesson => lesson.status === 'paid')
     },
@@ -151,8 +151,8 @@ export default {
     },
     totalMonthEarn(selectedDate) {
       return this.students.reduce((acc, student) => {
-        acc.arrived += this.arrivedThisMonth(student, selectedDate).length * student.price;
-        acc.paid += this.paidThisMonth(student, selectedDate).length * student.price;
+        acc.arrived += this.arrivedThisMonth(student, selectedDate).reduce((acc, lesson) => acc + lesson?.price, 0)
+        acc.paid += this.paidThisMonth(student, selectedDate).reduce((acc, lesson) => acc + lesson?.price, 0)
         return acc;
       }, { arrived: 0, paid: 0 });
     },
@@ -172,12 +172,11 @@ export default {
     },
     openWhatsApp(student) {
       var phoneNumber = this.formatPhoneNumber(student.phone || '0543060864')
-      var unpaid = this.arrivedThisMonth(student).length
       let userPref = this.fullUser.pref
       if (userPref.msg[0] || userPref.msg[1] || userPref.msg[2]) {
         var message = `${userPref.msg[0]} ${unpaid} ${userPref.msg[1]} ${unpaid * student.price} ${userPref.msg[2]}`
       }
-      else var message = `We had ${unpaid} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${unpaid * student.price}`;
+      else var message = `We had ${this.arrivedThisMonth(student).length} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${this.sumArrivedThisMonth(student)}`;
       var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       var urlStart = isMobileDevice ? 'https://api.whatsapp.com/send?phone=' : 'https://web.whatsapp.com/send?phone='
       var whatsappUrl = urlStart + phoneNumber + '&text=' + encodeURIComponent(message);

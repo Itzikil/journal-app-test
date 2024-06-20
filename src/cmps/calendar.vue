@@ -11,12 +11,9 @@
             </tr>
             <tr v-for="week in calendar">
                 <td v-for="day in week" :key="day.date" @click="showDay(day)"
-                    :class="{ 'today': isToday(day), 'empty-cell': emptyCell(day) ,'chosen-day': chosenDay(day)}">
+                    :class="{ 'today': isToday(day), 'empty-cell': emptyCell(day), 'chosen-day': chosenDay(day) }">
                     <p class="calendar-date">{{ day.date ? day.date : '' }}</p>
                     <p class="students-count">{{ day.students?.length }}</p>
-                    <!-- <ul class="students-in-day">
-                        <li v-for="student in day.students" :key="student.id">{{ student.name }}</li>
-                    </ul> -->
                 </td>
             </tr>
         </table>
@@ -33,11 +30,11 @@ export default {
             currentMonth: currentDate.getMonth(), // Note: Month is zero-indexed (0 for January, 1 for February, etc.)
             daysOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            dayShown: ''
+            dayShown: '',
         };
     },
     created() {
-        this.$store.dispatch({ type: "loadStudents" });
+
     },
     computed: {
         students() {
@@ -60,11 +57,8 @@ export default {
                     } else {
                         const date = day;
                         const dayName = dayNames[(day + firstDayOfMonth - 1) % 7]; // Calculate day name
-                        var studentsForDay = this.getStudentsForDay(dayName, date);
+                        var studentsForDay = this.syncLessons(dayName, date);
                         const clonedStudents = studentsForDay.map(student => ({ ...student }));
-                        //what is this?
-                        clonedStudents.map(student => student.status = 'pending')
-                        //
                         week.push({ date, dayName, students: clonedStudents }); // Include day name and students
                         day++;
                     }
@@ -99,20 +93,54 @@ export default {
                 this.currentYear += 1;
             }
         },
+        fullDate({ day, month, year }) {
+            if (!day) day = new Date().getDate()
+            if (!month) month = this.currentMonth + 1
+            if (!year) year = this.currentYear
+            return `${day}.${month}.${year}`
+        },
         showDay(day) {
             if (!day.date) return
-            day.month = this.currentMonth
-            day.year = this.currentYear
+            day.fullDate = this.fullDate({ day: day.date })
             this.$emit('showDay', day)
             this.dayShown = day
         },
         chosenDay(day) {
-            return day.date === this.dayShown.date && this.currentMonth === this.dayShown.month && this.currentYear === this.dayShown.year;
+            if (!day.date) return
+            return this.fullDate({ day: day.date }) === this.dayShown.fullDate
         },
-        getStudentsForDay(dayName,date) {
-            return this.students.filter(student => {
-                return student.day === dayName && utilService.biggerDate( student.start , `${date}.${this.currentMonth + 1}.${this.currentYear}`)  
+        getStudentsForDay(dayName, date) {
+            return this.students.reduce((acc, student) => {
+                if (student.lessonsInfo) {
+                    const lessonsForDay = student.lessonsInfo.filter(lesson => lesson.day === dayName && utilService.biggerDate(lesson.start, this.fullDate({ day: date })))
+                    if (lessonsForDay.length > 0) {
+                        for (let i = 0; i < lessonsForDay.length; i++) {
+                            acc.push({
+                                _id: student._id,
+                                name: student.name,
+                                ...lessonsForDay[i]
+                            });
+                        }
+                    }
+                }
+                return acc;
+            }, []);
+        },
+        syncLessons(dayName, date) {
+            var singleLesson = this.students.flatMap(student =>
+                student.classes
+                    .filter(lesson => lesson.date === this.fullDate({ day: date }))
+                    .map(lesson => ({ ...lesson, _id: student._id, name: student.name }))
+            );
+            var todayStudents = this.getStudentsForDay(dayName, date)
+            singleLesson.forEach(lesson => {
+                const existingIndex = todayStudents.findIndex(existingLesson =>
+                    existingLesson._id === lesson._id && existingLesson.time === lesson.time
+                );
+                if (existingIndex !== -1) todayStudents[existingIndex].status = lesson.status;
+                else todayStudents.push(lesson);
             });
+            return todayStudents
         },
     },
     components: {

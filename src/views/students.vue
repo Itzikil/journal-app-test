@@ -79,9 +79,9 @@ export default {
       }
     },
     classesInMonth(student) {
-      var copiedStudent = utilService.deepClone(student)
-      var sortedLessons = utilService.sortByDate(copiedStudent.classes)
-      return sortedLessons.slice(-4)
+      // var copiedStudent = utilService.deepClone(student)
+      // var sortedLessons = utilService.sortByDate(copiedStudent.classes)
+      // return sortedLessons.slice(-4)
     },
     printStudentToConsole(student) {
       console.log("Student msgs:", student.msgs);

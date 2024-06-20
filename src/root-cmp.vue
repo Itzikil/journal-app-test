@@ -27,6 +27,7 @@ export default {
   async created() {
     const user = await userService.getLoggedinUser()
     if (user) await store.commit({ type: 'setLoggedinUser', user })
+    await this.$store.dispatch({ type: "loadStudents" });
     this.loading = false
   },
   components: {

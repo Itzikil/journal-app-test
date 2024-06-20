@@ -12,6 +12,7 @@ export default {
     props: {
         student: Object,
         classesAmount: Number,
+        classesSum: Number,
     },
     data() {
         return {
@@ -19,14 +20,15 @@ export default {
             invoiceDetails: {
                 companyName: this.currUser?.name || 'Your Company Name',
                 companyAddress: this.currUser?.adress || 'Israel',
-                invoiceNumber: this.currUser?.invoiceNum + 1|| 1,
+                invoiceNumber: this.currUser?.invoiceNum + 1 || 1,
                 date: new Date().toLocaleDateString(),
             },
         };
     },
     created() {
         // console.log(this.student);
-        // console.log(this.classesAmount);
+        console.log(this.classesAmount);
+        console.log(this.classesSum);
     },
     computed: {
         currUser() {
@@ -56,7 +58,7 @@ export default {
 
             // Add table of items
             const tableColumn = ['Description', 'Quantity', 'Unit Price', 'Total'];
-            const tableRows = [['Lessons', this.classesAmount, this.student.price, (this.classesAmount * this.student.price).toFixed(2)]]
+            const tableRows = [['Lessons', this.classesAmount, this.classesSum / this.classesAmount, this.classesSum.toFixed(2)]]
 
             doc.autoTable({
                 startY: this.lineY += 15,

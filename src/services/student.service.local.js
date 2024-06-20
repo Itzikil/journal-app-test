@@ -12,7 +12,8 @@ export const studentService = {
     remove,
     getEmptyStudent,
     addStudentMsg,
-    getStudentByTeacher
+    getStudentByTeacher,
+    getEmptyClass
 }
 window.cs = studentService
 
@@ -74,17 +75,37 @@ async function addStudentMsg(studentId, txt) {
     return msg
 }
 
-function getEmptyStudent() {
+// function getEmptyStudent() {
+//     return {
+//         name: '',
+//         price: '',
+//         day: '',
+//         time: '',
+//         duration: '',
+//         teacher: '',
+//         phone: '',
+//         start: '',
+//         classes: []
+//     }
+// }
+
+function getEmptyClass() {
     return {
-        name: '',
-        price: '',
         day: '',
         time: '',
         duration: '',
-        teacher: '',
+        price: '',
+        start: '',
+    }
+}
+
+function getEmptyStudent() {
+    return {
+        name: '',
         phone: '',
-        start:'',
-        classes: []
+        teacher: '',
+        lessonsInfo: [],
+        classes: [],
     }
 }
 
