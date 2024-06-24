@@ -21,6 +21,16 @@
                     </tr>
                 </tbody>
             </table>
+            <div v-for="student in students" :key="student.name" class="card">
+                <div class="card-header">{{ student.name }}</div>
+                <div class="card-body">
+                    <div v-for="(month,idx) in monthNames" :key="month" class="card-row"
+                        :class="{ last: month === monthNames[monthNames.length - 1] }">
+                        <span>{{ month }}:</span>
+                        <div>{{ sumforMonth(student, idx)}}</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </template>
@@ -46,8 +56,8 @@ export default {
             return this.classesInMonth(student, selectedDate).filter(lesson => lesson.status === 'paid' || lesson.status === 'arrived')
         },
         arrivedThisMonth(student, selectedDate) {
-      return this.classesInMonth(student, selectedDate).filter(lesson => lesson.status === 'arrived')
-    },
+            return this.classesInMonth(student, selectedDate).filter(lesson => lesson.status === 'arrived')
+        },
         classesInMonth(student, selectedDate) {
             var date = `${selectedDate + 1}.${2024}`
             return student.classes.filter(lesson => `${lesson.date.split(".")[1]}.${lesson.date.split(".")[2]}` === date)
