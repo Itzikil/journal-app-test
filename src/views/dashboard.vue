@@ -1,80 +1,89 @@
 <template>
-  <section v-if="user" class="dashboard-container container">
-    <div class="user-details">
-      <div class="user-details-container">
-        <h2>Dashboard</h2>
-        <!-- <p class="fs20">{{ user.fullname }}</p> -->
-        <button @click="doLogout">Logout</button>
-      </div>
-      <img :src="user.imgUrl" alt="user" />
-    </div>
-    <div class="monthly-income-container">
-      <div class="monthly-income">
-        <div>
-          <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
-          <p><span class="fs12">₪</span>{{ totalMonthEarn().paid.toLocaleString() }}</p>
-          <p class="normal-font">Earning</p>
+  <transition name="switch" mode="out-in" >
+    <section v-if="!showTable" class="dashboard-container container">
+      <div class="user-details">
+        <div class="user-details-container">
+          <h2>Dashboard</h2>
+          <!-- <p class="fs20">{{ user.fullname }}</p> -->
+          <button @click="doLogout">Logout</button>
         </div>
-        <p class="month-name"> {{ monthNames[currentMonth] }} </p>
-        <div>
-          <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
-          <p><span class="fs12">₪</span>{{ totalMonthEarn().arrived.toLocaleString() }}</p>
-          <p class="normal-font">Unpaid</p>
+        <img :src="user.imgUrl" alt="user" />
+      </div>
+      <div class="monthly-income-container">
+        <div class="monthly-income">
+          <div>
+            <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
+            <p><span class="fs12">₪</span>{{ totalMonthEarn().paid.toLocaleString() }}</p>
+            <p class="normal-font">Earning</p>
+          </div>
+          <p class="month-name"> {{ monthNames[currentMonth] }} </p>
+          <div>
+            <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
+            <p><span class="fs12">₪</span>{{ totalMonthEarn().arrived.toLocaleString() }}</p>
+            <p class="normal-font">Unpaid</p>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-fill" :style="{ width: `${fillColor() * 100}%` }"></div>
         </div>
       </div>
-      <div class="stat">
-        <div class="stat-fill" :style="{ width: `${fillColor() * 100}%` }"></div>
+      <div class="total">
+        <p class="text-center fs20">{{ currentYear }}</p>
+        <p><span class="fs12">₪</span>{{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
+        <p class="normal-font">Total monthly earn </p>
+        <button @click="showTable = true">table</button>
       </div>
-    </div>
-    <div class="total">
-      <p class="text-center fs20">{{ currentYear }}</p>
-      <p><span class="fs12">₪</span>{{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
-      <p class="normal-font">Total monthly earn </p>
-    </div>
-    <div class="students-list">
-      <h3>Students</h3>
-      <ul>
-        <li v-for="student in students" :key="student._id">
-          <button @click="openStudentDetails(student)">{{ student.name }}</button>
-          <router-link :to="`/student/${student._id}`"></router-link>
-        </li>
-      </ul>
-    </div>
-    <div class="student-info">
-      <ul v-if="currStudent">
-        <li>
-          <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
-          <p class="bold-font">{{ paidThisMonth(currStudent).length }}
-            <span class="normal-font">classes paid this month</span>
-            <span class="fs12"> ₪</span>{{ sumPaidThisMonth(currStudent) }}
-          </p>
-          <p class="bold-font">{{ arrivedThisMonth(currStudent).length }}
-            <span class="normal-font"> classes unpaid this month</span>
-            <span class="fs12"> ₪</span>{{ sumArrivedThisMonth(currStudent) }}
-          </p>
-          <button @click="openWhatsApp(currStudent)">Send bill with whatsapp</button>
-          <invoice :student="currStudent" :classesAmount="paidThisMonth(currStudent).length"
-            :classesSum="sumPaidThisMonth(currStudent)" />
-        </li>
-      </ul>
-    </div>
-    <statistic class="stats" :months="months" />
-    <div class="some">
-      <h4>Didnt pay yet</h4>
-      <div v-for="student in students">
-        <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
-          <p class="normal-font">{{ student.name }}</p>
-          <p class="bold-font">{{ arrivedThisMonth(student).length }}</p>
+      <div class="students-list">
+        <h3>Students</h3>
+        <ul>
+          <li v-for="student in students" :key="student._id">
+            <button @click="openStudentDetails(student)">{{ student.name }}</button>
+            <router-link :to="`/student/${student._id}`"></router-link>
+          </li>
+        </ul>
+      </div>
+      <div class="student-info">
+        <ul v-if="currStudent">
+          <li>
+            <router-link :to="`/student/${currStudent._id}`">{{ currStudent.name }}</router-link>
+            <p class="bold-font">{{ paidThisMonth(currStudent).length }}
+              <span class="normal-font">classes paid this month</span>
+              <span class="fs12"> ₪</span>{{ sumPaidThisMonth(currStudent) }}
+            </p>
+            <p class="bold-font">{{ arrivedThisMonth(currStudent).length }}
+              <span class="normal-font"> classes unpaid this month</span>
+              <span class="fs12"> ₪</span>{{ sumArrivedThisMonth(currStudent) }}
+            </p>
+            <button @click="openWhatsApp(currStudent)">Send bill with whatsapp</button>
+            <invoice :student="currStudent" :classesAmount="paidThisMonth(currStudent).length"
+              :classesSum="sumPaidThisMonth(currStudent)" />
+          </li>
+        </ul>
+      </div>
+      <statistic class="stats" :months="months" />
+      <div class="some">
+        <h4>Didnt pay yet</h4>
+        <div v-for="student in students">
+          <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
+            <p class="normal-font">{{ student.name }}</p>
+            <p class="bold-font">{{ arrivedThisMonth(student).length }}</p>
+          </div>
+          <!-- <p v-else>Everyone paid this month</p> -->
         </div>
-        <!-- <p v-else>Everyone paid this month</p> -->
       </div>
-    </div>
-  </section>
+    </section>
+    <section v-else>
+      <monthTable />
+      <button @click="showTable = false">table</button>
+    </section>
+  </transition>
 </template>
 
 <script>
 import statistic from '../cmps/statistic.vue';
 import invoice from '../cmps/invoice.vue';
+import monthTable from '../cmps/monthTable.vue';
+
 export default {
   data() {
     return {
@@ -83,6 +92,7 @@ export default {
       currentYear: new Date().getFullYear(),
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       fullUser: null,
+      showTable: false,
     }
   },
   async created() {
@@ -194,7 +204,33 @@ export default {
   },
   components: {
     statistic,
-    invoice
+    invoice,
+    monthTable
   }
 }
 </script>
+
+<style>
+.switch-enter-from,
+.switch-leave-to {
+  opacity: 0;
+  transform: translateX(500px);
+}
+ .switch-leave-to {
+  transform: translateX(-500px);
+}
+
+.switch-enter-to,
+.switch-leave-from {
+  opacity: 1;
+  transform: translateX(0px);
+}
+
+.switch-leave-active {
+  transition: all 0.5s ease
+}
+
+.switch-enter-active {
+  transition: all 0.5s ease
+}
+</style>

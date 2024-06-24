@@ -2,6 +2,7 @@ header {
     display: flex;
     flex-direction: column;
     background-color: #e1eceb;
+    z-index: 100;
 
     .loggedin-user {
         display: flex;
