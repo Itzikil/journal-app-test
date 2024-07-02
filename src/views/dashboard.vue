@@ -1,5 +1,5 @@
 <template>
-  <transition name="switch" mode="out-in" >
+  <transition name="switch" mode="out-in">
     <section v-if="!showTable" class="dashboard-container container">
       <div class="user-details">
         <div class="user-details-container">
@@ -60,7 +60,7 @@
           </li>
         </ul>
       </div>
-      <statistic class="stats" :months="months" />
+      <statistic class="stats" :fourMonths="fourMonths" />
       <div class="some">
         <h4>Didnt pay yet</h4>
         <div v-for="student in students">
@@ -73,7 +73,7 @@
       </div>
     </section>
     <section v-else>
-      <monthTable />
+      <monthTable :fourMonths="fourMonths" />
       <button @click="showTable = false">table</button>
     </section>
   </transition>
@@ -108,7 +108,7 @@ export default {
     students() {
       return this.$store.getters.students;
     },
-    months() {
+    fourMonths() {
       var stats = []
       var month
       for (let i = 0; i < 4; i++) {
@@ -118,6 +118,7 @@ export default {
         }
         stats.unshift({
           name: this.monthNames[month].slice(0, 3),
+          number: month + 1,
           earning: this.monthlySum(`${month + 1}.${this.currentYear}`)
         }
         )
@@ -216,7 +217,8 @@ export default {
   opacity: 0;
   transform: translateX(500px);
 }
- .switch-leave-to {
+
+.switch-leave-to {
   transform: translateX(-500px);
 }
 

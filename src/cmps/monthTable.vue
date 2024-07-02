@@ -1,47 +1,61 @@
 <template>
     <section class="charts-container container">
         <div class="table-container">
+            <div class="chart-header">
+                <button ><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
+                <h3>{{ monthPicked.name }}</h3>
+                <button><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
+            </div>
             <table>
                 <thead>
                     <tr>
                         <th></th>
-                        <th v-for="month in monthNames" :key="month">{{ month.substring(0, 3) }}</th>
+                        <th v-if="!monthPicked" v-for="month in fourMonths" :key="month">
+                            <button @click="pickMonth(month)">{{ month.name }}</button>
+                        </th>
+                        <th v-else v-for="week in [1, 2, 3, 4, 5]" :key="week">
+                            {{ week }}
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="student in students" :key="student">
                         <td>{{ student.name }}</td>
-                        <td v-for="(month, idx) in monthNames" :key="student" class="fs14">{{ sumforMonth(student, idx)
-                            }}</td>
+                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" class="fs14">{{
+                            sumforMonth(student, month.number -1)
+                        }}</td>
+                        <td v-else v-for="lesson in classesInMonth(student, monthPicked.number)">
+                            <p>{{ lesson.price }}</p>
+                            <!-- <pre>{{ classesInMonth(student , monthPicked.number) }}</pre> -->
+                        </td>
                     </tr>
                     <tr>
                         <td>Total</td>
-                        <td v-for="(month, idx) in monthNames" :key="month" class="fs14">{{ monthlySum(idx) }}
+                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" class="fs14">{{
+                            monthlySum(month.number -1) }}
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div v-for="student in students" :key="student.name" class="card">
-                <div class="card-header">{{ student.name }}</div>
-                <div class="card-body">
-                    <div v-for="(month,idx) in monthNames" :key="month" class="card-row"
-                        :class="{ last: month === monthNames[monthNames.length - 1] }">
-                        <span>{{ month }}:</span>
-                        <div>{{ sumforMonth(student, idx)}}</div>
-                    </div>
-                </div>
-            </div>
         </div>
+        <button @click="monthPicked = ''">Clear</button>
     </section>
 </template>
 
 <script>
 
 export default {
+    props: {
+        fourMonths: Array,
+    },
     data() {
         return {
             monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            monthPicked: '',
         }
+    },
+    created() {
+        console.log(this.fourMonths);
     },
     computed: {
         students() {
@@ -74,6 +88,9 @@ export default {
                 return acc;
             }, { arrived: 0, paid: 0 });
         },
+        pickMonth(month) {
+            this.monthPicked = month
+        }
     }
 }
 </script>

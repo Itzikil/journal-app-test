@@ -5,6 +5,27 @@
         margin: 10px;
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(87, 86, 86, 0.1);
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            button {
+                padding-top: 7px;
+                margin: 0;
+                border-radius: 50%;
+                max-width: 40px;
+                max-height: 40px;
+
+                img {
+                    width: 80%;
+                    height: 100%;
+                    border-radius: 100%;
+                }
+
+            }
+        }
     }
 
     table {
@@ -49,10 +70,6 @@
     @media screen and (max-width: 600px) {
         .table-container {
             overflow: hidden;
-        }
-
-        table {
-            display: none;
         }
 
         .card {

@@ -6,7 +6,7 @@
                 <p>1</p>
                 <p>1</p>
             </div> -->
-            <div v-for="month in months" class="month-stats">
+            <div v-for="month in fourMonths" class="month-stats">
                 <div class="candle" :style="candleHeight(month)" >
                 <!-- <div class="candle" :style="candleHeight(month)" @click="showEarn"> -->
                     <p class="earning">₪{{ month.earning }}</p>
@@ -20,7 +20,7 @@
 <script>
 export default {
     props: {
-        months: Array,
+        fourMonths: Array,
     },
     data() {
         return {
@@ -36,7 +36,7 @@ export default {
         // },
         highestEarn() {
             var highest = 0
-            this.months.forEach(month => month.earning > highest ? highest = month.earning : '')
+            this.fourMonths.forEach(month => month.earning > highest ? highest = month.earning : '')
             return highest
         },
         candleHeight(month) {
