@@ -189,7 +189,7 @@ export default {
       }
       else var message = `We had ${this.arrivedThisMonth(student).length} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${this.sumArrivedThisMonth(student)}`;
       console.log(message);
-      var isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      var isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       var urlStart = isMobileDevice ? 'https://api.whatsapp.com/send?phone=' : 'https://web.whatsapp.com/send?phone='
       var whatsappUrl = urlStart + phoneNumber + '&text=' + encodeURIComponent(message);
       window.open(whatsappUrl);
