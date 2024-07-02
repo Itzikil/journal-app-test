@@ -73,7 +73,7 @@
       </div>
     </section>
     <section v-else>
-      <monthTable :fourMonths="fourMonths" />
+      <monthTable :fourMonths="fourMonths" :chartData="chartData" />
       <button @click="showTable = false">table</button>
     </section>
   </transition>
@@ -119,11 +119,25 @@ export default {
         stats.unshift({
           name: this.monthNames[month].slice(0, 3),
           number: month + 1,
-          earning: this.monthlySum(`${month + 1}.${this.currentYear}`)
+          earning: this.monthlySum(`${month + 1}`)
         }
         )
       }
       return stats
+    },
+    chartData() {
+      return {
+        sumPaidThisMonth: this.sumPaidThisMonth,
+        sumArrivedThisMonth: this.sumArrivedThisMonth,
+        classesInMonth: this.classesInMonth,
+        monthlySum: this.monthlySum,
+        prevMonth: this.prevMonth,
+        nextMonth: this.nextMonth,
+        changeMonth: this.changeMonth,
+        currentYear: this.currentYear,
+        currentMonth: this.currentMonth,
+        monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      }
     }
   },
   methods: {
@@ -142,7 +156,7 @@ export default {
       }
     },
     classesInMonth(student, selectedDate) {
-      var date = selectedDate || `${this.currentMonth + 1}.${this.currentYear}`
+      var date = selectedDate ? `${selectedDate}.${this.currentYear}` : `${this.currentMonth + 1}.${this.currentYear}`
       return student.classes.filter(lesson => `${lesson.date.split(".")[1]}.${lesson.date.split(".")[2]}` === date)
     },
     sumPaidThisMonth(student, selectedDate) {
@@ -170,6 +184,9 @@ export default {
     monthlySum(selectedDate) {
       var sum = this.totalMonthEarn(selectedDate)
       return sum.arrived + sum.paid
+    },
+    changeMonth(month) {
+      this.currentMonth = month
     },
     fillColor() {
       var full = this.monthlySum()

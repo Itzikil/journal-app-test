@@ -26,9 +26,6 @@ export default {
         };
     },
     created() {
-        // console.log(this.student);
-        console.log(this.classesAmount);
-        console.log(this.classesSum);
     },
     computed: {
         currUser() {
