@@ -31,7 +31,6 @@
         <p class="text-center fs20">{{ currentYear }}</p>
         <p><span class="fs12">₪</span>{{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
         <p class="normal-font">Total monthly earn </p>
-        <button @click="showTable = true">table</button>
       </div>
       <div class="students-list">
         <h3>Students</h3>
@@ -60,7 +59,11 @@
           </li>
         </ul>
       </div>
-      <statistic class="stats" :fourMonths="fourMonths" />
+      <div class="stats">
+        <h3>statistics</h3>
+        <button @click="showTable = true">For more deep stats -></button>
+        <statistic :fourMonths="fourMonths" style="height: 130px; width: 100px;" />
+      </div>
       <div class="some">
         <h4>Didnt pay yet</h4>
         <div v-for="student in students">
@@ -72,9 +75,17 @@
         </div>
       </div>
     </section>
-    <section v-else>
-      <monthTable :fourMonths="fourMonths" :chartData="chartData" />
-      <button @click="showTable = false">table</button>
+    <section v-else class="charts-stats-container ">
+      <div>
+        <button @click="showTable = false">Back to dashboard</button>
+        <monthTable :fourMonths="fourMonths" :chartData="chartData" />
+      </div>
+      <div>
+        <h3>statistics</h3>
+        <div style="padding: 15px;">
+          <statistic class="stats" :fourMonths="fourMonths" />
+        </div>
+      </div>
     </section>
   </transition>
 </template>

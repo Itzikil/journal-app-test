@@ -1,6 +1,5 @@
 <template>
     <section class="stats-page-container">
-        <h3>Statistic</h3>
         <div class="stats-container">
             <!-- <div>
                 <p>1</p>

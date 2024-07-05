@@ -5,9 +5,10 @@
     <app-header />
     <router-view />
     <!-- </PullToRefresh> -->
+    <!-- <h2 class="text-center">Loading</h2> -->
   </section>
-  <section v-else>
-    <h2 class="text-center">Loading</h2>
+  <section v-else class="main-loader">
+    <img src="./assets/imgs/page-‏‏loader.gif" alt="">
   </section>
 </template>
 

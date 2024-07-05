@@ -1,12 +1,12 @@
 <template>
-    <section class="charts-container container">
+    <section class="charts-container">
+        <div class="chart-header">
+            <button @click="changeMonth(-1)"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
+            <h3>{{ chartData.currentYear }}</h3>
+            <h3 v-if="monthPicked"> {{ chartData.monthNames[monthPicked] }}</h3>
+            <button @click="changeMonth(1)"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
+        </div>
         <div class="table-container">
-            <div class="chart-header">
-                <button @click="changeMonth(-1)"><img src="../assets/imgs/left-arrow.svg" alt="left arrow"></button>
-                <h3>{{ chartData.currentYear }}</h3>
-                <h3 v-if="monthPicked"> {{ chartData.monthNames[monthPicked] }}</h3>
-                <button @click="changeMonth(1)"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
-            </div>
             <table>
                 <thead>
                     <tr>
@@ -15,27 +15,34 @@
                             <button @click="pickMonth(month)">{{ month.name }}</button>
                         </th>
                         <th v-else v-for="week in [1, 2, 3, 4, 5]" :key="week">
-                            {{ week }}
+                            <p>{{ week }}</p>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="student in students" :key="student">
-                        <td>{{ student.name }}</td>
-                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" class="fs14">{{
-                            chartData.sumPaidThisMonth(student, month.number) + chartData.sumArrivedThisMonth(student,
-                                month.number)
-                            }}</td>
-                        <td v-else v-for="lesson in chartData.classesInMonth(student, monthPicked.number)">
-                            <p>{{ lesson.price }}</p>
-                            <!-- <pre>{{ classesInMonth(student , monthPicked.number) }}</pre> -->
+                        <td>
+                            <p>{{ student.name }}</p>
+                        </td>
+                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" class="fs14">
+                            <p>{{ chartData.sumPaidThisMonth(student, month.number)
+                                + chartData.sumArrivedThisMonth(student, month.number) }}
+                            </p>
+                        </td>
+                        <td v-else v-for="(lessons, idx) in weeklyPrice(student)">
+                            <p v-for="lesson in lessons">{{ lesson.price }}</p>
                         </td>
                     </tr>
                     <tr>
-                        <td>Total</td>
-                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" class="fs14">{{
-                            chartData.monthlySum(month.number) }}
+                        <td>
+                            <p>Total</p>
                         </td>
+                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" class="fs14">
+                            <p>{{ chartData.monthlySum(month.number) }}</p>
+                        </td>
+                        <!-- <td v-else v-for="month in fourMonths" :key="month" class="fs14">
+                            <p>{{ chartData.monthlySum(month.number) }}</p>
+                        </td> -->
                     </tr>
                 </tbody>
             </table>
@@ -57,7 +64,7 @@ export default {
     data() {
         return {
             monthPicked: '',
-            // monthPicked: this.chartData.currentMonth,
+            weeks: [[], [], [], [], []]
         }
     },
     created() {
@@ -75,8 +82,23 @@ export default {
         changeMonth(num) {
             num === 1 ? this.chartData.nextMonth() : this.chartData.prevMonth()
             if (this.monthPicked) this.monthPicked = this.monthPicked + num
-
-        }
+        },
+        weeklyPrice(student) {
+            var monthlyLessons = this.chartData.classesInMonth(student, this.monthPicked.number)
+            return this.groupLessonsByWeek(monthlyLessons)
+        },
+        groupLessonsByWeek(monthlyLessons) {
+            var testWeeks = [[], [], [], [], []]
+            monthlyLessons.forEach((lesson) => {
+                if (lesson.status === 'paid' || lesson.status === 'arrived') {
+                    const day = parseInt(lesson.date.split(".")[0], 10);
+                    const weekIndex = Math.floor((day - 1) / 7);;
+                    testWeeks[weekIndex].push(lesson);
+                }
+            });
+            console.log(testWeeks);
+            return testWeeks
+        },
     }
 }
 </script>
