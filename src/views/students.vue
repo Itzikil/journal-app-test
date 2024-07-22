@@ -20,10 +20,18 @@
               </div>
             </div>
           </div>
-          <button @click.prevent="removeStudent(student._id)">x</button>
+          <button @click.prevent="deleteStudent = student">x</button>
         </router-link>
       </li>
     </ul>
+    <div v-if="deleteStudent" class="delete-student-container">
+      <p>Are you sure you want to delete {{ deleteStudent.name }}?</p>
+      <div class="btns-delete-container">
+        <button @click="removeStudent(deleteStudent._id)">yes</button>
+        <button @click="deleteStudent = null">no</button>
+        <button @click="deactivateStudent(deleteStudent)">deactivate</button>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -41,7 +49,8 @@ export default {
     return {
       studentToAdd: studentService.getEmptyStudent(),
       daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      editCmp: false
+      editCmp: false,
+      deleteStudent: null,
     };
   },
   created() {
@@ -64,9 +73,22 @@ export default {
       try {
         await this.$store.dispatch({ type: 'removeStudent', studentId })
         showSuccessMsg("Student removed");
+        this.deleteStudent = null
       } catch (err) {
         console.log(err);
         showErrorMsg("Cannot remove student");
+      }
+    },
+    async deactivateStudent(student) {
+      var studentClone = utilService.deepClone(student)
+      studentClone.status = 'unactive'
+      try {
+        await this.$store.dispatch({ type: "updateStudent", student: studentClone });
+        showSuccessMsg(studentClone.name + " " + ('deactivated'));
+        this.lessonToEdit = ''
+      } catch (err) {
+        console.log(err);
+        showErrorMsg(`Cannot change ${studentClone} `);
       }
     },
     async addStudentMsg(studentId) {
