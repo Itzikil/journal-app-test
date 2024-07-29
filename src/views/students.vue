@@ -10,7 +10,7 @@
     <addStudent v-if="editCmp" @closeEdit="closeEdit" />
     <!-- <p>{{ groupedStudents }}</p> -->
     <div class="days-container">
-      <ul v-for="(students, day) in groupedStudents" :key="day" >
+      <ul v-for="(students, day) in groupedStudents" :key="day">
         <p>{{ day }}</p>
         <ul class="student-list">
           <li v-for="student in students" :key="student._id">
@@ -78,15 +78,16 @@ export default {
       return this.$store.getters.students;
     },
     groupedStudents() {
-      const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      console.log(this.students);
-      return dayOrder.reduce((acc, day) => {
+      var sortedStudents = this.daysOfWeek.reduce((acc, day) => {
         const studentsForDay = this.students.filter(student => student.lessonsInfo[0]?.day === day);
         if (studentsForDay.length) {
           acc[day] = studentsForDay;
         }
         return acc;
-      }, {});
+      }, {})
+      sortedStudents.Singles = this.students.filter(student => !student.lessonsInfo[0])
+      return sortedStudents
+
     }
   },
   methods: {
