@@ -30,63 +30,70 @@
         }
     }
 
-    .student-list {
+    .days-container {
         display: flex;
-        flex-wrap: wrap;
-        padding: 0;
-        margin: 0;
         gap: 10px;
-        margin-bottom: 10px;
 
-        li {
-            flex: 1 0 auto;
-            border-radius: 10px;
-            margin: 0;
-            padding: 0;
-            width: calc(25% - 1%);
-            max-width: 24%;
-            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-            background-color: $clr4;
-
-            a {
-                display: flex;
-                flex-direction: column;
-                position: relative;
-                color: white;
-
-                .student-name {
-                    font-size: 1.3rem;
-                    font-weight: 500;
-                    // line-height: 1;
-                }
-
-                .student-day {
-                    font-size: 0.8rem;
-                }
-
-                button {
-                    position: absolute;
-                    right: 5px;
-                    top: 5px;
-                }
-            }
-        }
-
-        .lessons-imgs {
+        .student-list {
             display: flex;
-            gap: 5px;
+            flex-direction: column;
+            flex-wrap: wrap;
+            padding: 0;
+            margin: 0;
+            gap: 10px;
+            margin-bottom: 10px;
+            width: 100%;
 
-            div {
-                display: flex;
+            li {
+                flex: 1 0 auto;
+                border-radius: 10px;
+                margin: 0;
+                padding: 0;
+                width: calc(25% - 1%);
+                max-width: 24%;
+                box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+                background-color: $clr4;
+                min-width: 200px;
+
+                a {
+                    display: flex;
+                    flex-direction: column;
+                    position: relative;
+                    color: white;
+
+                    .student-name {
+                        font-size: 1.3rem;
+                        font-weight: 500;
+                        // line-height: 1;
+                    }
+
+                    .student-day {
+                        font-size: 0.8rem;
+                    }
+
+                    button {
+                        position: absolute;
+                        right: 5px;
+                        top: 5px;
+                    }
+                }
             }
 
-            img {
-                width: 17px;
-                height: 17px;
-                align-self: center;
+            .lessons-imgs {
+                display: flex;
+                gap: 5px;
+
+                div {
+                    display: flex;
+                }
+
+                img {
+                    width: 17px;
+                    height: 17px;
+                    align-self: center;
+                }
             }
         }
-
     }
 
     .delete-student-container {
@@ -121,11 +128,15 @@
             // }
         }
 
-        .student-list {
-            li {
-                width: 100%;
-                max-width: 100%;
+        .days-container {
+            flex-direction: column;
 
+            .student-list {
+                li {
+                    width: 100%;
+                    max-width: 100%;
+
+                }
             }
         }
     }

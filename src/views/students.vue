@@ -8,7 +8,21 @@
       <input type="text" name="" id="">
     </div>
     <addStudent v-if="editCmp" @closeEdit="closeEdit" />
-    <ul class="student-list">
+    <!-- <p>{{ groupedStudents }}</p> -->
+    <div class="days-container">
+      <ul v-for="(students, day) in groupedStudents" :key="day" >
+        <p>{{ day }}</p>
+        <ul class="student-list">
+          <li v-for="student in students" :key="student._id">
+            <router-link :to="`/student/${student._id}`">
+              <p class="student-name">{{ student.name }}</p>
+              <button @click.prevent="deleteStudent = student">x</button>
+            </router-link>
+          </li>
+        </ul>
+      </ul>
+    </div>
+    <!-- <ul class="student-list">
       <li v-for="student in students" :key="student._id">
         <router-link :to="`/student/${student._id}`">
           <p class="student-name">{{ student.name }}</p>
@@ -23,7 +37,7 @@
           <button @click.prevent="deleteStudent = student">x</button>
         </router-link>
       </li>
-    </ul>
+    </ul> -->
     <div v-if="deleteStudent" class="delete-student-container">
       <p>Are you sure you want to delete {{ deleteStudent.name }}?</p>
       <div class="btns-delete-container">
@@ -63,6 +77,17 @@ export default {
     students() {
       return this.$store.getters.students;
     },
+    groupedStudents() {
+      const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      console.log(this.students);
+      return dayOrder.reduce((acc, day) => {
+        const studentsForDay = this.students.filter(student => student.lessonsInfo[0]?.day === day);
+        if (studentsForDay.length) {
+          acc[day] = studentsForDay;
+        }
+        return acc;
+      }, {});
+    }
   },
   methods: {
     loadImage(status) {
