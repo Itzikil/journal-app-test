@@ -17,6 +17,10 @@
     <p>Organize your schedule</p>
     <ModalComponent :message="modalMessage" :imageSrc="modalImage" :visible="isModalVisible"
       @close="isModalVisible = false" />
+    <div>
+      <p>Already have an account? copy your information</p>
+      <button @click="pasteData">Paste students data</button>
+    </div>
   </section>
 </template>
 
@@ -24,6 +28,7 @@
 import downloadBtn from '../cmps/download-btn.vue'
 import { utilService } from '../services/util.service';
 import ModalComponent from '../cmps/alertModal.vue'; // Adjust the import path as necessary
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
 
 export default {
   name: 'home',
@@ -50,7 +55,24 @@ export default {
       this.modalMessage = payload.message;
       this.modalImage = payload.image;
       this.isModalVisible = true;
-    }
+    },
+    async pasteData() {
+      try {
+        const text = await navigator.clipboard.readText();
+        const data = JSON.parse(text);
+        if (data.user) {
+          console.log(data.user);
+          utilService.saveToStorage('user', data.user)
+        }
+        if (data.student) {
+          utilService.saveToStorage('student', data.student)
+        }
+        // console.log(objects);
+        showSuccessMsg("data pasted, now log-in");
+      } catch (err) {
+        console.error('Failed to paste objects: ', err);
+      }
+    },
   },
   components: {
     downloadBtn,

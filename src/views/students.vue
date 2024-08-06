@@ -79,7 +79,7 @@ export default {
     },
     groupedStudents() {
       var sortedStudents = this.daysOfWeek.reduce((acc, day) => {
-        const studentsForDay = this.students.filter(student => student.lessonsInfo[0]?.day === day);
+        const studentsForDay = this.students.filter(student => student?.lessonsInfo[0]?.day === day);
         if (studentsForDay.length) {
           acc[day] = studentsForDay;
         }

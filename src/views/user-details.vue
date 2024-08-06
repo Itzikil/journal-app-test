@@ -31,7 +31,7 @@
           <form @submit.prevent="updateHours()">
             <p>choose the hours in a day you want to work</p>
             <input type="number" placeholder="from" v-model="this.from">
-            <input type="number" placeholder="to" v-model="this.to" >
+            <input type="number" placeholder="to" v-model="this.to">
             <button>Update</button>
           </form>
         </div>
@@ -46,6 +46,16 @@
           <input type="text" placeholder="to">
         </div>
       </transition>
+    </div>
+    <div>
+      <button @click="copyData">Copy students data</button>
+    </div>
+    <div>
+      <!-- <input type="text" v-model="studentsData"> -->
+      <button @click="pasteData">Paste students data</button>
+    </div>
+    <div>
+      <!-- <pre>{{ studentsData }}</pre> -->
     </div>
   </section>
 </template>
@@ -62,8 +72,9 @@ export default {
       thirdLine: '',
       user: null,
       openPref: '',
-      from:'',
-      to:'',
+      from: '',
+      to: '',
+      // studentsData: '',
     }
   },
   async created() {
@@ -114,7 +125,43 @@ export default {
     },
     togglePref(name) {
       this.openPref = this.openPref === name ? null : name;
-    }
+    },
+    // copyData() {
+    // },
+    async copyData() {
+      try {
+        var studentData = utilService.loadFromStorage('student')
+        var userData = utilService.loadFromStorage('user')
+        var data = {
+          user: userData,
+          student: studentData
+        }
+        const dataAsString = JSON.stringify(data);
+        await navigator.clipboard.writeText(dataAsString);
+        console.log(dataAsString);
+        showSuccessMsg("data copied");
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+      }
+    },
+    async pasteData() {
+      try {
+        const text = await navigator.clipboard.readText();
+        const data = JSON.parse(text);
+        if (data.user) {
+          utilService.saveToStorage('user', data.user)
+        }
+        if (data.student) {
+          utilService.saveToStorage('student', data.student)
+        }
+        console.log(objects);
+        // localStorage.setItem('pastedObjects', text);
+        // this.pastedObjects = objects;
+        showSuccessMsg("data pasted");
+      } catch (err) {
+        console.error('Failed to paste objects: ', err);
+      }
+    },
   },
   components: {
   }

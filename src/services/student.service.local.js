@@ -28,7 +28,7 @@ async function query(filterBy = { txt: '', price: 0 }) {
         students = students.filter(student => student.price <= filterBy.price)
     }
     var teacher = await userService.getLoggedinUser()
-    students = students.filter(student => student?.teacher?._id === teacher._id)
+    students = students.filter(student => student?.teacher?._id === teacher?._id)
     students = utilService.sortByName(students)
     return students
 }
