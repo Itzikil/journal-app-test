@@ -18,11 +18,8 @@
             </select>
           </div>
         </label>
-        <div v-else>
-          <p class="text-center fs12">Add the first lesson</p>
-          <label>Lesson day <input type="text" :ref="'lessonDatePicker' + idx" class="custom-date-input"
-              v-model="lessonsInfo[idx].day" required></label>
-        </div>
+        <label v-else>Lesson day <input type="text" :ref="'lessonDatePicker' + idx" class="custom-date-input"
+            v-model="lessonsInfo[idx].day" required></label>
         <label>Time <input modern-time-input type="time" name="time" min="08:00" max="20:00"
             v-model="lessonsInfo[idx].time" required></label>
         <label>Duration <input type="number" name="duration" v-model="lessonsInfo[idx].duration" placeholder="Minutes"

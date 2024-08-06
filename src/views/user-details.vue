@@ -1,8 +1,8 @@
 <template>
   <section class="user-detail-container container">
-    <div v-if="user">
+    <div>
       <p @click="togglePref('info')">Your info</p>
-      <div class="content" :class="{ active: openPref === 'info' }">
+      <div v-if="user" class="content" :class="{ active: openPref === 'info' }">
         <p>{{ user.username }}</p>
         <img :src="user.imgUrl" alt="your img" style="height: 100px; border-radius: 5px;">
       </div>
@@ -50,13 +50,6 @@
     <div>
       <button @click="copyData">Copy students data</button>
     </div>
-    <div>
-      <!-- <input type="text" v-model="studentsData"> -->
-      <button @click="pasteData">Paste students data</button>
-    </div>
-    <div>
-      <!-- <pre>{{ studentsData }}</pre> -->
-    </div>
   </section>
 </template>
 
@@ -74,7 +67,6 @@ export default {
       openPref: '',
       from: '',
       to: '',
-      // studentsData: '',
     }
   },
   async created() {
@@ -142,24 +134,6 @@ export default {
         showSuccessMsg("data copied");
       } catch (err) {
         console.error('Failed to copy text: ', err);
-      }
-    },
-    async pasteData() {
-      try {
-        const text = await navigator.clipboard.readText();
-        const data = JSON.parse(text);
-        if (data.user) {
-          utilService.saveToStorage('user', data.user)
-        }
-        if (data.student) {
-          utilService.saveToStorage('student', data.student)
-        }
-        console.log(objects);
-        // localStorage.setItem('pastedObjects', text);
-        // this.pastedObjects = objects;
-        showSuccessMsg("data pasted");
-      } catch (err) {
-        console.error('Failed to paste objects: ', err);
       }
     },
   },

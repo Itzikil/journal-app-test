@@ -67,8 +67,8 @@ export default {
         if (data.student) {
           utilService.saveToStorage('student', data.student)
         }
-        // console.log(objects);
-        showSuccessMsg("data pasted, now log-in");
+        showSuccessMsg("data pasted, now login");
+        this.$router.push('/login')
       } catch (err) {
         console.error('Failed to paste objects: ', err);
       }
