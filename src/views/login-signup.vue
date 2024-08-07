@@ -13,7 +13,7 @@
       <form @submit.prevent="doLogin">
         <select v-model="loginCred.username">
           <!-- <option value="">Select User</option> -->
-          <option v-for="user in users" :key="user._id" :value="user.username">{{ user.fullname }}</option>
+          <option v-for="user in users" :key="user._id" :value="user.username">{{ user.username }}</option>
         </select>
         <!-- <input type="text" v-model="loginCred.username" placeholder="User name" />
         <input

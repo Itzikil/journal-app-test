@@ -109,5 +109,12 @@
 
     @media (max-width:650px) {
         padding: 0;
+
+        .student {
+
+            .btns-container {
+                width: 45%;
+            }
+        }
     }
 }
