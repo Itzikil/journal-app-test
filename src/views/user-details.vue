@@ -30,8 +30,8 @@
         <div class="content" :class="{ active: openPref === 'hours' }">
           <form @submit.prevent="updateHours()">
             <p>choose the hours in a day you want to work</p>
-            <input type="number" placeholder="from" v-model="this.from">
-            <input type="number" placeholder="to" v-model="this.to">
+            <input type="number" placeholder="8:00" v-model="this.from" min="0" max="24">
+            <input type="number" placeholder="20:00" v-model="this.to" min="0" max="24">
             <button>Update</button>
           </form>
         </div>
@@ -42,8 +42,8 @@
       <transition name="expand" :class="{ active: openPref === 'days' }">
         <div class="content">
           <p>choose the days in a week you want to work</p>
-          <input type="text" placeholder="from">
-          <input type="text" placeholder="to">
+          <input type="text" placeholder="Sunday">
+          <input type="text" placeholder="saturday">
         </div>
       </transition>
     </div>
@@ -78,6 +78,10 @@ export default {
           this.firstLine = this.user.pref.msg[0] || '';
           this.secondLine = this.user.pref.msg[1] || '';
           this.thirdLine = this.user.pref.msg[2] || '';
+        }
+        if (this.user && this.user.pref && this.user.pref.hours) {
+          this.from = this.user.pref.hours.from || '';
+          this.to = this.user.pref.hours.to || '';
         }
       }
     } catch (error) {

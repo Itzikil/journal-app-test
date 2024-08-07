@@ -20,14 +20,14 @@
         </label>
         <label v-else>Lesson day <input type="text" :ref="'lessonDatePicker' + idx" class="custom-date-input"
             v-model="lessonsInfo[idx].day" required></label>
-        <label>Time <input modern-time-input type="time" name="time" min="08:00" max="20:00"
+        <label>Time <input modern-time-input type="time" name="time" :min="startHour" :max="endHour"
             v-model="lessonsInfo[idx].time" required></label>
         <label>Duration <input type="number" name="duration" v-model="lessonsInfo[idx].duration" placeholder="Minutes"
             required></label>
         <label>Price <input type="number" name="price" v-model="lessonsInfo[idx].price" placeholder="100 / 200"
             required></label>
         <!-- <label v-if="!studentToAdd._id"> Joined at -->
-        <label> {{!studentToAdd._id ? 'Joined at' : 'changed at'}}
+        <label> {{ !studentToAdd._id ? 'Joined at' : 'changed at' }}
           <input type="text" :ref="'joinedDatePicker' + idx" class="custom-date-input"
             v-model="lessonsInfo[idx].start" />
         </label>
@@ -44,9 +44,9 @@
 <script>
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
 import { studentService } from '../services/student.service.local';
-import { utilService } from '../services/util.service';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+// import { utilService } from '../services/util.service';
 
 export default {
   props: {
@@ -61,18 +61,28 @@ export default {
       daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       teacher: this.$store.getters.loggedinUser,
       lessonMode: !this.editStudent?.lessonsInfo ? 'single' : 'weekly',
+      startHour: '',
+      endHour: '',
     };
   },
-  created() {
+  async created() {
     this.studentToAdd.teacher = { 'name': this.teacher.username, '_id': this.teacher._id }
+    if (this.teacher) var user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId: this.teacher._id })
+    this.startHour = user.pref.hours?.from
+      ? `${user.pref.hours.from < 10 ? '0' : ''}${user.pref.hours.from}:00`
+      : '08:00';
+    this.endHour = user.pref.hours?.to
+      ? `${user.pref.hours.to < 10 ? '0' : ''}${user.pref.hours.to}:00`
+      : '20:00';
   },
   mounted() {
     if (!this.lessonsInfo.length) this.addLesson()
+
   },
   computed: {
     addEdit() {
       return this.$route.path === '/students' ? 'Add student' : 'Update student'
-    }
+    },
   },
   methods: {
     removeLesson() {

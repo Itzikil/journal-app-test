@@ -1,6 +1,6 @@
 <template>
     <section class="today-container container">
-        <h2>Today</h2>
+        <!-- <h2>Today</h2> -->
         <day :day="getStudentsForDay" />
     </section>
 </template>

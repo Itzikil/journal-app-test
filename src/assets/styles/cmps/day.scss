@@ -2,7 +2,17 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 95%;
+    height: 94vh;
+    // min-height: 100vh;
+
+    .day-top-header {
+        display: flex;
+        justify-content: space-between;
+
+        h2 {
+            margin-bottom: 10px;
+        }
+    }
 
     .day-header {
         // align-self: center;
@@ -39,10 +49,11 @@
     .student {
         display: flex;
         align-items: center;
-        justify-content: space-around;
+        justify-content: space-between;
         background-color: lightblue;
         border-radius: 5px;
         box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        padding: 2px 30px;
 
         p {
             font-size: 16px;
@@ -53,28 +64,31 @@
 
         .btns-container {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             height: 100%;
+            width: 30%;
+            justify-content: space-around;
 
             button {
                 background-color: transparent;
                 padding: 0;
                 margin: 0;
                 height: 100%;
+                max-width: 25px;
 
                 img {
                     height: 100%;
                     width: 100%;
-                    // max-width: 25px;
-                    // height: 25px;
                     border-radius: 25px;
                     opacity: 0.4;
                     transition: 0.6s;
-                    &:hover{
+
+                    &:hover {
                         opacity: 0.8;
                     }
+
                     &.active-status {
-                        opacity: 1 ;
+                        opacity: 1;
                         // box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
                     }
                 }

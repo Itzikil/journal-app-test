@@ -1,6 +1,9 @@
 <template>
-    <section class="day-container container">
-        <p class="day-header">{{ day.dayName }} {{ day.fullDate }}</p>
+    <section v-if="!loading" class="day-container container">
+        <div class="day-top-header">
+            <h2>Today</h2>
+            <p class="day-header"><span class="fs14">{{ day.dayName }}</span> {{ day.fullDate }}</p>
+        </div>
         <div class="hour" v-for="hour in hours" :key="hour">
             <div class="hour-label">{{ hour }}:00</div>
             <button class="student-slot student" v-for="(lesson, idx) in studentsByHour[hour]" :key="lesson.id"
@@ -24,6 +27,11 @@
             <p>{{ lessonShown.time }} - {{ calculateEndTime(lessonShown.time, lessonShown.duration) }}</p>
         </div>
     </section>
+    <section v-else class="main-loader">
+        <div style="border-radius: 20px;overflow: hidden;">
+            <img src="../assets/imgs/page-‏‏loader.gif" alt="" style="overflow: hidden;">
+        </div>
+    </section>
 </template>
 
 <script>
@@ -42,24 +50,24 @@ export default {
         return {
             lessonShown: '',
             user: null,
-            students: this.$store.getters.students
+            students: this.$store.getters.students,
+            loading: true
         }
     },
     async created() {
         const userId = this.$store.getters.loggedinUser?._id;
         if (userId) this.user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId })
-        // console.log(this.day);
+        this.loading = false
     },
     watch: {
         day(newValue, oldValue) {
             this.lessonShown = ''
-
         },
     },
     computed: {
         hours() {
             const startHour = +this.user?.pref.hours?.from || 8
-            const endHour = +this.user?.pref.hours?.to || 20
+            const endHour = +this.user?.pref.hours?.to - 1 || 20
             return Array.from({ length: endHour - startHour + 1 }, (_, i) => `${startHour + i}`)
         },
         studentsByHour() {
