@@ -1,7 +1,14 @@
 <template>
   <transition name="slide-down">
-    <div v-if="alive" class="alert" :class="alertClass" :style="{ top: `${positionY}px` }" @touchstart="startDrag"
-      @touchmove="onDrag" @touchend="endDrag">
+    <div
+      v-if="alive"
+      class="alert"
+      :class="alertClass"
+      :style="{ top: `${positionY}px` }"
+      @touchstart="startDrag"
+      @touchmove="onDrag"
+      @touchend="endDrag"
+    >
       {{ msg?.txt }}
     </div>
   </transition>
@@ -14,7 +21,7 @@ export default {
   created() {
     eventBus.on(SHOW_MSG, (msg) => {
       this.msg = msg;
-      var delay = msg.delay || 4500;
+      const delay = msg.delay || 4500;
       this.alive = true;
       this.positionY = -50; // Start off-screen
       this.showBar();
@@ -33,6 +40,7 @@ export default {
       isDragging: false,
       startY: 0,
       initialPositionY: 0,
+      hideThreshold: -100, // Threshold to fully hide the bar
     };
   },
   methods: {
@@ -55,18 +63,17 @@ export default {
         const deltaY = event.touches[0].clientY - this.startY;
         this.positionY = this.initialPositionY + deltaY;
 
-        // Constrain the drag within the viewport
-        if (this.positionY < 0) this.positionY = 0;
-        if (this.positionY > window.innerHeight - 50) {
-          this.positionY = window.innerHeight - 50;
-        }
+        // No constraint on dragging up; allow to go above the screen
       }
     },
     endDrag() {
       this.isDragging = false;
-      // Automatically hide if dragged to a certain position
-      if (this.positionY > 100) {
+
+      // Hide the bar if dragged above the hideThreshold
+      if (this.positionY < this.hideThreshold) {
         this.hideBar();
+      } else {
+        this.positionY = 0; // Reset to the top if not dragged up enough
       }
     },
   },
@@ -84,7 +91,7 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  /* right: 0; */
+  right: 0;
   background-color: #333;
   color: white;
   padding: 10px;
@@ -95,8 +102,7 @@ export default {
   transition: top 0.3s ease;
 }
 
-.slide-down-enter-active,
-.slide-down-leave-active {
+.slide-down-enter-active, .slide-down-leave-active {
   transition: all 0.3s ease;
 }
 
@@ -108,6 +114,7 @@ export default {
   top: -50px;
 }
 </style>
+
 <!-- 
 
 <template>
