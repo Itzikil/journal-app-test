@@ -1,5 +1,5 @@
 <template>
-  <transition name="slide-down">
+  <transition name="slide-down" @before-enter="beforeEnter" @enter="enter" @leave="leave">
     <div
       v-if="alive"
       class="alert"
@@ -24,7 +24,7 @@ export default {
   created() {
     eventBus.on(SHOW_MSG, (msg) => {
       this.msg = msg;
-      const delay = msg.delay || 4500;
+      const delay = msg.delay || 2500;
       this.alive = true;
       this.positionY = 20; // Start 20px from the top
       this.showBar();
@@ -88,6 +88,20 @@ export default {
         this.positionY = 20; // Reset to initial position if not dragged up enough
       }
     },
+    beforeEnter(el) {
+      el.style.top = '-50px'; // Start off-screen before enter transition
+    },
+    enter(el, done) {
+      el.offsetHeight; // Trigger reflow to apply the CSS transition
+      el.style.transition = 'top 0.8s ease'; // Ensure transition is applied
+      el.style.top = '20px'; // Final position when enter transition is complete
+      done(); // Call done to indicate transition is complete
+    },
+    leave(el, done) {
+      el.style.transition = 'top 0.8s ease'; // Ensure transition is applied
+      el.style.top = '-50px'; // Move off-screen when leave transition is complete
+      done(); // Call done to indicate transition is complete
+    },
   },
   computed: {
     alertClass() {
@@ -101,27 +115,21 @@ export default {
 <style scoped>
 .alert {
   position: fixed;
-  top: 0;
-  background-color: #333;
-  color: white;
-  padding: 10px;
+  top: 20px; /* Initial position for styling */
+  padding: 13px;
   text-align: center;
   z-index: 1000;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  transition: top 0.3s ease;
+  transition: top 0.8s ease;
 }
 
 .slide-down-enter-active, .slide-down-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.8s ease;
 }
 
-.slide-down-enter {
-  top: 20px; /* Adjusted for the initial position */
-}
-
-.slide-down-leave-to {
-  top: -50px; /* Adjusted for hiding off-screen */
+.slide-down-enter, .slide-down-leave-to {
+  top: -50px; /* Initial and final position for transition */
 }
 </style>
 
