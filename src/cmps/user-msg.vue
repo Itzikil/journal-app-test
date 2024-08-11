@@ -24,7 +24,7 @@ export default {
   created() {
     eventBus.on(SHOW_MSG, (msg) => {
       this.msg = msg;
-      const delay = msg.delay || 2500;
+      const delay = msg.delay || 4500;
       this.alive = true;
       this.positionY = 20; // Start 20px from the top
       this.showBar();
@@ -43,7 +43,7 @@ export default {
       isDragging: false,
       startY: 0,
       initialPositionY: 20, // Adjusted to match initial position
-      hideThreshold: 0, // Threshold to fully hide the bar
+      hideThreshold: 0, // Threshold to fully hide the bar, adjust as needed
       maxDragDown: 10, // Maximum pixels to drag down
     };
   },
@@ -52,7 +52,7 @@ export default {
       this.positionY = 20; // Set initial position when showing
     },
     hideBar() {
-      this.positionY = -50; // Move back off-screen
+      this.positionY = -150; // Move off-screen, adjust to ensure complete hide
       setTimeout(() => {
         this.alive = false;
       }, 300); // Wait for the transition to complete
@@ -89,7 +89,7 @@ export default {
       }
     },
     beforeEnter(el) {
-      el.style.top = '-50px'; // Start off-screen before enter transition
+      el.style.top = '-150px'; // Start off-screen before enter transition
     },
     enter(el, done) {
       el.offsetHeight; // Trigger reflow to apply the CSS transition
@@ -99,7 +99,7 @@ export default {
     },
     leave(el, done) {
       el.style.transition = 'top 0.8s ease'; // Ensure transition is applied
-      el.style.top = '-50px'; // Move off-screen when leave transition is complete
+      el.style.top = '-150px'; // Move off-screen when leave transition is complete
       done(); // Call done to indicate transition is complete
     },
   },
@@ -121,15 +121,19 @@ export default {
   z-index: 1000;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  transition: top 0.8s ease;
+  transition: top 0.8s ease; /* Transition for smooth sliding */
 }
 
 .slide-down-enter-active, .slide-down-leave-active {
-  transition: all 0.8s ease;
+  transition: top 0.8s ease; /* Ensure transition is applied */
 }
 
-.slide-down-enter, .slide-down-leave-to {
-  top: -50px; /* Initial and final position for transition */
+.slide-down-enter {
+  top: -150px; /* Start off-screen before enter transition */
+}
+
+.slide-down-leave-to {
+  top: -150px; /* Move off-screen when leave transition is complete */
 }
 </style>
 
