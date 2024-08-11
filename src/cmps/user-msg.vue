@@ -43,7 +43,7 @@ export default {
       isDragging: false,
       startY: 0,
       initialPositionY: 20, // Adjusted to match initial position
-      hideThreshold: -100, // Threshold to fully hide the bar
+      hideThreshold: 0, // Threshold to fully hide the bar
       maxDragDown: 10, // Maximum pixels to drag down
     };
   },
