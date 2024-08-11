@@ -23,7 +23,7 @@ export default {
       this.msg = msg;
       const delay = msg.delay || 4500;
       this.alive = true;
-      this.positionY = -50; // Start off-screen
+      this.positionY = 20; // Start 20px from the top
       this.showBar();
       setTimeout(() => {
         if (!this.isDragging) {
@@ -36,17 +36,17 @@ export default {
     return {
       alive: false,
       msg: null,
-      positionY: -50, // Initial position off-screen
+      positionY: 20, // Initial position 20px from the top
       isDragging: false,
       startY: 0,
-      initialPositionY: 0,
+      initialPositionY: 20, // Adjusted to match initial position
       hideThreshold: -100, // Threshold to fully hide the bar
       maxDragDown: 10, // Maximum pixels to drag down
     };
   },
   methods: {
     showBar() {
-      this.positionY = 0; // Move to the top of the screen
+      this.positionY = 20; // Set initial position when showing
     },
     hideBar() {
       this.positionY = -50; // Move back off-screen
@@ -82,7 +82,7 @@ export default {
       if (this.positionY < this.hideThreshold) {
         this.hideBar();
       } else {
-        this.positionY = 0; // Reset to the top if not dragged up enough
+        this.positionY = 20; // Reset to initial position if not dragged up enough
       }
     },
   },
@@ -99,10 +99,8 @@ export default {
 .alert {
   position: fixed;
   top: 0;
-  /* left: 0; */
-  /* right: 0; */
-  /* background-color: #333; */
-  /* color: white; */
+  background-color: #333;
+  color: white;
   padding: 10px;
   text-align: center;
   z-index: 1000;
@@ -116,11 +114,11 @@ export default {
 }
 
 .slide-down-enter {
-  top: -50px;
+  top: 20px; /* Adjusted for the initial position */
 }
 
 .slide-down-leave-to {
-  top: -50px;
+  top: -50px; /* Adjusted for hiding off-screen */
 }
 </style>
 
