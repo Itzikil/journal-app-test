@@ -41,6 +41,7 @@ export default {
       startY: 0,
       initialPositionY: 0,
       hideThreshold: -100, // Threshold to fully hide the bar
+      maxDragDown: 10, // Maximum pixels to drag down
     };
   },
   methods: {
@@ -54,16 +55,24 @@ export default {
       }, 300); // Wait for the transition to complete
     },
     startDrag(event) {
+      event.preventDefault(); // Prevent screen movement
       this.isDragging = true;
       this.startY = event.touches[0].clientY;
       this.initialPositionY = this.positionY;
     },
     onDrag(event) {
       if (this.isDragging) {
+        event.preventDefault(); // Prevent screen movement
         const deltaY = event.touches[0].clientY - this.startY;
-        this.positionY = this.initialPositionY + deltaY;
-
-        // No constraint on dragging up; allow to go above the screen
+        
+        // Constrain dragging down to a maximum of `maxDragDown` pixels
+        if (deltaY > this.maxDragDown) {
+          this.positionY = this.initialPositionY + this.maxDragDown;
+        } else {
+          this.positionY = this.initialPositionY + deltaY;
+        }
+        
+        // Allow dragging up beyond the screen
       }
     },
     endDrag() {
@@ -92,8 +101,8 @@ export default {
   top: 0;
   /* left: 0; */
   /* right: 0; */
-  background-color: #333;
-  color: white;
+  /* background-color: #333; */
+  /* color: white; */
   padding: 10px;
   text-align: center;
   z-index: 1000;
