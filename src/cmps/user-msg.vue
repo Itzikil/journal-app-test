@@ -8,6 +8,9 @@
       @touchstart="startDrag"
       @touchmove="onDrag"
       @touchend="endDrag"
+      @mousedown="startDrag"
+      @mousemove="onDrag"
+      @mouseup="endDrag"
     >
       {{ msg?.txt }}
     </div>
@@ -55,15 +58,15 @@ export default {
       }, 300); // Wait for the transition to complete
     },
     startDrag(event) {
-      event.preventDefault(); // Prevent screen movement
+      event.preventDefault(); // Prevent default behavior for both touch and mouse events
       this.isDragging = true;
-      this.startY = event.touches[0].clientY;
+      this.startY = event.touches ? event.touches[0].clientY : event.clientY;
       this.initialPositionY = this.positionY;
     },
     onDrag(event) {
       if (this.isDragging) {
-        event.preventDefault(); // Prevent screen movement
-        const deltaY = event.touches[0].clientY - this.startY;
+        event.preventDefault(); // Prevent default behavior for both touch and mouse events
+        const deltaY = (event.touches ? event.touches[0].clientY : event.clientY) - this.startY;
         
         // Constrain dragging down to a maximum of `maxDragDown` pixels
         if (deltaY > this.maxDragDown) {
@@ -99,6 +102,8 @@ export default {
 .alert {
   position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   background-color: #333;
   color: white;
   padding: 10px;
