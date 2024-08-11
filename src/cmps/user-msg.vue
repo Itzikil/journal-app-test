@@ -1,3 +1,4 @@
+first remeber the new code:
 <template>
   <transition name="slide-down" @before-enter="beforeEnter" @enter="enter" @leave="leave">
     <div
@@ -8,9 +9,6 @@
       @touchstart="startDrag"
       @touchmove="onDrag"
       @touchend="endDrag"
-      @mousedown="startDrag"
-      @mousemove="onDrag"
-      @mouseup="endDrag"
     >
       {{ msg?.txt }}
     </div>
@@ -24,7 +22,7 @@ export default {
   created() {
     eventBus.on(SHOW_MSG, (msg) => {
       this.msg = msg;
-      const delay = msg.delay || 4500;
+      const delay = msg.delay || 2500;
       this.alive = true;
       this.positionY = 20; // Start 20px from the top
       this.showBar();
@@ -136,42 +134,3 @@ export default {
   top: -150px; /* Move off-screen when leave transition is complete */
 }
 </style>
-
-<!-- 
-
-<template>
-  <div class="alert" :class="alive? 'scroll-down' : ''">
-    {{ msg?.txt }}
-  </div>
-</template>
-
-
-<script>
-import { eventBus, SHOW_MSG } from "../services/event-bus.service.js"
-
-export default {
-  created() {
-    eventBus.on(SHOW_MSG, (msg) => {
-      this.msg = msg
-      var delay = msg.delay || 4500
-      this.alive = true
-      // window.scrollTo({top: 0, behavior: 'smooth'});
-      setTimeout(() => {
-        this.alive = false
-      }, delay)
-    })
-  },
-  data() {
-    return {
-      alive: false,
-      msg: null,
-    }
-  },
-  computed: {
-    alertClass() {
-      if (!this.msg) return
-      return `alert-${this.msg.type}`
-    },
-  },
-}
-</script> -->
