@@ -71,6 +71,7 @@ export default {
             delete currLesson.start;
             delete currLesson.day;
             this.editStudent.classes.push(currLesson)
+            this.$emit('closeAddSingle');
             try {
                 await this.$store.dispatch({ type: "updateStudent", student: this.editStudent })
                 showSuccessMsg("You added single class to " + this.editStudent.name)

@@ -106,6 +106,7 @@ function getEmptyStudent() {
         teacher: '',
         lessonsInfo: [],
         classes: [],
+        active: true,
     }
 }
 

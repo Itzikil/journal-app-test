@@ -7,8 +7,12 @@
       </div>
       <input type="text" name="" id="">
     </div>
+    <button @click="activeStudents = true" :class="{ 'inactive-btn': !activeStudents }">Active ({{
+      activeStudentsList.length }})</button>
+    <button @click="activeStudents = false" :class="{ 'inactive-btn': activeStudents }">Inactive ({{
+      inactiveStudentsList.length }})</button>
+    <button @click="activatatedStudents">activate all students</button>
     <addStudent v-if="editCmp" @closeEdit="closeEdit" />
-    <!-- <p>{{ groupedStudents }}</p> -->
     <div class="days-container">
       <ul v-for="(students, day) in groupedStudents" :key="day">
         <p>{{ day }}</p>
@@ -65,6 +69,7 @@ export default {
       daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       editCmp: false,
       deleteStudent: null,
+      activeStudents: true,
     };
   },
   created() {
@@ -79,21 +84,49 @@ export default {
     },
     groupedStudents() {
       var sortedStudents = this.daysOfWeek.reduce((acc, day) => {
-        const studentsForDay = this.students.filter(student => student?.lessonsInfo[0]?.day === day);
+        const studentsForDay = (this.activeStudents ? this.activeStudentsList : this.inactiveStudentsList).filter(student => student?.lessonsInfo[0]?.day === day);
         if (studentsForDay.length) {
           acc[day] = studentsForDay;
         }
         return acc;
       }, {})
-      sortedStudents.Singles = this.students.filter(student => !student.lessonsInfo[0])
+      sortedStudents.Singles = this.students.filter(student => !student.lessonsInfo[0] && student.active === this.activeStudents)
+      if (!sortedStudents.Singles.length) delete sortedStudents.Singles
       return sortedStudents
-
-    }
+    },
+    activeStudentsList() {
+      return this.students.filter(student => student?.active);
+    },
+    inactiveStudentsList() {
+      return this.students.filter(student => student.active === false);
+    },
   },
   methods: {
     loadImage(status) {
       var imgs = { arrived, paid, hevriz }
       return imgs[status]
+    },
+    async activatatedStudents() {
+      try {
+        for (const student of this.students) {
+          await this.activateStudent(student);
+        }
+        showSuccessMsg("All students activated successfully");
+      } catch (err) {
+        console.log(err);
+        showErrorMsg("Error activating students");
+      }
+    },
+    async activateStudent(student) {
+      var studentClone = utilService.deepClone(student)
+      studentClone.active = true
+      try {
+        await this.$store.dispatch({ type: "updateStudent", student: studentClone });
+        showSuccessMsg(studentClone.name + " " + ('activated'));
+      } catch (err) {
+        console.log(err);
+        showErrorMsg(`Cannot change ${studentClone} `);
+      }
     },
     async removeStudent(studentId) {
       try {
@@ -107,32 +140,20 @@ export default {
     },
     async deactivateStudent(student) {
       var studentClone = utilService.deepClone(student)
-      studentClone.status = 'unactive'
+      studentClone.active = false
       try {
         await this.$store.dispatch({ type: "updateStudent", student: studentClone });
         showSuccessMsg(studentClone.name + " " + ('deactivated'));
-        this.lessonToEdit = ''
+        this.deleteStudent = null
       } catch (err) {
         console.log(err);
         showErrorMsg(`Cannot change ${studentClone} `);
-      }
-    },
-    async addStudentMsg(studentId) {
-      try {
-        await this.$store.dispatch({ type: 'addStudent', studentId })
-        showSuccessMsg("Student msg added");
-      } catch (err) {
-        console.log(err);
-        showErrorMsg("Cannot add student msg");
       }
     },
     classesInMonth(student) {
       // var copiedStudent = utilService.deepClone(student)
       // var sortedLessons = utilService.sortByDate(copiedStudent.classes)
       // return sortedLessons.slice(-4)
-    },
-    printStudentToConsole(student) {
-      console.log("Student msgs:", student.msgs);
     },
     closeEdit() {
       this.editCmp = false

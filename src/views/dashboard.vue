@@ -68,7 +68,11 @@
         <h4>Didnt pay yet</h4>
         <div v-for="student in students">
           <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
-            <p class="normal-font">{{ student.name }}</p>
+            <div class="flex">
+              <button @click.stop="updateMonthlyLessons(student)" class="arrival-btn">
+                <img src="../assets/imgs/paid.svg" alt="paid"></button>
+              <p class="normal-font">{{ student.name }}</p>
+            </div>
             <p class="bold-font">{{ arrivedThisMonth(student).length }}</p>
           </div>
           <!-- <p v-else>Everyone paid this month</p> -->
@@ -94,6 +98,8 @@
 import statistic from '../cmps/statistic.vue';
 import invoice from '../cmps/invoice.vue';
 import monthTable from '../cmps/monthTable.vue';
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
+import { utilService } from '../services/util.service';
 
 export default {
   data() {
@@ -230,7 +236,22 @@ export default {
         phoneNumber = countryCode + phoneNumber.slice(1);
       }
       return phoneNumber;
-    }
+    },
+    async updateMonthlyLessons(student) {
+      var lessonsList = this.arrivedThisMonth(student)
+      var studentClone = utilService.deepClone(student)
+      try {
+        for (const lesson of lessonsList) {
+          const lessonClone = { ...lesson, status: 'paid' };
+          const existingIndex = studentClone.classes.findIndex((c) => c.date === lessonClone.date);
+          studentClone.classes.splice(existingIndex, 1, lessonClone);
+        }
+        await this.$store.dispatch({ type: "updateStudent", student: studentClone });
+        showSuccessMsg(student.name + " paid for the month");
+      } catch (err) {
+        showErrorMsg("Error in monthly pay");
+      }
+    },
   },
   components: {
     statistic,

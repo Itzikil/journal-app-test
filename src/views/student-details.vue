@@ -31,7 +31,11 @@
       </div>
       <div class="lessons-list">
         <ul v-if="student.classes" v-for="(lessons, idx) in slicedClasses" class="lesson-list" :key="idx">
-          <h4 class="text-center ">{{ getMonthName(lessons[0].date) }}</h4>
+          <div class="monthly-header">
+            <h4 class="text-center ">{{ getMonthName(lessons[0].date) }}</h4>
+            <button @click.stop="updateMonthlyLessons(lessons[0].date)"><img src="../assets/imgs/paid.svg"
+                alt="paid"></button>
+          </div>
           <div v-for="lesson in lessons" :key="lesson.date">
             <div class="lesson-item">
               <div class="edit-lesson">
@@ -62,7 +66,7 @@
     <div>
     </div>
     <button @click="addSingleOpen = !addSingleOpen">{{ !addSingleOpen ? 'Add' : 'Close' }} single lesson</button>
-    <singleClass :editStudent="student" v-if="addSingleOpen" />
+    <singleClass :editStudent="student" v-if="addSingleOpen" @closeAddSingle="closeAddSingle" />
     <form v-if="lessonToEdit" @submit.prevent="updateLesson">
       <input type="text" v-model="lessonToEdit.date">
       <input type="text" v-model="lessonToEdit.time">
@@ -72,7 +76,7 @@
       <button @click="lessonToEdit = ''" type="button">Close</button>
     </form>
     <form v-if="lessonNote">
-      <input type="text" v-model="lessonNote" >
+      <input type="text" v-model="lessonNote">
     </form>
   </section>
 </template>
@@ -90,7 +94,7 @@ export default {
       addSingleOpen: false,
       student: null,
       editCmp: false,
-      classes: [],
+      // classes: [],
       classesForDisplay: [],
       monthNumber: 0,
       lessonToEdit: '',
@@ -101,12 +105,14 @@ export default {
   async created() {
     const id = this.$route.params.id
     this.student = await studentService.getById(id)
-    this.classes = utilService.sortByDate(this.student.classes, 'backwards')
     this.groupClassesByMonth()
   },
   computed: {
     classesSum() {
       this.displayClasses
+    },
+    classes() {
+      return utilService.sortByDate(this.student.classes, 'backwards')
     },
     calculateClassSum() {
       return (status) => {
@@ -130,6 +136,24 @@ export default {
     }
   },
   methods: {
+    async updateMonthlyLessons(month) {
+      const [monthDay, monthWanted, monthyear] = month.split('.')
+      var monthlylessons = this.student.classes.filter(lesson => {
+        const [day, monthStr, year] = lesson.date.split('.')
+        return monthWanted === monthStr && lesson.status === 'arrived'
+      })
+      try {
+        for (const lesson of monthlylessons) {
+          await this.updateLesson(lesson, 'paid');
+        }
+        showSuccessMsg("All arrived " + this.monthNames[monthWanted - 1] + " lessons are paid ");
+      } catch (err) {
+        showErrorMsg("Error activating students");
+      }
+    },
+    closeAddSingle() {
+      this.addSingleOpen = '';
+    },
     groupClassesByMonth() {
       const groupedClasses = {};
       this.classes.forEach(cls => {

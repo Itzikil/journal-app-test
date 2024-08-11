@@ -13,11 +13,10 @@ export const studentStore = {
         },
         addStudent(state, { student }) {
             state.students.push(student)
-            console.log(state.students);
+            // console.log(state.students);
         },
         updateStudent(state, { student }) {
             const idx = state.students.findIndex(c => c._id === student._id)
-            console.log(idx);
             state.students.splice(idx, 1, student)
         },
         removeStudent(state, { studentId }) {
