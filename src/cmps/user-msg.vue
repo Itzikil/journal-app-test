@@ -81,23 +81,23 @@ export default {
 
 <style scoped>
 .alert {
-  /* position: fixed; */
-  /* top: 0; */
-  /* left: 0; */
+  position: fixed;
+  top: 0;
+  left: 0;
   /* right: 0; */
-  /* background-color: #333; */
+  background-color: #333;
   color: white;
   padding: 10px;
   text-align: center;
   z-index: 1000;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  /* transition: top 0.3s ease; */
+  transition: top 0.3s ease;
 }
 
 .slide-down-enter-active,
 .slide-down-leave-active {
-  /* transition: all 0.3s ease; */
+  transition: all 0.3s ease;
 }
 
 .slide-down-enter {
