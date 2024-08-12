@@ -37,48 +37,54 @@
 
     .days-container {
         display: flex;
+        gap: 10px;
 
-        .student-list {
-            display: flex;
-            flex-direction: column;
-            flex-wrap: wrap;
-            padding: 0;
-            margin: 0;
-            gap: 10px;
-            margin-bottom: 10px;
+        .students-list {
             width: 100%;
+            max-width: 25%;
 
-            li {
-                flex: 1 0 auto;
-                border-radius: 10px;
-                margin: 0;
-                padding: 0;
-                width: calc(25% - 1%);
-                max-width: 24%;
-                box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-                background-color: $clr4;
-                min-width: 200px;
+            .student-list {
+                gap: 10px;
+                // display: flex;
+                // flex-direction: column;
+                // flex-wrap: wrap;
+                // padding: 0;
+                // margin: 0;
+                // margin-bottom: 10px;
 
-                a {
-                    display: flex;
-                    flex-direction: column;
-                    position: relative;
-                    color: white;
+                li {
+                    flex: 1 0 auto;
+                    border-radius: 10px;
+                    margin: 0;
+                    padding: 0;
+                    width: 100%;
+                    // max-width: 24%;
+                    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+                    background-color: $clr4;
+                    // min-width: 150px;
+                    // max-width: 250px;
 
-                    .student-name {
-                        font-size: 1.3rem;
-                        font-weight: 500;
-                        // line-height: 1;
-                    }
+                    a {
+                        display: flex;
+                        flex-direction: column;
+                        position: relative;
+                        color: white;
 
-                    .student-day {
-                        font-size: 0.8rem;
-                    }
+                        .student-name {
+                            font-size: 1.3rem;
+                            font-weight: 500;
+                            // line-height: 1;
+                        }
 
-                    button {
-                        position: absolute;
-                        right: 5px;
-                        top: 5px;
+                        .student-day {
+                            font-size: 0.8rem;
+                        }
+
+                        button {
+                            position: absolute;
+                            right: 5px;
+                            top: 5px;
+                        }
                     }
                 }
             }
@@ -134,12 +140,17 @@
 
         .days-container {
             flex-direction: column;
+            gap: 0px;
 
-            .student-list {
-                li {
-                    width: 100%;
-                    max-width: 100%;
+            .students-list {
+                min-width: 100%;
+                margin-bottom: 15px;
 
+                .student-list {
+                    li {
+                        width: 100%;
+                        max-width: 100%;
+                    }
                 }
             }
         }

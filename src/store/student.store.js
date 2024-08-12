@@ -2,7 +2,10 @@ import { studentService } from '../services/student.service.local'
 
 export const studentStore = {
     state: {
-        students: []
+        students: [],
+        filterBy: {
+            name: ''
+        },
     },
     getters: {
         students({ students }) { return students },
@@ -13,7 +16,6 @@ export const studentStore = {
         },
         addStudent(state, { student }) {
             state.students.push(student)
-            // console.log(state.students);
         },
         updateStudent(state, { student }) {
             const idx = state.students.findIndex(c => c._id === student._id)
@@ -26,6 +28,9 @@ export const studentStore = {
             const student = state.students.find(student => student._id === studentId)
             if (!student.msgs) student.msgs = []
             student.msgs.push(msg)
+        },
+        setFilter(state, { filterBy }) {
+            state.filterBy = filterBy
         },
     },
     actions: {
@@ -49,10 +54,10 @@ export const studentStore = {
                 throw err
             }
         },
-        async loadStudents(context) {
+        async loadStudents({ commit, state }) {
             try {
-                const students = await studentService.query()
-                context.commit({ type: 'setStudents', students })
+                const students = await studentService.query(state.filterBy)
+                commit({ type: 'setStudents', students })
             } catch (err) {
                 console.log('studentStore: Error in loadStudents', err)
                 throw err
@@ -85,6 +90,14 @@ export const studentStore = {
                 throw err
             }
         },
-
+        async setFilter({ commit, dispatch }, { filterBy }) {
+            try {
+                commit({ type: 'setFilter', filterBy })
+                dispatch({ type: 'loadStudents' })
+            } catch (err) {
+                console.log('Cannot load Students', err);
+                throw err;
+            }
+        },
     }
 }

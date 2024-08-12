@@ -62,7 +62,7 @@
 
     .students-list {
         grid-area: list;
-
+        overflow-y: scroll;
         ul {
             display: flex;
             flex-wrap: wrap;

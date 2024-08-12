@@ -5,7 +5,9 @@
         <h3>{{ students.length }} <span class="fs14">Students</span></h3>
         <button @click="editCmp = !editCmp">{{ editCmp ? '-' : '+' }}</button>
       </div>
-      <input type="text" name="" id="">
+      <form action="" @submit.prevent="">
+        <input type="text" name="" id="" v-model="filterBy.name" @input="setFilter">
+      </form>
     </div>
     <button @click="activeStudents = true" :class="{ 'inactive-btn': !activeStudents }">Active ({{
       activeStudentsList.length }})</button>
@@ -14,8 +16,8 @@
     <button @click="activatatedStudents">activate all students</button>
     <addStudent v-if="editCmp" @closeEdit="closeEdit" />
     <div class="days-container">
-      <ul v-for="(students, day) in groupedStudents" :key="day">
-        <p>{{ day }}</p>
+      <ul v-for="(students, day) in groupedStudents" :key="day" class="students-list">
+        <p class="fs14">{{ day }}</p>
         <ul class="student-list">
           <li v-for="student in students" :key="student._id">
             <router-link :to="`/student/${student._id}`">
@@ -70,6 +72,9 @@ export default {
       editCmp: false,
       deleteStudent: null,
       activeStudents: true,
+      filterBy: {
+        name: ''
+      },
     };
   },
   created() {
@@ -158,6 +163,13 @@ export default {
     closeEdit() {
       this.editCmp = false
     },
+    async setFilter() {
+      try {
+        await this.$store.dispatch({ type: "setFilter", filterBy: {...this.filterBy} });
+      } catch (err) {
+        showErrorMsg(`Cannot change ${studentClone} `);
+      }
+    }
   },
   components: {
     addStudent,

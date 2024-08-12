@@ -18,18 +18,21 @@ export const studentService = {
 window.cs = studentService
 
 
-async function query(filterBy = { txt: '', price: 0 }) {
+async function query(filterBy = { name: '' }) {
     var students = await storageService.query(STORAGE_KEY)
-    if (filterBy.txt) {
-        const regex = new RegExp(filterBy.txt, 'i')
-        students = students.filter(student => regex.test(student.name) || regex.test(student.description))
-    }
-    if (filterBy.price) {
-        students = students.filter(student => student.price <= filterBy.price)
-    }
-    var teacher = await userService.getLoggedinUser()
-    students = students.filter(student => student?.teacher?._id === teacher?._id)
-    students = utilService.sortByName(students)
+
+    // students = students.filter(student => regex.test(student.name) || regex.test(student.description))
+    // if (filterBy.price) {
+        //     students = students.filter(student => student.price <= filterBy.price)
+        // }
+        var teacher = await userService.getLoggedinUser()
+        students = students.filter(student => student?.teacher?._id === teacher?._id)
+        if (filterBy.name) {
+            const regex = new RegExp(filterBy.name, 'i')
+            students = students.filter(student => regex.test(student.name))
+            console.log(students);
+        }
+        students = utilService.sortByName(students)
     return students
 }
 
