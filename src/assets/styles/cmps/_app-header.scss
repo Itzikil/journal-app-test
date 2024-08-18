@@ -80,6 +80,11 @@ header {
 
     }
 
+    @media (max-width:1000px) {
+        p {
+            display: none;
+        }
+    }
 
     @media (max-width:650px) {
         z-index: 100;
@@ -124,10 +129,6 @@ header {
                         border-radius: 5px;
                         transition: background-color 0.5s;
                     }
-                }
-
-                p {
-                    display: none;
                 }
             }
         }

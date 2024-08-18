@@ -13,7 +13,7 @@
       activeStudentsList.length }})</button>
     <button @click="activeStudents = false" :class="{ 'inactive-btn': activeStudents }">Inactive ({{
       inactiveStudentsList.length }})</button>
-    <button @click="activatatedStudents">activate all students</button>
+    <!-- <button @click="activatatedStudents">activate all students</button> -->
     <addStudent v-if="editCmp" @closeEdit="closeEdit" />
     <div class="days-container">
       <ul v-for="(students, day) in groupedStudents" :key="day" class="students-list">

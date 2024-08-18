@@ -24,24 +24,24 @@
                         <td>
                             <p>{{ student.name }}</p>
                         </td>
-                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" class="fs14">
-                            <p>{{ chartData.sumPaidThisMonth(student, month.number)
+                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" >
+                            <p class="fs14">{{ chartData.sumPaidThisMonth(student, month.number)
                                 + chartData.sumArrivedThisMonth(student, month.number) }}
                             </p>
                         </td>
                         <td v-else v-for="(lessons, idx) in weeklyPrice(student)">
-                            <p v-for="lesson in lessons">{{ lesson.price }}</p>
+                            <p v-for="lesson in lessons"  class="fs14">{{ lesson.price }}</p>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <p>Total</p>
                         </td>
-                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" class="fs14">
-                            <p>{{ chartData.monthlySum(month.number) }}</p>
+                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" >
+                            <p class="fs16">{{ chartData.monthlySum(month.number) }}</p>
                         </td>
-                        <td v-else v-for="(week, idx) in weeks" :key="idx" class="fs14">
-                            <p>{{ week }}</p>
+                        <td v-else v-for="(week, idx) in weeks" :key="idx">
+                            <p  class="fs16">{{ week }}</p>
                         </td>
                     </tr>
                 </tbody>

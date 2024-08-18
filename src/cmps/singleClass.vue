@@ -5,7 +5,7 @@
                 <p class="text-center fs12" v-if="idx === 0">Add single lesson</p>
                 <label>Lesson day <input type="text" :ref="'lessonDatePicker' + idx" class="custom-date-input"
                         v-model="lessonsInfo[idx].day" required></label>
-                <label>Time <input modern-time-input type="time" name="time" min="08:00" max="20:00"
+                <label>Time <input modern-time-input type="time" name="time" :min="startHour" :max="endHour"
                         v-model="lessonsInfo[idx].time" required></label>
                 <label>Duration <input type="number" name="duration" v-model="lessonsInfo[idx].duration"
                         placeholder="Minutes" required></label>
@@ -37,9 +37,19 @@ export default {
         return {
             lessonsInfo: [],
             daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            startHour: '',
+            endHour: '',
         };
     },
-    created() {
+    async created() {
+        console.log(this.editStudent);
+        if (this.editStudent) var user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId: this.editStudent.teacher._id })
+        this.startHour = user.pref.hours?.from
+            ? `${user.pref.hours.from < 10 ? '0' : ''}${user.pref.hours.from}:00`
+            : '08:00';
+        this.endHour = user.pref.hours?.to
+            ? `${user.pref.hours.to < 10 ? '0' : ''}${user.pref.hours.to}:00`
+            : '20:00';
     },
     mounted() {
         this.addLesson()
