@@ -1,7 +1,6 @@
 <template>
   <section class="container home text-center">
     <h1>Work Journal</h1>
-    <h2 class="text-center">Orgnaize your work </h2>
     <img alt="Vue logo" src="/pwa-192x192.png">
     <div class="flex gap-10">
       <img src="../assets/imgs/arrived.svg" alt="V" v-if="IsPwa" class="vi-image">
@@ -18,7 +17,9 @@
     <ModalComponent :message="modalMessage" :imageSrc="modalImage" :visible="isModalVisible"
       @close="isModalVisible = false" />
     <div>
-      <p>Already have an account? copy your information</p>
+      <p>Already have an account?</p>
+      <router-link to="/login">Sign in</router-link>
+      <p>Or </p>
       <button @click="pasteData">Paste students data</button>
     </div>
   </section>
@@ -39,6 +40,11 @@ export default {
       modalImage: ''
     }
   },
+  created() {
+    if (this.loggedInUser) {
+      this.$router.push('/today')
+    }
+  },
   computed: {
     IsPwa() {
       console.log(utilService.isRunningAsPWAOnDesktop());
@@ -47,8 +53,6 @@ export default {
     loggedInUser() {
       return this.$store.getters.loggedinUser
     },
-  },
-  created() {
   },
   methods: {
     handleOpenModal(payload) {

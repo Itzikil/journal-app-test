@@ -19,7 +19,7 @@
           <input type="text" placeholder="Add your text" v-model="thirdLine">
           <button>Update</button>
         </form>
-        <p>{{ fullMessage }}</p>
+        <p class="full-msg">{{ fullMessage }}</p>
       </div>
       <!-- </transition> -->
     </div>
@@ -49,6 +49,9 @@
     </div>
     <div>
       <button @click="copyData">Copy students data</button>
+    </div>
+    <div>
+      <button @click="doLogout">Logout</button>
     </div>
   </section>
 </template>
@@ -140,6 +143,10 @@ export default {
         console.error('Failed to copy text: ', err);
       }
     },
+    doLogout() {
+      this.$store.dispatch({ type: 'logout' })
+      this.$router.push('/')
+    },
   },
   components: {
   }
@@ -154,6 +161,6 @@ export default {
 }
 
 .active {
-  max-height: 250px;
+  max-height: 350px;
 }
 </style>

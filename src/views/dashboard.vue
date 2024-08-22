@@ -33,9 +33,9 @@
         <p class="normal-font">Total monthly earn </p>
       </div>
       <div class="students-list">
-        <h3>Students</h3>
+        <h3>Students <span class="fs14">({{ studentsByMonth.length }})</span></h3>
         <ul>
-          <li v-for="student in students" :key="student._id">
+          <li v-for="student in studentsByMonth" :key="student._id">
             <button @click="openStudentDetails(student)">{{ student.name }}</button>
             <router-link :to="`/student/${student._id}`"></router-link>
           </li>
@@ -124,6 +124,14 @@ export default {
     },
     students() {
       return this.$store.getters.students;
+    },
+    studentsByMonth() {
+      return this.students.filter(student =>
+        student.lessonsInfo[0] ?
+          // console.log(student.lessonsInfo[0].start)
+          utilService.biggerDate(student.lessonsInfo[0].start, `32.${this.currentMonth + 1}.${this.currentYear}`)
+          : ''
+      )
     },
     fourMonths() {
       var stats = []

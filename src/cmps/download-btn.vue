@@ -1,5 +1,5 @@
 <template>
-  <button @click="downloadPWA">Download PWA</button>
+  <button @click="downloadPWA">Download APP</button>
 </template>
 
 <script>
@@ -15,7 +15,7 @@ export default {
           modalMessage = 'Please tap the Share button below and then select "Add to Home Screen" to download the App.';
           modalImage = 'safari';
         } else {
-          modalMessage = 'Please use your browser\'s options menu to "Add to Home Screen" to download the Appsss.';
+          modalMessage = 'Please use your browser\'s options menu to "Add to Home Screen" to download the App.';
           modalImage = 'desktop';
         }
       } else {
