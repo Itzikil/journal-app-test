@@ -12,7 +12,9 @@ export const utilService = {
     checkForConflict,
     isRunningAsPWA,
     isRunningAsPWAOnDesktop,
-    biggerDate
+    biggerDate,
+    returnMonthFromDate,
+    getFormattedDate
 }
 
 function makeId(length = 6) {
@@ -83,10 +85,24 @@ function biggerDate(a, b) {
     return dateA <= dateB
 }
 
+function returnMonthFromDate(dateString) {
+    const [day, month, year] = dateString.split('.').map(Number);
+    return month
+};
+
 function parseDate(dateString) {
     const [day, month, year] = dateString.split('.').map(Number);
     return new Date(year, month - 1, day);
 };
+
+function getFormattedDate() {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1; // Months are zero-based in JavaScript
+    const year = today.getFullYear();
+
+    return `${day}.${month}.${year}`;
+}
 
 function sortByName(items) {
     return items.sort((a, b) => {

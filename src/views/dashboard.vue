@@ -128,9 +128,8 @@ export default {
     studentsByMonth() {
       return this.students.filter(student =>
         student.lessonsInfo[0] ?
-          // console.log(student.lessonsInfo[0].start)
           utilService.biggerDate(student.lessonsInfo[0].start, `32.${this.currentMonth + 1}.${this.currentYear}`)
-          : ''
+          : student.classes.some(lesson => utilService.returnMonthFromDate(lesson.date) == `${this.currentMonth + 1}`)
       )
     },
     fourMonths() {

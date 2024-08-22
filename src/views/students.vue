@@ -49,7 +49,7 @@
       <div class="btns-delete-container">
         <button @click="removeStudent(deleteStudent._id)">yes</button>
         <button @click="deleteStudent = null">no</button>
-        <button @click="deactivateStudent(deleteStudent)">deactivate</button>
+        <button v-if="deleteStudent.active" @click="deactivateStudent(deleteStudent)">deactivate</button>
       </div>
     </div>
   </section>
@@ -145,7 +145,8 @@ export default {
     },
     async deactivateStudent(student) {
       var studentClone = utilService.deepClone(student)
-      studentClone.active = false
+      studentClone.active = utilService.getFormattedDate()
+      studentClone.lessonsInfo = []
       try {
         await this.$store.dispatch({ type: "updateStudent", student: studentClone });
         showSuccessMsg(studentClone.name + " " + ('deactivated'));
@@ -165,7 +166,7 @@ export default {
     },
     async setFilter() {
       try {
-        await this.$store.dispatch({ type: "setFilter", filterBy: {...this.filterBy} });
+        await this.$store.dispatch({ type: "setFilter", filterBy: { ...this.filterBy } });
       } catch (err) {
         showErrorMsg(`Cannot change ${studentClone} `);
       }
