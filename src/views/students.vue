@@ -17,12 +17,13 @@
     <addStudent v-if="editCmp" @closeEdit="closeEdit" />
     <div class="days-container">
       <ul v-for="(students, day) in groupedStudents" :key="day" class="students-list">
-        <p class="fs14">{{ day }}</p>
+        <p v-if="activeStudents" class="fs14">{{ day }}</p>
         <ul class="student-list">
           <li v-for="student in students" :key="student._id">
             <router-link :to="`/student/${student._id}`">
               <p class="student-name">{{ student.name }}</p>
-              <button @click.prevent="deleteStudent = student">x</button>
+              <button v-if="!student.active" @click.prevent="activateStudent(student)" class="activate-btn">activate</button>
+              <button @click.prevent="deleteStudent = student" class="delete-btn">x</button>
             </router-link>
           </li>
         </ul>
@@ -145,7 +146,7 @@ export default {
     },
     async deactivateStudent(student) {
       var studentClone = utilService.deepClone(student)
-      studentClone.active = utilService.getFormattedDate()
+      studentClone.active = false
       studentClone.lessonsInfo = []
       try {
         await this.$store.dispatch({ type: "updateStudent", student: studentClone });
