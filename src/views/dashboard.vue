@@ -110,7 +110,7 @@ export default {
       currentYear: new Date().getFullYear(),
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       fullUser: null,
-      showTable: true,
+      showTable: false,
     }
   },
   async created() {
@@ -132,7 +132,7 @@ export default {
         student.lessonsInfo[0] ?
           utilService.biggerDate(student.lessonsInfo[0].start, `${lastDay}.${this.currentMonth + 1}.${this.currentYear}`
           )
-          : student.classes.some(lesson => utilService.returnMonthFromDate(lesson.date) == `${this.currentMonth + 1}.${this.currentYear}`)
+          : student.classes.some(lesson => utilService.extractDatePart(lesson.date,'month.year') == `${this.currentMonth + 1}.${this.currentYear}`)
       )
     },
     fourMonths() {
