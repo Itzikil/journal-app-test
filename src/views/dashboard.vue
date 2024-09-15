@@ -30,8 +30,8 @@
         <p class="text-center fs20">{{ currentYear }}</p>
         <p><span class="fs12">₪</span>{{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
         <p class="normal-font">Total monthly earn </p>
-        <!-- <p>Max Revenue</p>
-        <p>{{ monthlyMax }}</p> -->
+        <p class="fs10"><span class="fs8">₪</span>{{ monthlyMax }}</p>
+        <p class="fs12">Max Revenue</p>
       </div>
       <div class="students-list">
         <h3>Students <span class="fs14">({{ studentsByMonth.length }})</span></h3>
@@ -127,13 +127,16 @@ export default {
       return this.$store.getters.students;
     },
     studentsByMonth() {
-      const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-      return this.students.filter(student =>
-        student.lessonsInfo[0] ?
-          utilService.biggerDate(student.lessonsInfo[0].start, `${lastDay}.${this.currentMonth + 1}.${this.currentYear}`
-          )
-          : student.classes.some(lesson => utilService.extractDatePart(lesson.date,'month.year') == `${this.currentMonth + 1}.${this.currentYear}`)
-      )
+      const lastDayOfMonth = `${new Date(this.currentYear, this.currentMonth + 1, 0).getDate()}.${this.currentMonth + 1}.${this.currentYear}`;
+      return this.students.filter(student => {
+        const firstLesson = student.lessonsInfo[0];
+        if (firstLesson && utilService.biggerDate(firstLesson.start, lastDayOfMonth)) {
+          return true;
+        }
+        return student.classes.some(lesson =>
+          utilService.extractDatePart(lesson.date, 'month.year') === `${this.currentMonth + 1}.${this.currentYear}`
+        );
+      });
     },
     fourMonths() {
       var stats = []
@@ -152,16 +155,17 @@ export default {
       }
       return stats
     },
-    // monthlyMax() {
-    //   return this.students.reduce((sum, student) => {
-    //     const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
-    //       if (!utilService.biggerDate(`${this.currentMonth}.${this.currentYear}`, lesson.start)) return
-    //       const lessonDays = utilService.getWeekdayCountInMonth(this.currentYear, this.currentMonth, lesson.day);
-    //       return acc + (lessonDays * lesson.price);
-    //     }, 0) ?? 0; // If studentRevenue is undefined, default to 0
-    //     return sum + studentRevenue; // Add each student's revenue to the total
-    //   }, 0); // Initial value for outer accumulator is 0
-    // },
+    monthlyMax() {
+      console.log(this.studentsByMonth)
+      return this.studentsByMonth.reduce((sum, student) => {
+        const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
+          if (!utilService.biggerDate(`${this.currentMonth}.${this.currentYear}`, lesson.start)) return
+          const lessonDays = utilService.getWeekdayCountInMonth(this.currentYear, this.currentMonth, lesson.day);
+          return acc + (lessonDays * lesson.price);
+        }, 0) ?? 0; // If studentRevenue is undefined, default to 0
+        return sum + studentRevenue; // Add each student's revenue to the total
+      }, 0); // Initial value for outer accumulator is 0
+    },
     chartData() {
       return {
         sumPaidThisMonth: this.sumPaidThisMonth,
