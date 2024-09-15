@@ -156,10 +156,9 @@ export default {
       return stats
     },
     monthlyMax() {
-      console.log(this.studentsByMonth)
+      // console.log(this.studentsByMonth)
       return this.studentsByMonth.reduce((sum, student) => {
         const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
-          if (!utilService.biggerDate(`${this.currentMonth}.${this.currentYear}`, lesson.start)) return
           const lessonDays = utilService.getWeekdayCountInMonth(this.currentYear, this.currentMonth, lesson.day);
           return acc + (lessonDays * lesson.price);
         }, 0) ?? 0; // If studentRevenue is undefined, default to 0
