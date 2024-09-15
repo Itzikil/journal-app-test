@@ -4,7 +4,6 @@
       <div class="user-details">
         <div class="user-details-container">
           <h2>Dashboard</h2>
-          <!-- <p class="fs20">{{ user.fullname }}</p> -->
           <button @click="doLogout">Logout</button>
         </div>
         <img :src="user.imgUrl" alt="user" />
@@ -31,6 +30,8 @@
         <p class="text-center fs20">{{ currentYear }}</p>
         <p><span class="fs12">₪</span>{{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
         <p class="normal-font">Total monthly earn </p>
+        <!-- <p>Max Revenue</p>
+        <p>{{ monthlyMax }}</p> -->
       </div>
       <div class="students-list">
         <h3>Students <span class="fs14">({{ studentsByMonth.length }})</span></h3>
@@ -109,7 +110,7 @@ export default {
       currentYear: new Date().getFullYear(),
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       fullUser: null,
-      showTable: false,
+      showTable: true,
     }
   },
   async created() {
@@ -126,10 +127,12 @@ export default {
       return this.$store.getters.students;
     },
     studentsByMonth() {
+      const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
       return this.students.filter(student =>
         student.lessonsInfo[0] ?
-          utilService.biggerDate(student.lessonsInfo[0].start, `32.${this.currentMonth + 1}.${this.currentYear}`)
-          : student.classes.some(lesson => utilService.returnMonthFromDate(lesson.date) == `${this.currentMonth + 1}`)
+          utilService.biggerDate(student.lessonsInfo[0].start, `${lastDay}.${this.currentMonth + 1}.${this.currentYear}`
+          )
+          : student.classes.some(lesson => utilService.returnMonthFromDate(lesson.date) == `${this.currentMonth + 1}.${this.currentYear}`)
       )
     },
     fourMonths() {
@@ -149,6 +152,16 @@ export default {
       }
       return stats
     },
+    // monthlyMax() {
+    //   return this.students.reduce((sum, student) => {
+    //     const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
+    //       if (!utilService.biggerDate(`${this.currentMonth}.${this.currentYear}`, lesson.start)) return
+    //       const lessonDays = utilService.getWeekdayCountInMonth(this.currentYear, this.currentMonth, lesson.day);
+    //       return acc + (lessonDays * lesson.price);
+    //     }, 0) ?? 0; // If studentRevenue is undefined, default to 0
+    //     return sum + studentRevenue; // Add each student's revenue to the total
+    //   }, 0); // Initial value for outer accumulator is 0
+    // },
     chartData() {
       return {
         sumPaidThisMonth: this.sumPaidThisMonth,
@@ -158,6 +171,7 @@ export default {
         prevMonth: this.prevMonth,
         nextMonth: this.nextMonth,
         changeMonth: this.changeMonth,
+        studentsByMonth: this.studentsByMonth,
         currentYear: this.currentYear,
         currentMonth: this.currentMonth,
         monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

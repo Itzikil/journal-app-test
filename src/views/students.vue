@@ -2,7 +2,7 @@
   <section class="students-container container">
     <div class="students-header">
       <div class="sub-students-header">
-        <h3>{{ students.length }} <span class="fs14">Students</span></h3>
+        <h3>{{ activeStudentsList.length }} <span class="fs14">Students</span></h3>
         <button @click="editCmp = !editCmp">{{ editCmp ? '-' : '+' }}</button>
       </div>
       <form action="" @submit.prevent="">
@@ -22,29 +22,14 @@
           <li v-for="student in students" :key="student._id">
             <router-link :to="`/student/${student._id}`">
               <p class="student-name">{{ student.name }}</p>
-              <button v-if="!student.active" @click.prevent="activateStudent(student)" class="activate-btn">activate</button>
+              <button v-if="!student.active" @click.prevent="activateStudent(student)"
+                class="activate-btn">activate</button>
               <button @click.prevent="deleteStudent = student" class="delete-btn">x</button>
             </router-link>
           </li>
         </ul>
       </ul>
     </div>
-    <!-- <ul class="student-list">
-      <li v-for="student in students" :key="student._id">
-        <router-link :to="`/student/${student._id}`">
-          <p class="student-name">{{ student.name }}</p>
-          <div class="flex justify-space align-center">
-            <p class="student-day">{{ student.day }}</p>
-            <div class="lessons-imgs">
-              <div v-for="lesson in classesInMonth(student)" :key="lesson.date">
-                <img :src="loadImage(lesson.status)" :alt="lesson.status" :title="lesson.date">
-              </div>
-            </div>
-          </div>
-          <button @click.prevent="deleteStudent = student">x</button>
-        </router-link>
-      </li>
-    </ul> -->
     <div v-if="deleteStudent" class="delete-student-container">
       <p>Are you sure you want to delete {{ deleteStudent.name }}?</p>
       <div class="btns-delete-container">
@@ -156,11 +141,6 @@ export default {
         console.log(err);
         showErrorMsg(`Cannot change ${studentClone} `);
       }
-    },
-    classesInMonth(student) {
-      // var copiedStudent = utilService.deepClone(student)
-      // var sortedLessons = utilService.sortByDate(copiedStudent.classes)
-      // return sortedLessons.slice(-4)
     },
     closeEdit() {
       this.editCmp = false

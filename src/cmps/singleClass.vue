@@ -61,7 +61,12 @@ export default {
             if (this.lessonsInfo.length) this.lessonsInfo.pop()
         },
         addLesson() {
-            this.lessonsInfo.push(studentService.getEmptyClass());
+            // var lessonsLength = this.editStudent.classes.length
+            // if (lessonsLength) {
+            //     this.lessonsInfo.push(this.editStudent.classes[lessonsLength - 1])
+            // } else {
+                this.lessonsInfo.push(studentService.getEmptyClass());
+            // }
             const index = this.lessonsInfo.length - 1;
             this.$nextTick(() => {
                 ['joinedDatePicker', 'lessonDatePicker'].forEach(ref => {

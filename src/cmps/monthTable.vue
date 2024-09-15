@@ -20,28 +20,28 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="student in students" :key="student.id">
+                    <tr v-for="student in studentsByMonth" :key="student.id">
                         <td>
                             <p>{{ student.name }}</p>
                         </td>
-                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" >
+                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month">
                             <p class="fs14">{{ chartData.sumPaidThisMonth(student, month.number)
                                 + chartData.sumArrivedThisMonth(student, month.number) }}
                             </p>
                         </td>
                         <td v-else v-for="(lessons, idx) in weeklyPrice(student)">
-                            <p v-for="lesson in lessons"  class="fs14">{{ lesson.price }}</p>
+                            <p v-for="lesson in lessons" class="fs14">{{ lesson.price }}</p>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <p>Total</p>
                         </td>
-                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month" >
+                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month">
                             <p class="fs16">{{ chartData.monthlySum(month.number) }}</p>
                         </td>
                         <td v-else v-for="(week, idx) in weeks" :key="idx">
-                            <p  class="fs16">{{ week }}</p>
+                            <p class="fs16">{{ week }}</p>
                         </td>
                     </tr>
                 </tbody>
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import { utilService } from '../services/util.service';
+
 export default {
     props: {
         fourMonths: Array,
@@ -70,6 +72,20 @@ export default {
         students() {
             return this.$store.getters.students;
         },
+        studentsByMonth() {
+            const lastDay = new Date(this.chartData.currentYear, this.chartData.currentMonth + 1, 0).getDate();
+            return this.students.filter(student =>
+                student.lessonsInfo[0] ?
+                    utilService.biggerDate(student.lessonsInfo[0].start, `${lastDay}.${this.chartData.currentMonth + 1}.${this.chartData.currentYear}`,
+                    )
+                    : student.classes.some(lesson => {
+                        const lessonMonth = utilService.extractDatePart(lesson.date, 'month');
+                        const lessonYear = utilService.extractDatePart(lesson.date, 'year');
+                        const monthDifference = (lessonYear - this.chartData.currentYear) * 12 + (lessonMonth - (this.chartData.currentMonth + 1));
+                        return monthDifference <= 0 && monthDifference >= -3;
+                    })
+            );
+        }
     },
     methods: {
         pickMonth(month) {

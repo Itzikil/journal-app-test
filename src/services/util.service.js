@@ -14,7 +14,10 @@ export const utilService = {
     isRunningAsPWAOnDesktop,
     biggerDate,
     returnMonthFromDate,
-    getFormattedDate
+    returnYearFromDate,
+    extractDatePart,
+    getFormattedDate,
+    getWeekdayCountInMonth
 }
 
 function makeId(length = 6) {
@@ -80,14 +83,26 @@ function sortByDate(lessons, backwards) {
 }
 
 function biggerDate(a, b) {
+    if (a.split('.').length === 2) {
+        a = `1.${a}`
+
+    }
+    if (b.split('.').length === 2) {
+        b = `1.${b}`
+    }
+
     const dateA = parseDate(a);
     const dateB = parseDate(b);
-    return dateA <= dateB
+    return dateA <= dateB;
 }
 
 function returnMonthFromDate(dateString) {
     const [day, month, year] = dateString.split('.').map(Number);
-    return month
+    return `${month}`
+};
+function returnYearFromDate(dateString) {
+    const [day, month, year] = dateString.split('.').map(Number);
+    return `${year}`
 };
 
 function parseDate(dateString) {
@@ -102,6 +117,44 @@ function getFormattedDate() {
     const year = today.getFullYear();
 
     return `${day}.${month}.${year}`;
+}
+
+function extractDatePart(dateString, part) {
+    const [day, month, year] = dateString.split('.').map(Number);
+    switch (part) {
+        case 'day':
+            return day;
+        case 'month':
+            return month;
+        case 'year':
+            return year;
+        case 'month.year':
+            return `${month}.${year}`;
+        case 'day.month':
+            return `${day}.${month}`;
+        case 'full':
+            return `${day}.${month}.${year}`;
+        default:
+            return null;
+    }
+}
+
+function getWeekdayCountInMonth(year, month, weekday) {
+    let count = 0;
+    const date = new Date(year, month, 1); // Start from the 1st day of the month
+    const lastDay = new Date(year, month + 1, 0).getDate(); // Get the last day of the month
+    for (let day = 1; day <= lastDay; day++) {
+        date.setDate(day);
+        if (date.getDay() === weekdayToNumber(weekday)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function weekdayToNumber(weekday) {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    return days.indexOf(weekday);
 }
 
 function sortByName(items) {
