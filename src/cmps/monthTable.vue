@@ -73,18 +73,27 @@ export default {
             return this.$store.getters.students;
         },
         studentsByMonth() {
-            const lastDay = new Date(this.chartData.currentYear, this.chartData.currentMonth + 1, 0).getDate();
-            return this.students.filter(student =>
-                student.lessonsInfo[0] ?
-                    utilService.biggerDate(student.lessonsInfo[0].start, `${lastDay}.${this.chartData.currentMonth + 1}.${this.chartData.currentYear}`,
-                    )
-                    : student.classes.some(lesson => {
-                        const lessonMonth = utilService.extractDatePart(lesson.date, 'month');
-                        const lessonYear = utilService.extractDatePart(lesson.date, 'year');
-                        const monthDifference = (lessonYear - this.chartData.currentYear) * 12 + (lessonMonth - (this.chartData.currentMonth + 1));
-                        return monthDifference <= 0 && monthDifference >= -3;
-                    })
-            );
+            const lastDayOfMonth = `${new Date(this.chartData.currentYear, this.chartData.currentMonth + 1, 0).getDate()}.${this.chartData.currentMonth + 1}.${this.chartData.currentYear}`;
+
+            // Helper function to check if a lesson is within the desired month range (up to 3 months before)
+            const isWithinMonthRange = (lesson) => {
+                const lessonMonth = utilService.extractDatePart(lesson.date, 'month');
+                const lessonYear = utilService.extractDatePart(lesson.date, 'year');
+                const monthDifference = (lessonYear - this.chartData.currentYear) * 12 + (lessonMonth - (this.chartData.currentMonth + 1));
+                return monthDifference <= 0 && monthDifference >= -3;
+            };
+
+            return this.students.filter(student => {
+                const firstLesson = student.lessonsInfo[0];
+
+                // Check if student's first lesson exists and falls within the valid date range
+                if (firstLesson && utilService.biggerDate(firstLesson.start, lastDayOfMonth)) {
+                    return true;
+                }
+
+                // Check if any class of the student is within the desired month range
+                return student.classes.some(isWithinMonthRange);
+            });
         }
     },
     methods: {

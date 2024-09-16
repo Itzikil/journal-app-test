@@ -110,7 +110,7 @@ export default {
       currentYear: new Date().getFullYear(),
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       fullUser: null,
-      showTable: false,
+      showTable: true,
     }
   },
   async created() {
@@ -156,7 +156,7 @@ export default {
       return stats
     },
     monthlyMax() {
-      // console.log(this.studentsByMonth)
+      // count all the weekly active students, not inactive nor singles
       return this.studentsByMonth.reduce((sum, student) => {
         const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
           const lessonDays = utilService.getWeekdayCountInMonth(this.currentYear, this.currentMonth, lesson.day);
