@@ -98,7 +98,7 @@ export default {
     },
     methods: {
         monthOrYear(month) {
-            if (this.chartData.currentMonth >= 0 && this.chartData.currentMonth <= 2 && month > 2) {
+            if (this.chartData.currentMonth >= 0 && this.chartData.currentMonth <= 2 && month > 3) {
                 return `${month}.${this.chartData.currentYear - 1}`
             }
             else return month

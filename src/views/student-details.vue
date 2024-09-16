@@ -65,16 +65,31 @@
     </div>
     <div>
     </div>
-    <button @click="addSingleOpen = !addSingleOpen">{{ !addSingleOpen ? 'Add' : 'Close' }} single lesson</button>
+    <button @click="toggleAddSingle">{{ !addSingleOpen ? 'Add' : 'Close' }} single lesson</button>
     <singleClass :editStudent="student" v-if="addSingleOpen" @closeAddSingle="closeAddSingle" />
-    <form v-if="lessonToEdit" @submit.prevent="updateLesson">
-      <input type="text" v-model="lessonToEdit.date">
-      <input type="text" v-model="lessonToEdit.time">
-      <input type="number" v-model="lessonToEdit.duration">
-      <input type="number" v-model="lessonToEdit.price">
-      <button>Save</button>
-      <button @click="lessonToEdit = ''" type="button">Close</button>
-    </form>
+    <div class="add-student-container" v-if="lessonToEdit">
+      <form @submit.prevent="updateLesson">
+        <p class="text-center">Edit lesson</p>
+        <label for="">
+          Day
+          <input type="text" v-model="lessonToEdit.date">
+        </label>
+        <label for="">
+          Time
+          <input type="text" v-model="lessonToEdit.time">
+        </label>
+        <label for="">
+          Duration
+          <input type="number" v-model="lessonToEdit.duration">
+        </label>
+        <label for="">
+          Price
+          <input type="number" v-model="lessonToEdit.price">
+        </label>
+        <button>Save</button>
+        <button @click="lessonToEdit = ''" type="button">Close</button>
+      </form>
+    </div>
     <form v-if="lessonNote">
       <input type="text" v-model="lessonNote">
     </form>
@@ -94,7 +109,6 @@ export default {
       addSingleOpen: false,
       student: null,
       editCmp: false,
-      // classes: [],
       classesForDisplay: [],
       monthNumber: 0,
       lessonToEdit: '',
@@ -153,6 +167,25 @@ export default {
     },
     closeAddSingle() {
       this.addSingleOpen = '';
+    },
+    toggleAddSingle() {
+      if (this.addSingleOpen) {
+        this.addSingleOpen = '';
+      } else {
+        this.addSingleOpen = true;
+        const isMobile = window.innerWidth <= 768; // 768px is a common mobile breakpoint
+        if (isMobile) {
+          this.ScrollDown()
+        }
+      }
+    },
+    ScrollDown() {
+      setTimeout(() =>
+        window.scrollTo({
+          top: document.documentElement.scrollHeight, // Scroll to the bottom
+          behavior: 'smooth' // Smooth scroll
+        })
+        , 100)
     },
     groupClassesByMonth() {
       const groupedClasses = {};
@@ -217,7 +250,10 @@ export default {
     },
     editLesson(lesson) {
       if (lesson.time === this.lessonToEdit?.time && lesson.date === this.lessonToEdit?.date) this.lessonToEdit = ''
-      else this.lessonToEdit = lesson
+      else {
+        this.lessonToEdit = lesson
+        this.ScrollDown()
+      }
     },
     activeStatus(student, status) {
       if (student === status) return 'active-status'
