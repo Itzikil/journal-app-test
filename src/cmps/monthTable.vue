@@ -25,8 +25,8 @@
                             <p>{{ student.name }}</p>
                         </td>
                         <td v-if="!monthPicked" v-for="month in fourMonths" :key="month">
-                            <p class="fs14">{{ chartData.sumPaidThisMonth(student, month.number)
-                                + chartData.sumArrivedThisMonth(student, month.number) }}
+                            <p class="fs14">{{ chartData.sumPaidThisMonth(student, monthOrYear(month.number))
+                                + chartData.sumArrivedThisMonth(student, monthOrYear(month.number)) }}
                             </p>
                         </td>
                         <td v-else v-for="(lessons, idx) in weeklyPrice(student)">
@@ -38,7 +38,7 @@
                             <p>Total</p>
                         </td>
                         <td v-if="!monthPicked" v-for="month in fourMonths" :key="month">
-                            <p class="fs16">{{ chartData.monthlySum(month.number) }}</p>
+                            <p class="fs16">{{ chartData.monthlySum(monthOrYear(month.number)) }}</p>
                         </td>
                         <td v-else v-for="(week, idx) in weeks" :key="idx">
                             <p class="fs16">{{ week }}</p>
@@ -97,6 +97,12 @@ export default {
         }
     },
     methods: {
+        monthOrYear(month) {
+            if (this.chartData.currentMonth >= 0 && this.chartData.currentMonth <= 2 && month > 2) {
+                return `${month}.${this.chartData.currentYear - 1}`
+            }
+            else return month
+        },
         pickMonth(month) {
             this.chartData.changeMonth(month.number - 1)
             this.monthPicked = month.number

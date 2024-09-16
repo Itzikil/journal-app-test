@@ -197,8 +197,14 @@ export default {
       }
     },
     classesInMonth(student, selectedDate) {
-      var date = selectedDate ? `${selectedDate}.${this.currentYear}` : `${this.currentMonth + 1}.${this.currentYear}`
-      return student.classes.filter(lesson => `${lesson.date.split(".")[1]}.${lesson.date.split(".")[2]}` === date)
+      var date
+      if (/^\d{1,2}\.\d{4}$/.test(selectedDate)) {
+        date = selectedDate
+      }
+      else {
+        date = `${selectedDate || this.currentMonth + 1}.${this.currentYear}`
+      }
+      return student.classes.filter(lesson => utilService.extractDatePart(lesson.date, 'month.year') === date)
     },
     sumPaidThisMonth(student, selectedDate) {
       return this.paidThisMonth(student, selectedDate).reduce((acc, lesson) => acc + lesson.price, 0)
