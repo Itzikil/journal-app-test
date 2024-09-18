@@ -46,7 +46,6 @@ import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
 import { studentService } from '../services/student.service.local';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-// import { utilService } from '../services/util.service';
 
 export default {
   props: {
@@ -125,7 +124,7 @@ export default {
         await this.$store.dispatch({ type: this.studentToAdd._id ? "updateStudent" : "addStudent", student: this.studentToAdd });
         var msg = this.studentToAdd._id ? " updated" : " added"
         showSuccessMsg(this.studentToAdd.name + msg);
-        this.$emit('closeEdit')
+        this.$emit('toggleEditCmp')
         this.studentToAdd = studentService.getEmptyStudent();
       } catch (err) {
         console.log(err);

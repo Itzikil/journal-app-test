@@ -20,9 +20,9 @@
           <p>₪{{ lesson.price }}</p>
         </div>
       </div>
-      <button @click="openEdit">Edit</button>
+      <button @click="toggleEditCmp">Edit</button>
     </div>
-    <addStudent v-if="editCmp" :editStudent="student" @closeEdit="closeEdit" />
+    <addStudent v-if="editCmp" :editStudent="student" @toggleEditCmp="toggleEditCmp" />
     <div class="last-lessons">
       <div class="btn-container">
         <button @click="changeMonth(1)">&lt</button>
@@ -41,7 +41,7 @@
               <div class="edit-lesson">
                 <button @click="deleteLesson(lesson)"><img src="../assets/imgs/delete.svg" alt="delete"></button>
                 <button @click="editLesson(lesson)"><img src="../assets/imgs/edit.svg" alt="edit"></button>
-                <button><img src="../assets/imgs/note.svg" alt="note"></button>
+                <button @click="toggleLessonNote(lesson)"><img src="../assets/imgs/note.svg" alt="note"></button>
               </div>
               <p>{{ lesson.date }} </p>
               <div class="btns-container">
@@ -65,34 +65,28 @@
     </div>
     <div>
     </div>
-    <button @click="toggleAddSingle">{{ !addSingleOpen ? 'Add' : 'Close' }} single lesson</button>
-    <singleClass :editStudent="student" v-if="addSingleOpen" @closeAddSingle="closeAddSingle" />
+    <div class="add-student-container" v-if="lessonNote">
+      <p>Lesson note</p>
+      <p>{{ lessonNote.date }} - {{ lessonNote.time }}</p>
+      <form @submit.prevent="updateNoteLesson">
+        <textarea v-model="lessonNote.note"></textarea>
+        <button>Save</button>
+        <button @click="lessonNote = ''" type="button">Close</button>
+      </form>
+    </div>
     <div class="add-student-container" v-if="lessonToEdit">
       <form @submit.prevent="updateLesson">
         <p class="text-center">Edit lesson</p>
-        <label for="">
-          Day
-          <input type="text" v-model="lessonToEdit.date">
-        </label>
-        <label for="">
-          Time
-          <input type="text" v-model="lessonToEdit.time">
-        </label>
-        <label for="">
-          Duration
-          <input type="number" v-model="lessonToEdit.duration">
-        </label>
-        <label for="">
-          Price
-          <input type="number" v-model="lessonToEdit.price">
-        </label>
+        <label for="">Day<input type="text" v-model="lessonToEdit.date"></label>
+        <label for="">Time<input type="text" v-model="lessonToEdit.time"></label>
+        <label for="">Duration<input type="number" v-model="lessonToEdit.duration"></label>
+        <label for="">Price<input type="number" v-model="lessonToEdit.price"></label>
         <button>Save</button>
         <button @click="lessonToEdit = ''" type="button">Close</button>
       </form>
     </div>
-    <form v-if="lessonNote">
-      <input type="text" v-model="lessonNote">
-    </form>
+    <button @click="toggleAddSingle">{{ !addSingleOpen ? 'Add' : 'Close' }} single lesson</button>
+    <singleClass :editStudent="student" v-if="addSingleOpen" @toggleAddSingle="toggleAddSingle" />
   </section>
 </template>
 
@@ -122,28 +116,8 @@ export default {
     this.groupClassesByMonth()
   },
   computed: {
-    classesSum() {
-      this.displayClasses
-    },
     classes() {
       return utilService.sortByDate(this.student.classes, 'backwards')
-    },
-    calculateClassSum() {
-      return (status) => {
-        return this.displayClasses.reduce((total, lesson) => {
-          if (lesson.status === status) {
-            return total + this.student.price;
-          } else {
-            return total;
-          }
-        }, 0);
-      };
-    },
-    arrivedClassesSum() {
-      return this.calculateClassSum("arrived");
-    },
-    paidClassesSum() {
-      return this.calculateClassSum("paid");
     },
     slicedClasses() {
       return this.classesForDisplay.slice(this.monthNumber, this.monthNumber + 2)
@@ -163,20 +137,6 @@ export default {
         showSuccessMsg("All arrived " + this.monthNames[monthWanted - 1] + " lessons are paid ");
       } catch (err) {
         showErrorMsg("Error activating students");
-      }
-    },
-    closeAddSingle() {
-      this.addSingleOpen = '';
-    },
-    toggleAddSingle() {
-      if (this.addSingleOpen) {
-        this.addSingleOpen = '';
-      } else {
-        this.addSingleOpen = true;
-        const isMobile = window.innerWidth <= 768; // 768px is a common mobile breakpoint
-        if (isMobile) {
-          this.ScrollDown()
-        }
       }
     },
     ScrollDown() {
@@ -210,18 +170,17 @@ export default {
         (this.classesForDisplay.length < 2)) return
       this.monthNumber += idx
     },
-    openEdit() {
-      this.editCmp = !this.editCmp
-    },
-    closeEdit() {
-      this.editCmp = false
+
+    updateNoteLesson() {
+      this.updateLesson(this.lessonNote)
+      this.lessonNote = ''
     },
     async updateLesson(lesson, status) {
       if (status) {
         if (lesson.status === status) return
         lesson.status = status
       } else {
-        lesson = this.lessonToEdit
+        lesson = this.lessonNote || this.lessonToEdit
       }
       var studentClone = utilService.deepClone(this.student)
       const existingIndex = studentClone.classes.findIndex((c) => c.date === lesson.date);
@@ -246,17 +205,46 @@ export default {
         console.log(err);
         showErrorMsg(`Cannot change ${studentClone}`);
       }
-      console.log(studentClone);
-    },
-    editLesson(lesson) {
-      if (lesson.time === this.lessonToEdit?.time && lesson.date === this.lessonToEdit?.date) this.lessonToEdit = ''
-      else {
-        this.lessonToEdit = lesson
-        this.ScrollDown()
-      }
     },
     activeStatus(student, status) {
       if (student === status) return 'active-status'
+    },
+    toggleEditCmp() {
+      this.editCmp = !this.editCmp;
+      this.resetOtherStates('editCmp');
+    },
+    toggleLessonNote(lesson) {
+      this.lessonNote = this.isSameLesson(lesson, this.lessonNote) ? '' : lesson;
+      this.resetOtherStates('lessonNote');
+      this.ScrollDown();
+    },
+    editLesson(lesson) {
+      if (this.isSameLesson(lesson, this.lessonToEdit)) {
+        this.lessonToEdit = '';
+      } else {
+        this.lessonToEdit = lesson;
+        this.ScrollDown();
+      }
+      this.resetOtherStates('lessonToEdit');
+    },
+    toggleAddSingle() {
+      this.addSingleOpen = !this.addSingleOpen;
+      if (this.addSingleOpen && this.isMobile()) {
+        this.ScrollDown();
+      }
+      this.resetOtherStates('addSingleOpen');
+    },
+    resetOtherStates(except) {
+      if (except !== 'addSingleOpen') this.addSingleOpen = '';
+      if (except !== 'lessonToEdit') this.lessonToEdit = '';
+      if (except !== 'lessonNote') this.lessonNote = '';
+      if (except !== 'editCmp') this.editCmp = '';
+    },
+    isMobile() {
+      return window.innerWidth <= 768;
+    },
+    isSameLesson(lessonA, lessonB) {
+      return lessonA?.date === lessonB?.date && lessonA?.time === lessonB?.time;
     },
   },
   components: {
