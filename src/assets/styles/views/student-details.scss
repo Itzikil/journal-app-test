@@ -51,13 +51,14 @@
             .monthly-header {
                 display: flex;
                 position: relative;
+                width: 100%;
 
                 h4 {
                     justify-self: end;
                     align-self: center;
                 }
 
-                button {
+                .pay-all-btn {
                     min-width: 25px;
                     height: 25px;
                     background-color: transparent;

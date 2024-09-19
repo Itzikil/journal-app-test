@@ -74,6 +74,8 @@ function loadFromStorage(key) {
 }
 
 function sortByDate(lessons, backwards) {
+    console.log(lessons);
+    
     return lessons.sort((a, b) => {
         const dateA = parseDate(a.date);
         const dateB = parseDate(b.date);

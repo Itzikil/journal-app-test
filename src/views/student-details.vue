@@ -33,14 +33,14 @@
         <ul v-if="student.classes" v-for="(lessons, idx) in slicedClasses" class="lesson-list" :key="idx">
           <div class="monthly-header">
             <h4 class="text-center ">{{ getMonthName(lessons[0].date) }}</h4>
-            <button @click.stop="updateMonthlyLessons(lessons[0].date)"><img src="../assets/imgs/paid.svg"
+            <button @click.stop="updateMonthlyLessons(lessons[0].date)" class="pay-all-btn"><img src="../assets/imgs/paid.svg"
                 alt="paid"></button>
           </div>
           <div v-for="lesson in lessons" :key="lesson.date">
             <div class="lesson-item">
               <div class="edit-lesson">
                 <button @click="deleteLesson(lesson)"><img src="../assets/imgs/delete.svg" alt="delete"></button>
-                <button @click="editLesson(lesson)"><img src="../assets/imgs/edit.svg" alt="edit"></button>
+                <button @click="openEditLesson(lesson)"><img src="../assets/imgs/edit.svg" alt="edit"></button>
                 <button @click="toggleLessonNote(lesson)"><img src="../assets/imgs/note.svg" alt="note"></button>
               </div>
               <p>{{ lesson.date }} </p>
@@ -92,7 +92,6 @@
 
 <script>
 import { utilService } from '../services/util.service'
-import { studentService } from '../services/student.service.local'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service';
 import addStudent from '../cmps/addStudent.vue'
 import singleClass from '../cmps/singleClass.vue';
@@ -101,9 +100,7 @@ export default {
   data() {
     return {
       addSingleOpen: false,
-      student: null,
       editCmp: false,
-      classesForDisplay: [],
       monthNumber: 0,
       lessonToEdit: '',
       lessonNote: '',
@@ -112,33 +109,38 @@ export default {
   },
   async created() {
     const id = this.$route.params.id
-    this.student = await studentService.getById(id)
-    this.groupClassesByMonth()
+    try {
+      await this.$store.dispatch({ type: "getStudentById", id });
+    } catch (err) {
+      console.log(err);
+    }
+    this.groupClassesByMonth
   },
   computed: {
+    student() {
+      return utilService.deepClone(this.$store.getters.currStudent)
+    },
     classes() {
       return utilService.sortByDate(this.student.classes, 'backwards')
     },
     slicedClasses() {
-      return this.classesForDisplay.slice(this.monthNumber, this.monthNumber + 2)
-    }
+      return this.groupClassesByMonth.slice(this.monthNumber, this.monthNumber + 2)
+    },
+    groupClassesByMonth() {
+      const groupedClasses = {};
+      this.classes.forEach(cls => {
+        const monthKey = utilService.extractDatePart(cls.date, 'month.year')
+        if (!groupedClasses[monthKey]) {
+          groupedClasses[monthKey] = [];
+        }
+        groupedClasses[monthKey].push(cls);
+      });
+      const keys = Object.keys(groupedClasses);
+      var classesForDisplay = keys.map(key => groupedClasses[key])
+      return classesForDisplay
+    },
   },
   methods: {
-    async updateMonthlyLessons(month) {
-      const [monthDay, monthWanted, monthyear] = month.split('.')
-      var monthlylessons = this.student.classes.filter(lesson => {
-        const [day, monthStr, year] = lesson.date.split('.')
-        return monthWanted === monthStr && lesson.status === 'arrived'
-      })
-      try {
-        for (const lesson of monthlylessons) {
-          await this.updateLesson(lesson, 'paid');
-        }
-        showSuccessMsg("All arrived " + this.monthNames[monthWanted - 1] + " lessons are paid ");
-      } catch (err) {
-        showErrorMsg("Error activating students");
-      }
-    },
     ScrollDown() {
       setTimeout(() =>
         window.scrollTo({
@@ -147,33 +149,30 @@ export default {
         })
         , 100)
     },
-    groupClassesByMonth() {
-      const groupedClasses = {};
-      this.classes.forEach(cls => {
-        const [day, month, year] = cls.date.split('.');
-        const monthKey = `${parseInt(month)}.${year}`; // Combine month and year as key
-        if (!groupedClasses[monthKey]) {
-          groupedClasses[monthKey] = [];
-        }
-        groupedClasses[monthKey].push(cls);
-      });
-      const keys = Object.keys(groupedClasses);
-      this.classesForDisplay = keys.map(key => groupedClasses[key])
-      return groupedClasses
-    },
     getMonthName(monthKey) {
       const [day, month, year] = monthKey.split('.');
       return `${this.monthNames[month - 1]} ${year}`
     },
     changeMonth(idx) {
-      if ((this.monthNumber === 0 && idx === -1) || (this.monthNumber === this.classesForDisplay.length - 2 && idx === 1) ||
-        (this.classesForDisplay.length < 2)) return
+      if ((this.monthNumber === 0 && idx === -1) || (this.monthNumber === this.groupClassesByMonth.length - 2 && idx === 1) ||
+        (this.groupClassesByMonth.length < 2)) return
       this.monthNumber += idx
     },
-
     updateNoteLesson() {
       this.updateLesson(this.lessonNote)
       this.lessonNote = ''
+    },
+    async updateMonthlyLessons(month) {
+      var monthWanted = utilService.extractDatePart(month, 'month')
+      var monthlyLessons = this.student.classes.filter(lesson => {
+        var monthStr = utilService.extractDatePart(lesson.date, 'month')
+        return monthWanted === monthStr && lesson.status === 'arrived'
+      })
+      monthlyLessons.forEach(lesson => {
+        lesson.status = 'paid'
+      })
+      this.updateStudentToStore(this.student, "All arrived " + this.monthNames[monthWanted - 1] + " lessons are paid ",
+        `Cannot pay all ${this.student} for ${this.monthNames[monthWanted - 1]}`)
     },
     async updateLesson(lesson, status) {
       if (status) {
@@ -182,28 +181,23 @@ export default {
       } else {
         lesson = this.lessonNote || this.lessonToEdit
       }
-      var studentClone = utilService.deepClone(this.student)
-      const existingIndex = studentClone.classes.findIndex((c) => c.date === lesson.date);
-      studentClone.classes.splice(existingIndex, 1, lesson);
-      try {
-        await this.$store.dispatch({ type: "updateStudent", student: studentClone });
-        showSuccessMsg(studentClone.name + " " + (status ? status : 'updated'));
-        this.lessonToEdit = ''
-      } catch (err) {
-        console.log(err);
-        showErrorMsg(`Cannot change ${studentClone} ${status}`);
-      }
+      const existingIndex = this.student.classes.findIndex((c) => c.date === lesson.date);
+      this.student.classes.splice(existingIndex, 1, lesson);
+      this.updateStudentToStore(this.student, this.student.name + " " + (status ? status : 'updated'), `Cannot change ${this.student} to ${status}`)
+      this.resetOtherStates()
     },
     async deleteLesson(lesson) {
-      var studentClone = utilService.deepClone(this.student)
-      const existingIndex = studentClone.classes.findIndex((c) => c.date === lesson.date);
-      studentClone.classes.splice(existingIndex, 1);
+      const existingIndex = this.student.classes.findIndex((c) => c.date === lesson.date);
+      this.student.classes.splice(existingIndex, 1);
+      this.updateStudentToStore(this.student, lesson.date + ' lesson has been deleted', `Cannot change ${this.student}`)
+    },
+    async updateStudentToStore(student, successMsg, errorMsg) {
       try {
-        await this.$store.dispatch({ type: "updateStudent", student: studentClone });
-        showSuccessMsg(lesson.date + ' class has been deleted');
+        await this.$store.dispatch({ type: "updateStudent", student });
+        showSuccessMsg(successMsg);
       } catch (err) {
         console.log(err);
-        showErrorMsg(`Cannot change ${studentClone}`);
+        showErrorMsg(errorMsg);
       }
     },
     activeStatus(student, status) {
@@ -218,10 +212,9 @@ export default {
       this.resetOtherStates('lessonNote');
       this.ScrollDown();
     },
-    editLesson(lesson) {
-      if (this.isSameLesson(lesson, this.lessonToEdit)) {
-        this.lessonToEdit = '';
-      } else {
+    openEditLesson(lesson) {
+      if (this.isSameLesson(lesson, this.lessonToEdit)) this.lessonToEdit = ''
+      else {
         this.lessonToEdit = lesson;
         this.ScrollDown();
       }

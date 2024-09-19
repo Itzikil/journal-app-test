@@ -3,16 +3,21 @@ import { studentService } from '../services/student.service.local'
 export const studentStore = {
     state: {
         students: [],
+        currStudent: '',
         filterBy: {
             name: ''
         },
     },
     getters: {
         students({ students }) { return students },
+        currStudent({ currStudent }) { return currStudent },
     },
     mutations: {
         setStudents(state, { students }) {
             state.students = students
+        },
+        setCurrStudent(state, { currStudent }) {
+            state.currStudent = currStudent
         },
         addStudent(state, { student }) {
             state.students.push(student)
@@ -20,6 +25,7 @@ export const studentStore = {
         updateStudent(state, { student }) {
             const idx = state.students.findIndex(c => c._id === student._id)
             state.students.splice(idx, 1, student)
+            state.currStudent = student
         },
         removeStudent(state, { studentId }) {
             state.students = state.students.filter(student => student._id !== studentId)
@@ -34,6 +40,24 @@ export const studentStore = {
         },
     },
     actions: {
+        async loadStudents({ commit, state }) {
+            try {
+                const students = await studentService.query(state.filterBy)
+                commit({ type: 'setStudents', students })
+            } catch (err) {
+                console.log('studentStore: Error in loadStudents', err)
+                throw err
+            }
+        },
+        async getStudentById({ commit }, { id }) {
+            try {
+                const student = await studentService.getById(id)
+                commit({ type: 'setCurrStudent', currStudent: student })
+            } catch (err) {
+                console.log('studentStore: Error in loadStudents', err)
+                throw err
+            }
+        },
         async addStudent(context, { student }) {
             try {
                 student = await studentService.save(student)
@@ -51,15 +75,6 @@ export const studentStore = {
                 return student
             } catch (err) {
                 console.log('studentStore: Error in updateStudent', err)
-                throw err
-            }
-        },
-        async loadStudents({ commit, state }) {
-            try {
-                const students = await studentService.query(state.filterBy)
-                commit({ type: 'setStudents', students })
-            } catch (err) {
-                console.log('studentStore: Error in loadStudents', err)
                 throw err
             }
         },
