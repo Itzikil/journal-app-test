@@ -30,7 +30,7 @@
         <button @click="changeMonth(-1)">></button>
       </div>
       <div class="lessons-list">
-        <transition-group tag="ul" name="lesson-list" v-if="student.classes" class="lessons-list" :key="student.id">
+        <ul tag="ul" name="lesson-list" v-if="student.classes" class="lessons-list" :key="student.id">
           <li v-for="(lessons, idx) in slicedClasses" :key="idx">
             <div class="monthly-header">
               <h4 class="text-center">{{ getMonthName(lessons[0].date) }}</h4>
@@ -59,9 +59,9 @@
               </button>
             </div>
           </li>
-        </transition-group>
-        </li>
-        </transition-group>
+          </transition-group>
+          </li>
+        </ul>
 
 
         <div v-else>
@@ -257,21 +257,21 @@ export default {
 <style>
 .lesson-list-enter-active,
 .lesson-list-leave-active {
-  transition: all 0.5s ease;
+  transition: all 0.4s ease;
 }
 
 .lesson-list-enter-from {
   opacity: 0;
-  transform: translateX(-50px);
+  transform: translateX(-100px);
 }
 
 .lesson-list-leave-to {
   opacity: 0;
-  transform: translateX(50px);
+  transform: translateX(100px);
 }
 
 .lesson-list-move {
-  transition: all 0.3s ease;
+  transition: all 0.8s ease;
 }
 
 .lesson-list-leave-active {

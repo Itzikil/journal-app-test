@@ -76,7 +76,6 @@ export default {
   mounted() {
     if (!this.lessonsInfo.length) this.addLesson()
     this.addFlatPickr('joinedDatePicker0')
-    console.log('hi');
   },
   computed: {
     addEdit() {
@@ -98,8 +97,7 @@ export default {
       })
     },
     addFlatPickr(ref) {
-      console.log(ref);
-      if (ref) var fpInstance = flatpickr(ref, { dateFormat: 'j.n.Y' })
+      if (ref) flatpickr(ref, { dateFormat: 'j.n.Y' })
       // let example = this.editStudent?.lessonsInfo.date
       // fpInstance.setDate(example, false, 'j.n.Y');
 
@@ -123,7 +121,6 @@ export default {
       }
     },
     async addStudent() {
-      console.log(this.studentToAdd);
       if (this.lessonMode === 'weekly') this.studentToAdd.lessonsInfo = this.lessonsInfo
       else {
         var lesson = this.lessonsInfo[0]
