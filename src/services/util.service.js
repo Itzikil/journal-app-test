@@ -74,8 +74,6 @@ function loadFromStorage(key) {
 }
 
 function sortByDate(lessons, backwards) {
-    console.log(lessons);
-    
     return lessons.sort((a, b) => {
         const dateA = parseDate(a.date);
         const dateB = parseDate(b.date);
@@ -122,6 +120,8 @@ function getFormattedDate() {
 }
 
 function extractDatePart(dateString, part) {
+    // return console.log(dateString);
+    
     const [day, month, year] = dateString.split('.').map(Number);
     switch (part) {
         case 'day':

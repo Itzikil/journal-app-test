@@ -1,15 +1,15 @@
 <template>
     <section class="add-student-container">
-        <form @submit.prevent="addClass()">
+        <form @submit.prevent="submitLesson()">
             <div v-for="(lesson, idx) in lessonsInfo" class="lessons-info-container">
                 <p class="text-center fs12" v-if="idx === 0">Add single lesson</p>
                 <label>Lesson day <input type="text" :ref="'lessonDatePicker' + idx" class="custom-date-input"
-                        v-model="lessonsInfo[idx].day" required></label>
+                        v-model="lesson.day" required></label>
                 <label>Time <input modern-time-input type="time" name="time" :min="startHour" :max="endHour"
-                        v-model="lessonsInfo[idx].time" required></label>
-                <label>Duration <input type="number" name="duration" v-model="lessonsInfo[idx].duration"
-                        placeholder="Minutes" required></label>
-                <label>Price <input type="number" name="price" v-model="lessonsInfo[idx].price" placeholder="100 / 200"
+                        v-model="lesson.time" required></label>
+                <label>Duration <input type="number" name="duration" v-model="lesson.duration" placeholder="Minutes"
+                        required></label>
+                <label>Price <input type="number" name="price" v-model="lesson.price" placeholder="100 / 200"
                         required></label>
             </div>
             <div class="btn-container">
@@ -41,7 +41,7 @@ export default {
             startHour: '',
             endHour: '',
             endHour: '',
-            studentClone: utilService.deepClone(this.editStudent)
+            studentClone: this.editStudent
         };
     },
     async created() {
@@ -54,16 +54,20 @@ export default {
             : '20:00';
     },
     mounted() {
-        this.addLesson()
+        this.addLesson(this.lastLesson)
     },
     computed: {
+        lastLesson() {
+            var sortedLessons = utilService.sortByDate(this.editStudent.classes, 'backwards')
+            return utilService.deepClone(sortedLessons[0])
+        }
     },
     methods: {
         removeLesson() {
             if (this.lessonsInfo.length) this.lessonsInfo.pop()
         },
-        addLesson() {
-            this.lessonsInfo.push(studentService.getEmptyClass());
+        addLesson(lastLesson) {
+            this.lessonsInfo.push(lastLesson ? lastLesson : studentService.getEmptyClass())
             const index = this.lessonsInfo.length - 1;
             this.$nextTick(() => {
                 ['joinedDatePicker', 'lessonDatePicker'].forEach(ref => {
@@ -75,7 +79,7 @@ export default {
         addFlatPickr(ref) {
             if (ref) { flatpickr(ref, { dateFormat: 'j.n.Y' }) }
         },
-        async addClass(student) {
+        async submitLesson(student) {
             this.lessonsInfo.forEach((lesson, idx) => {
                 lesson.date = lesson.day
                 delete lesson.day

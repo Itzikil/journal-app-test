@@ -38,10 +38,12 @@
     .days-container {
         display: flex;
         gap: 10px;
+        position: relative;
 
         .students-list {
             width: 100%;
             max-width: 25%;
+            position: relative;
 
             .student-list {
                 gap: 10px;

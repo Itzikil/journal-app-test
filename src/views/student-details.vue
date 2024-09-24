@@ -30,38 +30,45 @@
         <button @click="changeMonth(-1)">></button>
       </div>
       <div class="lessons-list">
-        <ul v-if="student.classes" v-for="(lessons, idx) in slicedClasses" class="lesson-list" :key="idx">
-          <div class="monthly-header">
-            <h4 class="text-center ">{{ getMonthName(lessons[0].date) }}</h4>
-            <button @click.stop="updateMonthlyLessons(lessons[0].date)" class="pay-all-btn"><img src="../assets/imgs/paid.svg"
-                alt="paid"></button>
-          </div>
-          <div v-for="lesson in lessons" :key="lesson.date">
-            <div class="lesson-item">
-              <div class="edit-lesson">
-                <button @click="deleteLesson(lesson)"><img src="../assets/imgs/delete.svg" alt="delete"></button>
-                <button @click="openEditLesson(lesson)"><img src="../assets/imgs/edit.svg" alt="edit"></button>
-                <button @click="toggleLessonNote(lesson)"><img src="../assets/imgs/note.svg" alt="note"></button>
-              </div>
-              <p>{{ lesson.date }} </p>
-              <div class="btns-container">
-                <button @click.stop="updateLesson(lesson, 'hevriz')">
-                  <img src="../assets/imgs/hevriz.svg" alt="didnt come" :class="activeStatus(lesson.status, 'hevriz')">
-                </button>
-                <button @click.stop="updateLesson(lesson, 'arrived')">
-                  <img src="../assets/imgs/arrived.svg" alt="arrived" :class="activeStatus(lesson.status, 'arrived')">
-                </button>
-                <button @click.stop="updateLesson(lesson, 'paid')">
-                  <img src="../assets/imgs/paid.svg" alt="paid" :class="activeStatus(lesson.status, 'paid')">
-                </button>
-              </div>
+        <transition-group tag="ul" name="lesson-list" v-if="student.classes" class="lessons-list" :key="student.id">
+          <li v-for="(lessons, idx) in slicedClasses" :key="idx">
+            <div class="monthly-header">
+              <h4 class="text-center">{{ getMonthName(lessons[0].date) }}</h4>
+              <button @click.stop="updateMonthlyLessons(lessons[0].date)" class="pay-all-btn">
+                <img src="../assets/imgs/paid.svg" alt="paid">
+              </button>
             </div>
-          </div>
-        </ul>
+
+            <transition-group tag="ul" name="lesson-list">
+          <li v-for="lesson in lessons" :key="lesson.date + lesson.time" class="lesson-item">
+            <div class="edit-lesson">
+              <button @click="deleteLesson(lesson)"><img src="../assets/imgs/delete.svg" alt="delete"></button>
+              <button @click="openEditLesson(lesson)"><img src="../assets/imgs/edit.svg" alt="edit"></button>
+              <button @click="toggleLessonNote(lesson)"><img src="../assets/imgs/note.svg" alt="note"></button>
+            </div>
+            <p>{{ lesson.date }}</p>
+            <div class="btns-container">
+              <button @click.stop="updateLesson(lesson, 'hevriz')">
+                <img src="../assets/imgs/hevriz.svg" alt="didn't come" :class="activeStatus(lesson.status, 'hevriz')">
+              </button>
+              <button @click.stop="updateLesson(lesson, 'arrived')">
+                <img src="../assets/imgs/arrived.svg" alt="arrived" :class="activeStatus(lesson.status, 'arrived')">
+              </button>
+              <button @click.stop="updateLesson(lesson, 'paid')">
+                <img src="../assets/imgs/paid.svg" alt="paid" :class="activeStatus(lesson.status, 'paid')">
+              </button>
+            </div>
+          </li>
+        </transition-group>
+        </li>
+        </transition-group>
+
+
         <div v-else>
           <p>No classes yet</p>
         </div>
       </div>
+
     </div>
     <div>
     </div>
@@ -246,3 +253,28 @@ export default {
   }
 }
 </script>
+
+<style>
+.lesson-list-enter-active,
+.lesson-list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.lesson-list-enter-from {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.lesson-list-leave-to {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.lesson-list-move {
+  transition: all 0.3s ease;
+}
+
+.lesson-list-leave-active {
+  position: absolute;
+}
+</style>

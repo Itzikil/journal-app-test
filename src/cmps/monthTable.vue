@@ -115,6 +115,11 @@ export default {
                 this.chartData.prevMonth();
             }
             if (this.monthPicked !== '') {
+                if (num === 1 && this.monthPicked === 12) {
+                    this.monthPicked = 0
+                } else if (num === -1 && this.monthPicked === 1) {
+                    this.monthPicked = 13
+                }
                 this.monthPicked += num;
                 this.updateWeeklyPrices();
             }

@@ -7,29 +7,27 @@
       <div class="flex btn-container">
         <button @click="changeMode('weekly')" type="button" :class="{ 'not-active': lessonMode === 'single' }">Weekly
           lessons</button>
-        <button @click="changeMode('single')" type="button" :class="{ 'not-active': lessonMode === 'weekly' }">single
+        <button v-if="!atStudentDetails" @click="changeMode('single')" type="button"
+          :class="{ 'not-active': lessonMode === 'weekly' }">single
           lesson</button>
       </div>
       <div v-for="(lesson, idx) in lessonsInfo" class="lessons-info-container">
         <label v-if="lessonMode === 'weekly'">Day
           <div class="select-wrapper">
-            <select v-model="lessonsInfo[idx].day" name="day" required class="custom-select">
+            <select v-model="lesson.day" name="day" required class="custom-select">
               <option v-for="day in daysOfWeek" :value="day">{{ day }}</option>
             </select>
           </div>
         </label>
         <label v-else>Lesson day <input type="text" :ref="'lessonDatePicker' + idx" class="custom-date-input"
-            v-model="lessonsInfo[idx].day" required></label>
+            v-model="lesson.day" required></label>
         <label>Time <input modern-time-input type="time" name="time" :min="startHour" :max="endHour"
-            v-model="lessonsInfo[idx].time" required></label>
-        <label>Duration <input type="number" name="duration" v-model="lessonsInfo[idx].duration" placeholder="Minutes"
+            v-model="lesson.time" required></label>
+        <label>Duration <input type="number" name="duration" v-model="lesson.duration" placeholder="Minutes"
             required></label>
-        <label>Price <input type="number" name="price" v-model="lessonsInfo[idx].price" placeholder="100 / 200"
-            required></label>
-        <!-- <label v-if="!studentToAdd._id"> Joined at -->
+        <label>Price <input type="number" name="price" v-model="lesson.price" placeholder="100 / 200" required></label>
         <label> {{ !studentToAdd._id ? 'Joined at' : 'changed at' }}
-          <input type="text" :ref="'joinedDatePicker' + idx" class="custom-date-input"
-            v-model="lessonsInfo[idx].start" />
+          <input type="text" :ref="'joinedDatePicker' + idx" class="custom-date-input" v-model="lesson.start" />
         </label>
       </div>
       <div class="btn-container">
@@ -59,9 +57,10 @@ export default {
       lessonsInfo: this.editStudent?.lessonsInfo || [],
       daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       teacher: this.$store.getters.loggedinUser,
-      lessonMode: !this.editStudent?.lessonsInfo ? 'single' : 'weekly',
+      lessonMode: 'weekly',
       startHour: '',
       endHour: '',
+      atStudentDetails: this.$route.name === 'student-details'
     };
   },
   async created() {
@@ -76,7 +75,8 @@ export default {
   },
   mounted() {
     if (!this.lessonsInfo.length) this.addLesson()
-
+    this.addFlatPickr('joinedDatePicker0')
+    console.log('hi');
   },
   computed: {
     addEdit() {
@@ -98,7 +98,20 @@ export default {
       })
     },
     addFlatPickr(ref) {
-      if (ref) { flatpickr(ref, { dateFormat: 'j.n.Y' }) }
+      console.log(ref);
+      if (ref) var fpInstance = flatpickr(ref, { dateFormat: 'j.n.Y' })
+      // let example = this.editStudent?.lessonsInfo.date
+      // fpInstance.setDate(example, false, 'j.n.Y');
+
+      // const fpInstance = flatpickr(ref, { 
+      // dateFormat: 'j.n.Y',
+      // onReady: (selectedDates, dateStr, instance) => {
+      //   // If input already has a value, set it in the flatpickr instance
+      //   if (example) {
+      //     instance.setDate(example, false, 'j.n.Y');
+      //   }
+      // }
+      // });
     },
     changeMode(mode) {
       this.lessonMode = mode

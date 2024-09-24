@@ -3,7 +3,7 @@
     <div class="students-header">
       <div class="sub-students-header">
         <h3>{{ activeStudentsList.length }} <span class="fs14">Students</span></h3>
-        <button @click="editCmp = !editCmp">{{ editCmp ? '-' : '+' }}</button>
+        <button @click="toggleEditCmp">{{ editCmp ? '-' : '+' }}</button>
       </div>
       <form action="" @submit.prevent="">
         <input type="text" name="" id="" v-model="filterBy.name" @input="setFilter">
@@ -14,21 +14,23 @@
     <button @click="activeStudents = false" :class="{ 'inactive-btn': activeStudents }">Inactive ({{
       inactiveStudentsList.length }})</button>
     <!-- <button @click="activatatedStudents">activate all students</button> -->
-    <addStudent v-if="editCmp" @closeEdit="closeEdit" />
+    <addStudent v-if="editCmp" @toggleEditCmp="toggleEditCmp" />
     <div class="days-container">
       <ul v-for="(students, day) in groupedStudents" :key="day" class="students-list">
         <p v-if="activeStudents" class="fs14">{{ day }}</p>
-        <ul class="student-list">
+        <!-- One TransitionGroup for the student list -->
+        <TransitionGroup tag="ul" name="student-list" class="student-list" :key="day">
           <li v-for="student in students" :key="student._id">
             <router-link :to="`/student/${student._id}`">
               <p class="student-name">{{ student.name }}</p>
               <button v-if="!student.active" @click.prevent="activateStudent(student)"
-                class="activate-btn">activate</button>
+                class="activate-btn">Activate</button>
               <button @click.prevent="deleteStudent = student" class="delete-btn">x</button>
             </router-link>
           </li>
-        </ul>
+        </TransitionGroup>
       </ul>
+
     </div>
     <div v-if="deleteStudent" class="delete-student-container">
       <p>Are you sure you want to delete {{ deleteStudent.name }}?</p>
@@ -93,6 +95,9 @@ export default {
     },
   },
   methods: {
+    toggleEditCmp() {
+      this.editCmp = !this.editCmp
+    },
     loadImage(status) {
       var imgs = { arrived, paid, hevriz }
       return imgs[status]
@@ -142,9 +147,6 @@ export default {
         showErrorMsg(`Cannot change ${studentClone} `);
       }
     },
-    closeEdit() {
-      this.editCmp = false
-    },
     async setFilter() {
       try {
         await this.$store.dispatch({ type: "setFilter", filterBy: { ...this.filterBy } });
@@ -158,3 +160,29 @@ export default {
   }
 };
 </script>
+
+<style>
+.student-list-move {
+  transition: all 0.4s ease;
+}
+
+.student-list-enter-active,
+.student-list-leave-active {
+  transition: all 0.6s ease;
+}
+
+.student-list-enter-from,
+.student-list-leave-to {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.student-list-leave-to {
+  transform: translateX(50px);
+}
+
+.student-list-leave-active {
+  position: absolute;
+  bottom: 0;
+}
+</style>
