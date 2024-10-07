@@ -67,17 +67,19 @@
       </div>
       <div class="some">
         <h4>Didnt pay yet</h4>
-        <div v-for="student in students">
-          <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
-            <div class="flex">
-              <button @click.stop="updateMonthlyLessons(student)" class="arrival-btn">
-                <img src="../assets/imgs/paid.svg" alt="paid"></button>
-              <p class="normal-font">{{ student.name }}</p>
+        <ul>
+          <li v-for="student in students">
+            <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
+              <div class="flex">
+                <button @click.stop="updateMonthlyLessons(student)" class="arrival-btn">
+                  <img src="../assets/imgs/paid.svg" alt="paid"></button>
+                <p class="normal-font">{{ student.name }}</p>
+              </div>
+              <p class="bold-font">{{ arrivedThisMonth(student).length }}</p>
             </div>
-            <p class="bold-font">{{ arrivedThisMonth(student).length }}</p>
-          </div>
-          <!-- <p v-else>Everyone paid this month</p> -->
-        </div>
+            <!-- <p v-else>Everyone paid this month</p> -->
+          </li>
+        </ul>
       </div>
     </section>
     <section v-else class="charts-stats-container ">

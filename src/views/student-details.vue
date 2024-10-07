@@ -1,5 +1,5 @@
 <template>
-  <section v-if="student" class="student-details-container container">
+  <section v-if="!loading && student" class="student-details-container container">
     <div class="student-card">
       <h1>Student Details - {{ student.name }}</h1>
       <div>
@@ -30,8 +30,10 @@
         <button @click="changeMonth(-1)">></button>
       </div>
       <div class="lessons-list">
-        <ul tag="ul" name="lesson-list" v-if="student.classes" class="lessons-list" :key="student.id">
+        <!-- <ul tag="ul" name="lesson-list" v-if="student.classes" class="lessons-list" :key="student.id">
+
           <li v-for="(lessons, idx) in slicedClasses" :key="idx">
+
             <div class="monthly-header">
               <h4 class="text-center">{{ getMonthName(lessons[0].date) }}</h4>
               <button @click.stop="updateMonthlyLessons(lessons[0].date)" class="pay-all-btn">
@@ -46,7 +48,55 @@
               <button @click="openEditLesson(lesson)"><img src="../assets/imgs/edit.svg" alt="edit"></button>
               <button @click="toggleLessonNote(lesson)"><img src="../assets/imgs/note.svg" alt="note"></button>
             </div>
+
             <p>{{ lesson.date }}</p>
+
+            <div class="btns-container">
+              <button @click.stop="updateLesson(lesson, 'hevriz')">
+                <img src="../assets/imgs/hevriz.svg" alt="didn't come" :class="activeStatus(lesson.status, 'hevriz')">
+              </button>
+              <button @click.stop="updateLesson(lesson, 'arrived')">
+                <img src="../assets/imgs/arrived.svg" alt="arrived" :class="activeStatus(lesson.status, 'arrived')">
+              </button>
+              <button @click.stop="updateLesson(lesson, 'paid')">
+                <img src="../assets/imgs/paid.svg" alt="paid" :class="activeStatus(lesson.status, 'paid')">
+              </button>
+            </div>
+
+          </li>
+
+          </transition-group>
+
+          </li>
+
+        </ul> -->
+
+        <!-- <ul v-if="student.classes" class="lessons-list" :key="student.id"> -->
+        <transition-group v-if="student.classes" tag="ul" name="lesson-list" class="lessons-group" :key="student._id">
+          <li v-for="(lessons, idx) in slicedClasses" :key="idx + '1'">
+            <div class="monthly-header">
+              <h4 class="text-center">{{ getMonthName(lessons[0].date) }}</h4>
+              <button @click.stop="updateMonthlyLessons(lessons[0].date)" class="pay-all-btn">
+                <img src="../assets/imgs/paid.svg" alt="paid">
+              </button>
+            </div>
+
+            <transition-group tag="ul" name="lesson-list" class="lessons-group" :key="idx">
+          <li v-for="lesson in lessons" :key="lesson.date + lesson.time" class="lesson-item">
+            <div class="edit-lesson">
+              <button @click="deleteLesson(lesson)">
+                <img src="../assets/imgs/delete.svg" alt="delete">
+              </button>
+              <button @click="openEditLesson(lesson)">
+                <img src="../assets/imgs/edit.svg" alt="edit">
+              </button>
+              <button @click="toggleLessonNote(lesson)">
+                <img :src="lesson.note ? greenNoteImage : noteImage" alt="note">
+              </button>
+            </div>
+
+            <p>{{ lesson.date }}</p>
+
             <div class="btns-container">
               <button @click.stop="updateLesson(lesson, 'hevriz')">
                 <img src="../assets/imgs/hevriz.svg" alt="didn't come" :class="activeStatus(lesson.status, 'hevriz')">
@@ -59,9 +109,9 @@
               </button>
             </div>
           </li>
-          </transition-group>
-          </li>
-        </ul>
+        </transition-group>
+        </li>
+        </transition-group>
 
 
         <div v-else>
@@ -95,17 +145,24 @@
     <button @click="toggleAddSingle">{{ !addSingleOpen ? 'Add' : 'Close' }} single lesson</button>
     <singleClass :editStudent="student" v-if="addSingleOpen" @toggleAddSingle="toggleAddSingle" />
   </section>
+
+  <section v-else class="main-loader">
+    <img src="@/assets/imgs/page-‏‏loader.gif" alt="">
+  </section>
 </template>
 
 <script>
 import { utilService } from '../services/util.service'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service';
+import noteImg from '@/assets/imgs/note.svg'
+import greenNoteImg from '@/assets/imgs/green-note.svg'
 import addStudent from '../cmps/addStudent.vue'
 import singleClass from '../cmps/singleClass.vue';
 
 export default {
   data() {
     return {
+      loading: true,
       addSingleOpen: false,
       editCmp: false,
       monthNumber: 0,
@@ -122,6 +179,7 @@ export default {
       console.log(err);
     }
     this.groupClassesByMonth
+    this.loading = false
   },
   computed: {
     student() {
@@ -146,6 +204,12 @@ export default {
       var classesForDisplay = keys.map(key => groupedClasses[key])
       return classesForDisplay
     },
+    noteImage() {
+      return noteImg
+    },
+    greenNoteImage() {
+      return greenNoteImg
+    }
   },
   methods: {
     ScrollDown() {
