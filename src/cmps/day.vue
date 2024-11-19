@@ -4,6 +4,13 @@
             <h2>Today</h2>
             <p class="day-header"><span class="fs14">{{ day.dayName }}</span> {{ day.fullDate }}</p>
         </div>
+        <div class="flex gap20 align-center">
+            <p class="fs16">Revenue</p>
+            <div class="flex align-center">
+                <p class="fs10">{{ revenue }}</p>
+                <p class="fs12"> /{{ maxRevenue }}</p>
+            </div>
+        </div>
         <div class="hour" v-for="hour in hours" :key="hour">
             <div class="hour-label">{{ hour }}:00</div>
             <button class="student-slot student" v-for="(lesson, idx) in studentsByHour[hour]" :key="lesson.id"
@@ -17,7 +24,7 @@
                         <img src="../assets/imgs/arrived.svg" alt="arrived" :class="activeStatus(lesson, 'arrived')">
                     </button>
                     <button @click.stop="addClass(lesson, 'paid')">
-                        <img src="../assets/imgs/paid.svg" alt="paid" :class="activeStatus(lesson, 'paid')">
+                        <img src="../assets/imgs/paid-white.svg" alt="paid" :class="activeStatus(lesson, 'paid')">
                     </button>
                 </div>
             </button>
@@ -83,6 +90,12 @@ export default {
             }
             return studentsByHour
         },
+        maxRevenue() {
+            return this.day.students.reduce((acc, student) => student.price + acc, 0)
+        },
+        revenue() {
+            return this.day.students.reduce((acc, student) => (!student.status || student.status === 'hevriz') ? acc : student.price + acc, 0)
+        }
     },
     methods: {
         calculateStudentStyle(student) {

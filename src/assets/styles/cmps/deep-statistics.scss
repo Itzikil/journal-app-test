@@ -1,0 +1,49 @@
+.deep-statistics-container {
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    // justify-content: center;
+    width: 100%;
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-block: 15px;
+        // margin-inline: 10px;
+
+        button {
+            padding-top: 7px;
+            margin: 0;
+            border-radius: 50%;
+            max-width: 40px;
+            max-height: 40px;
+
+            img {
+                width: 80%;
+                height: 100%;
+                border-radius: 100%;
+            }
+
+        }
+    }
+
+    .stat {
+        width: 90%;
+        background-color: rgba(77, 184, 184, 0.493);
+        height: 10px;
+        border-radius: 10px;
+        align-self: center;
+
+        .stat-fill {
+            background-color: aqua;
+            height: 10px;
+            border-radius: 10px;
+            width: 20%;
+        }
+    }
+
+}

@@ -29,7 +29,8 @@
                 width: 25%;
                 background-color: $clr7;
 
-                &:hover {
+                &:hover,
+                &:active {
                     background-color: #43726e;
 
                     p.earning {

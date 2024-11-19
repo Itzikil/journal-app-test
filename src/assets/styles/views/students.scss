@@ -128,6 +128,21 @@
         .btns-delete-container {
             display: flex;
         }
+
+    }
+
+    .add-student-cmp {
+        position: fixed;
+        z-index: 100;
+        width: 100%;
+        height: 95vh;
+        left: 0;
+        bottom: 0;
+        background-color: white;
+        overflow-y: scroll;
+        padding-block: 15px;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
     }
 
     @media (max-width:650px) {

@@ -28,7 +28,8 @@
       </div>
       <div class="total">
         <p class="text-center fs20">{{ currentYear }}</p>
-        <p><span class="fs12">₪</span>{{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p>
+        <!-- <p><span class="fs12">₪</span>{{ (totalMonthEarn().arrived + totalMonthEarn().paid).toLocaleString() }}</p> -->
+        <p><span class="fs12">₪</span>{{ monthlySum().toLocaleString() }}</p>
         <p class="normal-font">Total monthly earn </p>
         <p class="fs10"><span class="fs8">₪</span>{{ monthlyMax }}</p>
         <p class="fs12">Max Revenue</p>
@@ -68,16 +69,19 @@
       <div class="some">
         <h4>Didnt pay yet</h4>
         <ul>
-          <li v-for="student in students">
-            <div v-if="arrivedThisMonth(student).length" class="flex justify-space">
+          <li v-if="students.every(student => !arrivedThisMonth(student).length)">
+            <p class="fs14">Everyone paid this month</p>
+          </li>
+          <li v-for="student in students.filter(s => arrivedThisMonth(s).length)" :key="student.id">
+            <div class="flex justify-space">
               <div class="flex">
                 <button @click.stop="updateMonthlyLessons(student)" class="arrival-btn">
-                  <img src="../assets/imgs/paid.svg" alt="paid"></button>
+                  <img src="../assets/imgs/paid.svg" alt="paid">
+                </button>
                 <p class="normal-font">{{ student.name }}</p>
               </div>
               <p class="bold-font">{{ arrivedThisMonth(student).length }}</p>
             </div>
-            <!-- <p v-else>Everyone paid this month</p> -->
           </li>
         </ul>
       </div>
@@ -89,8 +93,14 @@
       </div>
       <div>
         <h3>statistics</h3>
-        <div style="padding: 15px;">
+        <div style="padding: 15px; margin-bottom: 10px;">
           <statistic class="stats" :fourMonths="fourMonths" />
+        </div>
+      </div>
+      <div style="padding: 15px; margin-bottom: 20px;">
+        <h3>Deep statistic</h3>
+        <div>
+          <deepStatistic :chartData="chartData" />
         </div>
       </div>
     </section>
@@ -99,6 +109,7 @@
 
 <script>
 import statistic from '../cmps/statistic.vue';
+import deepStatistic from '../cmps/deep-statistics.vue';
 import invoice from '../cmps/invoice.vue';
 import monthTable from '../cmps/monthTable.vue';
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
@@ -112,7 +123,7 @@ export default {
       currentYear: new Date().getFullYear(),
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       fullUser: null,
-      showTable: false,
+      showTable: true,
     }
   },
   async created() {
@@ -176,6 +187,7 @@ export default {
         prevMonth: this.prevMonth,
         nextMonth: this.nextMonth,
         changeMonth: this.changeMonth,
+        monthlyMax: this.monthlyMax,
         studentsByMonth: this.studentsByMonth,
         currentYear: this.currentYear,
         currentMonth: this.currentMonth,
@@ -198,7 +210,7 @@ export default {
         this.currentYear += 1;
       }
     },
-    classesInMonth(student, selectedDate) {
+    classesInMonth(student, selectedDate, notHevriz) {
       var date
       if (/^\d{1,2}\.\d{4}$/.test(selectedDate)) {
         date = selectedDate
@@ -206,7 +218,10 @@ export default {
       else {
         date = `${selectedDate || this.currentMonth + 1}.${this.currentYear}`
       }
-      return student.classes.filter(lesson => utilService.extractDatePart(lesson.date, 'month.year') === date)
+      if (notHevriz) {
+        return student.classes.filter(lesson => utilService.extractDatePart(lesson.date, 'month.year') === date && lesson.status !== 'hevriz')
+      }
+      else return student.classes.filter(lesson => utilService.extractDatePart(lesson.date, 'month.year') === date)
     },
     sumPaidThisMonth(student, selectedDate) {
       return this.paidThisMonth(student, selectedDate).reduce((acc, lesson) => acc + lesson.price, 0)
@@ -287,6 +302,7 @@ export default {
   },
   components: {
     statistic,
+    deepStatistic,
     invoice,
     monthTable
   }

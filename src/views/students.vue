@@ -3,7 +3,7 @@
     <div class="students-header">
       <div class="sub-students-header">
         <h3>{{ activeStudentsList.length }} <span class="fs14">Students</span></h3>
-        <button @click="toggleEditCmp">{{ editCmp ? '-' : '+' }}</button>
+        <button @click="toggleAddCmp">{{ editCmp ? '-' : '+' }}</button>
       </div>
       <form action="" @submit.prevent="">
         <input type="text" name="" id="" v-model="filterBy.name" @input="setFilter">
@@ -14,7 +14,17 @@
     <button @click="activeStudents = false" :class="{ 'inactive-btn': activeStudents }">Inactive ({{
       inactiveStudentsList.length }})</button>
     <!-- <button @click="activatatedStudents">activate all students</button> -->
-    <addStudent v-if="editCmp" @toggleEditCmp="toggleEditCmp" />
+    <div v-if="editCmp === 'student'" class="add-student-cmp">
+      <button @click="editCmp = false">X</button>
+      <addStudent @toggleEditCmp="toggleEditCmp" />
+    </div>
+    <transition name="adding-cmp">
+      <addStudentToGroup v-if="editCmp === 'group'" :activeStudents="activeStudentsList" @closeCmp="editCmp = false" />
+    </transition>
+    <div v-if="addCmp">
+      <button @click="toggleEditCmp('student')">Add student</button>
+      <button @click="toggleEditCmp('group')">Add group</button>
+    </div>
     <div class="days-container">
       <ul v-for="(students, day) in groupedStudents" :key="day" class="students-list">
         <p v-if="activeStudents" class="fs14">{{ day }}</p>
@@ -48,6 +58,7 @@ import { showErrorMsg, showSuccessMsg } from "../services/event-bus.service";
 import { studentService } from "../services/student.service.local";
 import { utilService } from "../services/util.service";
 import addStudent from '../cmps/addStudent.vue'
+import addStudentToGroup from '../cmps/addStudentToGroup.vue'
 import arrived from '@/assets/imgs/arrived.svg'
 import hevriz from '@/assets/imgs/hevriz.svg'
 import paid from '@/assets/imgs/paid.svg'
@@ -58,6 +69,7 @@ export default {
       studentToAdd: studentService.getEmptyStudent(),
       daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       editCmp: false,
+      addCmp: false,
       deleteStudent: null,
       activeStudents: true,
       filterBy: {
@@ -95,8 +107,13 @@ export default {
     },
   },
   methods: {
-    toggleEditCmp() {
-      this.editCmp = !this.editCmp
+    toggleEditCmp(whatToAdd) {
+      this.editCmp = whatToAdd
+      this.addCmp = false
+    },
+    toggleAddCmp() {
+      this.addCmp = this.editCmp === false ? true : false
+      this.editCmp = false
     },
     loadImage(status) {
       var imgs = { arrived, paid, hevriz }
@@ -157,11 +174,28 @@ export default {
   },
   components: {
     addStudent,
+    addStudentToGroup
   }
 };
 </script>
 
 <style>
+.adding-cmp-enter-active,
+.adding-cmp-leave-active {
+  transition: transform 0.5s ease-out;
+}
+
+.adding-cmp-enter,
+.adding-cmp-leave-to {
+  transform: translateY(100%);
+}
+
+.adding-cmp-enter-to,
+.adding-cmp-leave {
+  transform: translateY(0);
+  /* Moves to normal position */
+}
+
 .student-list-move {
   transition: all 0.4s ease;
 }

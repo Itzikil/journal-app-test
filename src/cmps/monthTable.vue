@@ -20,8 +20,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="student in studentsByMonth" :key="student.id">
-                        <td>
+                    <tr v-for="student in studentsByMonth" :key="student._id">
+                        <td class="student-name" :class="{ expanded: expandStudent === student._id }"
+                            @click="onExpandStudent(student._id)">
                             <p>{{ student.name }}</p>
                         </td>
                         <td v-if="!monthPicked" v-for="month in fourMonths" :key="month">
@@ -33,7 +34,7 @@
                             <p v-for="lesson in lessons" class="fs14">{{ lesson.price }}</p>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="total-line">
                         <td>
                             <p>Total</p>
                         </td>
@@ -65,7 +66,8 @@ export default {
     data() {
         return {
             monthPicked: '',
-            weeks: [0, 0, 0, 0, 0]
+            weeks: [0, 0, 0, 0, 0],
+            expandStudent: '',
         }
     },
     computed: {
@@ -147,6 +149,9 @@ export default {
         },
         weeklyPrice(student) {
             return this.groupLessonsByWeek(this.chartData.classesInMonth(student, this.monthPicked));
+        },
+        onExpandStudent(studentId) {
+            this.expandStudent = studentId === this.expandStudent ? '' : studentId
         }
     },
     created() {

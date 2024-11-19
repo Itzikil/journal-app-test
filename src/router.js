@@ -68,6 +68,11 @@ const routes = [
     name: 'student-details',
     component: studentDetails
   },
+  {
+    path: '/widget',
+    name: 'Widget',
+    component: () => import('@/views/WidgetView.vue')
+  }
 ]
 
 
