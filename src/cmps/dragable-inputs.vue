@@ -2,7 +2,9 @@
     <div>
         <ul>
             <li v-for="(input, index) in inputs" :key="input.id" :draggable="true" @dragstart="dragStart(index)"
-                @dragover.prevent="dragOver(index)" @drop="drop(index)" @dragend="dragEnd" class="drag-item">
+                @dragover.prevent="dragOver(index)" @drop="drop(index)" @dragend="dragEnd"
+                @touchstart="touchStart(index, $event)" @touchmove="touchMove($event)" @touchend="touchEnd"
+                class="drag-item">
                 <span>{{ index + 1 }}</span>
                 <input v-model="input.value" placeholder="Enter text..." />
             </li>
@@ -20,25 +22,42 @@ export default {
                 { id: 3, value: '' },
             ],
             draggingIndex: null,
+            touchStartY: 0, // Stores the initial Y position of a touch
         };
     },
     methods: {
         dragStart(index) {
             this.draggingIndex = index;
         },
-        dragOver(index) {
-            // Optional visual feedback logic for hovering over items can go here
-        },
+        dragOver(index) { },
         drop(index) {
             if (this.draggingIndex !== null && this.draggingIndex !== index) {
-                // Rearrange the items
                 const draggedItem = this.inputs[this.draggingIndex];
-                this.inputs.splice(this.draggingIndex, 1); // Remove the dragged item
-                this.inputs.splice(index, 0, draggedItem); // Insert it at the new position
+                this.inputs.splice(this.draggingIndex, 1);
+                this.inputs.splice(index, 0, draggedItem);
             }
+            this.draggingIndex = null;
         },
         dragEnd() {
-            this.draggingIndex = null; // Reset the index after drag operation
+            this.draggingIndex = null;
+        },
+        touchStart(index, event) {
+            this.draggingIndex = index;
+            this.touchStartY = event.touches[0].clientY; // Record the starting Y position
+        },
+        touchMove(event) {
+            const currentY = event.touches[0].clientY;
+            const hoveredIndex = Math.floor(
+                (currentY - event.target.parentElement.offsetTop) / event.target.offsetHeight
+            );
+
+            if (hoveredIndex !== this.draggingIndex && hoveredIndex >= 0 && hoveredIndex < this.inputs.length) {
+                this.drop(hoveredIndex); // Reorder on move
+                this.draggingIndex = hoveredIndex; // Update dragging index
+            }
+        },
+        touchEnd() {
+            this.draggingIndex = null; // Reset dragging index
         },
     },
 };
@@ -64,11 +83,11 @@ ul {
     transition: background-color 0.2s ease;
 }
 
-.drag-item:active {
-    cursor: grabbing;
-}
-
 .drag-item:hover {
     background-color: #e0e0e0;
+}
+
+.drag-item:active {
+    cursor: grabbing;
 }
 </style>
