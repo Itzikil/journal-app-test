@@ -62,7 +62,6 @@ export default {
                     .filter(lesson => lesson.date === this.fullDate)
                     .map(lesson => ({ ...lesson, _id: student._id, name: student.name }))
             );
-            console.log(singleLesson);
             var todayStudents = this.getStudentsByDate
             singleLesson.forEach(lesson => {
                 const existingIndex = todayStudents.findIndex(existingLesson =>

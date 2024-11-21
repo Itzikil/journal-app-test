@@ -10,21 +10,6 @@ export default defineConfig({
     registerType: 'autoUpdate',
     includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
     manifest: {
-      shortcuts: [
-        {
-          "name": "My Widget",
-          "short_name": "Widget",
-          "description": "Quick access to My Widget",
-          "url": "/widget",
-          "icons": [
-            {
-              "src": "/images/widget-icon.png",
-              "sizes": "192x192",
-              "type": "image/png"
-            }
-          ]
-        }
-      ],
       display: "standalone",
       name: 'Journal',
       short_name: 'Journal',
@@ -56,11 +41,8 @@ export default defineConfig({
           "purpose": "maskable"
         }
       ],
-      // "start_url": ".",
-      "start_url": "/",
-
+      "start_url": "."
     },
-
   })],
   base: "/journal-app-test/",
   resolve: {

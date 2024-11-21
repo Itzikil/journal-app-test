@@ -52,6 +52,7 @@ async function remove(studentId) {
 
 async function save(student) {
     var savedStudent
+    
     if (student._id) {
         savedStudent = await storageService.put(STORAGE_KEY, student)
     } else {

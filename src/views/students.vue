@@ -19,7 +19,8 @@
       <addStudent @toggleEditCmp="toggleEditCmp" />
     </div>
     <transition name="adding-cmp">
-      <addStudentToGroup v-if="editCmp === 'group'" :activeStudents="activeStudentsList" @closeCmp="editCmp = false" />
+      <addStudentToGroup v-if="editCmp === 'group'" @makeGroup="makeGroup"
+       :activeStudents="activeStudentsList" @closeCmp="editCmp = false" />
     </transition>
     <div v-if="addCmp">
       <button @click="toggleEditCmp('student')">Add student</button>
@@ -28,7 +29,6 @@
     <div class="days-container">
       <ul v-for="(students, day) in groupedStudents" :key="day" class="students-list">
         <p v-if="activeStudents" class="fs14">{{ day }}</p>
-        <!-- One TransitionGroup for the student list -->
         <TransitionGroup tag="ul" name="student-list" class="student-list" :key="day">
           <li v-for="student in students" :key="student._id">
             <router-link :to="`/student/${student._id}`">
@@ -165,6 +165,13 @@ export default {
       }
     },
     async setFilter() {
+      try {
+        await this.$store.dispatch({ type: "setFilter", filterBy: { ...this.filterBy } });
+      } catch (err) {
+        showErrorMsg(`Cannot change ${studentClone} `);
+      }
+    },
+    async makeGroup() {
       try {
         await this.$store.dispatch({ type: "setFilter", filterBy: { ...this.filterBy } });
       } catch (err) {

@@ -10,6 +10,17 @@
                 <p class="fs10">{{ revenue }}</p>
                 <p class="fs12"> /{{ maxRevenue }}</p>
             </div>
+            <div class="btns-container">
+                <button @click.stop="markAllLessons('hevriz')">
+                    <img src="../assets/imgs/hevriz.svg" alt="didnt come" class="">
+                </button>
+                <button @click.stop="markAllLessons('arrived')">
+                    <img src="../assets/imgs/arrived.svg" alt="arrived" class="">
+                </button>
+                <button @click.stop="markAllLessons('paid')">
+                    <img src="../assets/imgs/paid-white.svg" alt="paid" class="">
+                </button>
+            </div>
         </div>
         <div class="hour" v-for="hour in hours" :key="hour">
             <div class="hour-label">{{ hour }}:00</div>
@@ -42,7 +53,7 @@
 </template>
 
 <script>
-import { showSuccessMsg } from '../services/event-bus.service'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
 import { studentService } from '../services/student.service.local';
 import { utilService } from '../services/util.service'
 
@@ -65,6 +76,8 @@ export default {
         const userId = this.$store.getters.loggedinUser?._id;
         if (userId) this.user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId })
         this.loading = false
+        console.log(this.day);
+
     },
     watch: {
         day(newValue, oldValue) {
@@ -148,6 +161,53 @@ export default {
             const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`
             return endTime
         },
+        async markAllLessons(status) {
+            const todayClassTemplate = {
+                date: this.day.fullDate,
+                status
+            };
+
+            try {
+                // Prepare updated student data, ensuring we fetch missing student data if needed
+                const updatedStudents = await Promise.all(this.day.students.map(async (student) => {
+                    // Check if the student already has full data (including classes)
+                    let studentData = student.classes ? student : await studentService.getById(student._id);
+
+                    // Clone the student to avoid direct mutation
+                    const studentClone = utilService.deepClone(studentData);
+                    console.log(studentClone);
+                    
+                    const todayClass = {
+                        ...todayClassTemplate,
+                        _id: studentClone._id,
+                        price: studentClone.lessonsInfo[0].price,
+                        time: studentClone.lessonsInfo[0].time,
+                        duration: studentClone.lessonsInfo[0].duration,
+                    };
+
+                    const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
+
+                    if (existingIndex !== -1) {
+                        if (studentClone.classes[existingIndex].status !== todayClass.status) {
+                            studentClone.classes.splice(existingIndex, 1, todayClass);
+                        }
+                    } else {
+                        studentClone.classes.push(todayClass);
+                    }
+
+                    return studentClone;
+                }));
+
+                // Dispatch the batch update to the store
+                await this.$store.dispatch({ type: "updateMultipleStudents", students: updatedStudents });
+                showSuccessMsg("All lessons updated successfully!");
+            } catch (err) {
+                console.error("Error updating lessons:", err);
+                showErrorMsg("Failed to update all lessons.");
+            }
+        }
+
+
     }
 }
 </script>

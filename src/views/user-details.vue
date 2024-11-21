@@ -29,7 +29,7 @@
         <!-- <div v-if="openPref === 'hours'" class="content" :class="{active: openPref === 'hours'}"> -->
         <div class="content" :class="{ active: openPref === 'hours' }">
           <form @submit.prevent="updateHours()">
-            <p>choose the hours in a day you want to work</p>
+            <p class="fs12">choose the hours in a day you want to work (0-24)</p>
             <input type="number" placeholder="8:00" v-model="this.from" min="0" max="24">
             <input type="number" placeholder="20:00" v-model="this.to" min="0" max="24">
             <button>Update</button>
@@ -37,7 +37,7 @@
         </div>
       </transition>
     </div>
-    <div>
+    <!-- <div>
       <p @click="togglePref('days')">Work days</p>
       <transition name="expand" :class="{ active: openPref === 'days' }">
         <div class="content">
@@ -46,19 +46,21 @@
           <input type="text" placeholder="saturday">
         </div>
       </transition>
-    </div>
+    </div> -->
     <div>
       <button @click="copyData">Copy students data</button>
     </div>
     <div>
       <button @click="doLogout">Logout</button>
     </div>
+    <dragableInputs/>
   </section>
 </template>
 
 <script>
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
 import { utilService } from '../services/util.service';
+import dragableInputs from '../cmps/dragable-inputs.vue';
 
 export default {
   data() {
@@ -149,6 +151,7 @@ export default {
     },
   },
   components: {
+    dragableInputs
   }
 }
 </script>

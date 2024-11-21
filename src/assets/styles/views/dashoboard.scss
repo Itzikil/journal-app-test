@@ -185,6 +185,8 @@
 
     .some {
         grid-area: some;
+        overflow-y: scroll;
+
         ul{
             display: flex;
             flex-direction: column;

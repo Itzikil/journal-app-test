@@ -19,6 +19,12 @@ export const studentStore = {
         setCurrStudent(state, { currStudent }) {
             state.currStudent = currStudent
         },
+        setStudent(state, updatedStudent) {
+            const index = state.students.findIndex(s => s._id === updatedStudent._id);
+            if (index !== -1) {
+                state.students.splice(index, 1, updatedStudent);
+            }
+        },
         addStudent(state, { student }) {
             state.students.push(student)
         },
@@ -76,6 +82,17 @@ export const studentStore = {
             } catch (err) {
                 console.log('studentStore: Error in updateStudent', err)
                 throw err
+            }
+        },
+        async updateMultipleStudents({ commit }, { students }) {
+            try {
+                const updatedStudents = await Promise.all(students.map(student => studentService.save(student)));
+                updatedStudents.forEach(student => {
+                    commit("setStudent", student);
+                });
+            } catch (err) {
+                console.error("Failed to update multiple students:", err);
+                throw err;
             }
         },
         async getStudentByTeacher(context, { teacherId }) {
