@@ -14,8 +14,8 @@
       Active ({{ activeStudentsList.length }})</button>
     <button @click="setActiveStudents('inactive')" :class="{ 'inactive-btn': activeStudents === 'inactive' }">
       Inactive ({{ inactiveStudentsList.length }})</button>
-    <button @click="setActiveStudents('groups')" :class="{ 'inactive-btn': activeStudents === 'groups' }">
-      Groups ({{ groupsList.length }})</button>
+    <!-- <button @click="setActiveStudents('groups')" :class="{ 'inactive-btn': activeStudents === 'groups' }">
+      Groups ({{ groupsList.length }})</button> -->
 
     <!-- <button @click="activatatedStudents">activate all students</button> -->
     <div v-if="editCmp === 'student'" class="add-student-cmp">

@@ -4,8 +4,6 @@
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    // align-items: center;
-    // justify-content: center;
     width: 100%;
 
     .chart-header {
@@ -13,7 +11,6 @@
         justify-content: space-between;
         align-items: center;
         padding-block: 15px;
-        // margin-inline: 10px;
 
         button {
             padding-top: 7px;
@@ -31,9 +28,22 @@
         }
     }
 
+    .main-statistics {
+
+        .monthly-statistics {
+            .stat-container {
+                display: flex;
+                flex-direction: column;
+
+                p {
+                }
+            }
+        }
+    }
+
     .stat {
         width: 90%;
-        background-color:  rgba(118, 161, 161, 0.397);
+        background-color: rgba(118, 161, 161, 0.397);
         height: 5px;
         border-radius: 5px;
         align-self: center;

@@ -6,6 +6,7 @@
             <h3> {{ chartData.monthNames[chartData.currentMonth] }}</h3>
             <button @click="changeMonth(1)"><img src="../assets/imgs/right-arrow.svg" alt="right arrow"></button>
         </div>
+
         <div class="main-statistics">
             <p>{{ calculateAverageMoneyPerHour(maxWeeklyRevenue, maxHoursAWeek) }}₪ average per hour</p>
             <div class="weekly-statistics">
@@ -13,46 +14,56 @@
                 <p> {{ maxWeeklyRevenue }}₪ max for a week</p>
                 <p> {{ convertMinutesToHours(maxHoursAWeek) }} max hours a week</p>
             </div>
+
             <div class="monthly-statistics">
                 <h4>Monthly</h4>
-                <div class="flex column">
-                    <div class="flex justify-space">
-                        <p>{{ convertMinutesToHours(hoursAWeek) }}<span class="fs12">hrs</span></p>
-                        <p class="fs14">hours per month</p>
-                        <p>{{ convertMinutesToHours(monthlyMaxDuration) }}<span class="fs12">hrs</span></p>
+                <div class="stat-container">
+                    <div class="flex justify-space align-end">
+                        <p class="fs14 bold">Hours</p>
+                        <div class="flex align-end">
+                            <p>{{ convertMinutesToHours(hoursAWeek) }}<span class="fs12">hrs</span></p>
+                            <p class="fs12">/{{ convertMinutesToHours(monthlyMaxDuration) }}</p>
+                        </div>
                     </div>
                     <div class="stat">
                         <div class="stat-fill"
                             :style="{ width: `${fillColor(hoursAWeek, monthlyMaxDuration) * 100}%` }"></div>
                     </div>
-                    <p>{{ precentage(hoursAWeek, monthlyMaxDuration) }}%</p>
+                    <p class="fs14">{{ precentage(hoursAWeek, monthlyMaxDuration) }}%</p>
                 </div>
-                <div class="flex column">
-                    <div class="flex justify-space">
-                        <p>{{ allLessonsInMonth.length }}</p>
-                        <p class="fs14">lessons per month</p>
-                        <p>{{ monthlyMaxLessons }}</p>
+
+                <div class="stat-container">
+                    <div class="flex justify-space align-end">
+                        <p class="fs14 bold">Lessons</p>
+                        <div class="flex align-end">
+                            <p>{{ allLessonsInMonth.length }}</p>
+                            <p class="fs12">/{{ monthlyMaxLessons }}</p>
+                        </div>
                     </div>
                     <div class="stat">
                         <div class="stat-fill"
                             :style="{ width: `${fillColor(allLessonsInMonth.length, monthlyMaxLessons) * 100}%` }">
                         </div>
                     </div>
-                    <p>{{ precentage(allLessonsInMonth.length, monthlyMaxLessons) }}%</p>
+                    <p class="fs14">{{ precentage(allLessonsInMonth.length, monthlyMaxLessons) }}%</p>
                 </div>
-                <div class="flex column">
-                    <div class="flex justify-space">
-                        <p><span class="fs12">₪</span>{{ chartData.monthlySum().toLocaleString() }}</p>
-                        <p class="fs14">Revenue per month </p>
-                        <p><span class="fs12">₪</span>{{ chartData.monthlyMax.toLocaleString() }}</p>
+
+                <div class="stat-container">
+                    <div class="flex justify-space align-end">
+                        <p class="fs14 bold">Revenue </p>
+                        <div class="flex align-end">
+                            <p><span class="fs12">₪</span>{{ chartData.monthlySum().toLocaleString() }}</p>
+                            <p class="fs12">/{{ chartData.monthlyMax.toLocaleString() }}</p>
+                        </div>
                     </div>
                     <div class="stat">
                         <div class="stat-fill"
                             :style="{ width: `${fillColor(chartData.monthlySum(), chartData.monthlyMax) * 100}%` }">
                         </div>
                     </div>
-                    <p>{{ precentage(chartData.monthlySum(), chartData.monthlyMax) }}%</p>
+                    <p class="fs14">{{ precentage(chartData.monthlySum(), chartData.monthlyMax) }}%</p>
                 </div>
+
             </div>
         </div>
     </section>
@@ -72,12 +83,9 @@ export default {
         }
     },
     created() {
-        // console.log(this.chartData.studentsByMonth);
-        // this.allLessonsInMonth()
     },
     computed: {
         currMonthStudents() {
-            // return this.$store.getters.students
             return this.chartData.studentsByMonth
         },
         maxHoursAWeek() {
@@ -142,20 +150,8 @@ export default {
                     this.monthPicked = 13
                 }
                 this.monthPicked += num;
-                // this.updateWeeklyPrices();
             }
         },
-        // allLessonsInMonth() {
-        // var testWeeks = [[], [], [], [], []];
-        // monthlyLessons.forEach((lesson) => {
-        //     if (lesson.status === 'paid' || lesson.status === 'arrived') {
-        //         const day = parseInt(lesson.date.split(".")[0], 10);
-        //         const weekIndex = Math.floor((day - 1) / 7);
-        //         testWeeks[weekIndex].push(lesson);
-        //     }
-        // });
-        // return testWeeks;
-        // },
         fillColor(curr = 0, max = 0) {
             if (curr === 0 && max === 0) return 0
             return curr / max

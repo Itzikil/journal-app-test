@@ -87,6 +87,7 @@ export default {
     },
     doLogout() {
       this.$store.dispatch({ type: 'logout' })
+      this.$router.push('/')
     },
     async doSignup() {
       if (!this.signupCred.password || !this.signupCred.username) {
