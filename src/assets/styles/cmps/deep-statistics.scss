@@ -29,14 +29,15 @@
     }
 
     .main-statistics {
+        h4 {
+            margin-top: 10px;
+        }
 
         .monthly-statistics {
             .stat-container {
                 display: flex;
                 flex-direction: column;
-
-                p {
-                }
+                gap: 1px;
             }
         }
     }

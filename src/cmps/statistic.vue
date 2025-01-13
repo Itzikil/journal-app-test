@@ -6,8 +6,8 @@
                 <p>1</p>
             </div> -->
             <div v-for="month in fourMonths" class="month-stats">
-                <div class="candle" :style="candleHeight(month)" >
-                <!-- <div class="candle" :style="candleHeight(month)" @click="showEarn"> -->
+                <div class="candle" :style="candleHeight(month)">
+                    <!-- <div class="candle" :style="candleHeight(month)" @click="showEarn"> -->
                     <p class="earning">₪{{ month.earning }}</p>
                 </div>
                 <p class="fs14">{{ month.name }}</p>

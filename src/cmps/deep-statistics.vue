@@ -8,11 +8,12 @@
         </div>
 
         <div class="main-statistics">
-            <p>{{ calculateAverageMoneyPerHour(maxWeeklyRevenue, maxHoursAWeek) }}₪ average per hour</p>
+            <p>{{ calculateAverageMoneyPerHour(maxWeeklyRevenue, maxHoursAWeek) }}<span class="fs14">₪ average per
+                    hour</span></p>
             <div class="weekly-statistics">
                 <h4>Weekly</h4>
-                <p> {{ maxWeeklyRevenue }}₪ max for a week</p>
-                <p> {{ convertMinutesToHours(maxHoursAWeek) }} max hours a week</p>
+                <p> {{ maxWeeklyRevenue }}<span class="fs14">₪ max for a week</span></p>
+                <p> {{ convertMinutesToHours(maxHoursAWeek) }}<span class="fs14"> max hours a week</span></p>
             </div>
 
             <div class="monthly-statistics">
@@ -105,26 +106,60 @@ export default {
             });
             return allMonthlyLessons
         },
+        // monthlyMaxDuration() {
+        //     // count all the weekly active students, not inactive nor singles
+        //     return this.chartData.studentsByMonth.reduce((sum, student) => {
+        //         const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
+        //             const lessonDays = utilService.getWeekdayCountInMonth(this.chartData.currentYear, this.chartData.currentMonth, lesson.day);
+        //             return acc + (lessonDays * lesson.duration);
+        //         }, 0) ?? 0; // If studentRevenue is undefined, default to 0
+        //         return sum + studentRevenue; // Add each student's revenue to the total
+        //     }, 0); // Initial value for outer accumulator is 0
+        // },
         monthlyMaxDuration() {
-            // count all the weekly active students, not inactive nor singles
             return this.chartData.studentsByMonth.reduce((sum, student) => {
-                const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
-                    const lessonDays = utilService.getWeekdayCountInMonth(this.chartData.currentYear, this.chartData.currentMonth, lesson.day);
-                    return acc + (lessonDays * lesson.duration);
-                }, 0) ?? 0; // If studentRevenue is undefined, default to 0
-                return sum + studentRevenue; // Add each student's revenue to the total
-            }, 0); // Initial value for outer accumulator is 0
+                if (student.lessonsInfo.length) {
+                    const studentDuration = student.lessonsInfo.reduce((acc, lesson) => {
+                        const lessonDays = utilService.getWeekdayCountInMonth(
+                            this.chartData.currentYear,
+                            this.chartData.currentMonth,
+                            lesson.day
+                        );
+                        return acc + (lessonDays * lesson.duration);
+                    }, 0);
+                    return sum + studentDuration;
+                } else {
+                    const classDuration = student.classes.filter(cls => {
+                        const classMonth = utilService.extractDatePart(cls.date, 'month');
+                        const classYear = utilService.extractDatePart(cls.date, 'year');
+                        return classMonth === this.chartData.currentMonth + 1 && classYear === this.chartData.currentYear;
+                    }).reduce((acc, cls) => acc + cls.duration, 0); // Sum up the duration of each class
+                    return sum + classDuration;
+                }
+            }, 0);
         },
         monthlyMaxLessons() {
-            // count all the weekly active students, not inactive nor singles
             return this.chartData.studentsByMonth.reduce((sum, student) => {
-                const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
-                    const lessonDays = utilService.getWeekdayCountInMonth(this.chartData.currentYear, this.chartData.currentMonth, lesson.day);
-                    return acc + lessonDays;
-                }, 0) ?? 0; // If studentRevenue is undefined, default to 0
-                return sum + studentRevenue; // Add each student's revenue to the total
-            }, 0); // Initial value for outer accumulator is 0
-        },
+                if (student.lessonsInfo.length) {
+                    const studentRevenue = student.lessonsInfo.reduce((acc, lesson) => {
+                        const lessonDays = utilService.getWeekdayCountInMonth(
+                            this.chartData.currentYear,
+                            this.chartData.currentMonth,
+                            lesson.day
+                        );
+                        return acc + lessonDays;
+                    }, 0);
+                    return sum + studentRevenue;
+                } else {
+                    const classRevenue = student.classes.filter(cls => {
+                        const classMonth = utilService.extractDatePart(cls.date, 'month');
+                        const classYear = utilService.extractDatePart(cls.date, 'year');
+                        return classMonth === this.chartData.currentMonth + 1 && classYear === this.chartData.currentYear;
+                    }).length; // Count the number of matching classes
+                    return sum + classRevenue;
+                }
+            }, 0);
+        }
     },
     methods: {
         convertMinutesToHours(minutes) {
@@ -157,7 +192,7 @@ export default {
             return curr / max
         },
         precentage(a, b) {
-            return Math.floor((a / b) * 100)
+            return Math.floor((a / b) * 100) || 0
         }
     }
 }

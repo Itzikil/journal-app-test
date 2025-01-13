@@ -123,7 +123,7 @@ export default {
       currentYear: new Date().getFullYear(),
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       fullUser: null,
-      showTable: false,
+      showTable: true,
     }
   },
   async created() {
@@ -154,29 +154,53 @@ export default {
     fourMonths() {
       var stats = []
       var month
+      var year = this.currentYear
       for (let i = 0; i < 4; i++) {
         month = this.currentMonth - i
         if (month < 0) {
           month = 12 + (this.currentMonth - i)
+          year = this.currentYear - 1
         }
         stats.unshift({
           name: this.monthNames[month].slice(0, 3),
           number: month + 1,
-          earning: this.monthlySum(`${month + 1}`)
-        }
-        )
+          year: year,
+          earning: this.monthlySum(`${month + 1}.${year}`)
+        })
       }
       return stats
     },
+    // monthlyMax() {
+    //   // count all the weekly active students, not inactive nor singles
+    //   return this.studentsByMonth.reduce((sum, student) => {
+    //     const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
+    //       const lessonDays = utilService.getWeekdayCountInMonth(this.currentYear, this.currentMonth, lesson.day);
+    //       return acc + (lessonDays * lesson.price);
+    //     }, 0) ?? 0; // If studentRevenue is undefined, default to 0
+    //     return sum + studentRevenue; // Add each student's revenue to the total
+    //   }, 0); // Initial value for outer accumulator is 0
+    // },
     monthlyMax() {
-      // count all the weekly active students, not inactive nor singles
       return this.studentsByMonth.reduce((sum, student) => {
-        const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
-          const lessonDays = utilService.getWeekdayCountInMonth(this.currentYear, this.currentMonth, lesson.day);
-          return acc + (lessonDays * lesson.price);
-        }, 0) ?? 0; // If studentRevenue is undefined, default to 0
-        return sum + studentRevenue; // Add each student's revenue to the total
-      }, 0); // Initial value for outer accumulator is 0
+        if (student.lessonsInfo.length) {
+          const studentRevenue = student.lessonsInfo.reduce((acc, lesson) => {
+            const lessonDays = utilService.getWeekdayCountInMonth(
+              this.currentYear,
+              this.currentMonth,
+              lesson.day
+            );
+            return acc + (lessonDays * lesson.price);
+          }, 0);
+          return sum + studentRevenue;
+        } else {
+          const classRevenue = student.classes.filter(cls => {
+            const classMonth = utilService.extractDatePart(cls.date, 'month');
+            const classYear = utilService.extractDatePart(cls.date, 'year');
+            return classMonth === this.currentMonth + 1 && classYear === this.currentYear;
+          }).reduce((acc, cls) => acc + cls.price, 0); // Sum up the price of each class
+          return sum + classRevenue;
+        }
+      }, 0);
     },
     chartData() {
       return {
@@ -250,7 +274,8 @@ export default {
       return sum.arrived + sum.paid
     },
     changeMonth(month) {
-      this.currentMonth = month
+      this.currentMonth = month.number - 1
+      this.currentYear = month.year
     },
     fillColor() {
       var full = this.monthlySum()

@@ -45,7 +45,7 @@
                             <p>Total</p>
                         </td>
                         <td v-if="!monthPicked" v-for="month in fourMonths" :key="month">
-                            <p class="fs16">{{ chartData.monthlySum(monthOrYear(month.number)) }}</p>
+                            <p class="fs16">{{ month.earning }}</p>
                         </td>
                         <td v-else v-for="(week, idx) in weeks" :key="idx">
                             <p class="fs16">{{ week }}</p>
@@ -76,6 +76,11 @@ export default {
             monthPicked: 0,
             weeks: [0, 0, 0, 0, 0],
             expandStudent: '',
+        }
+    },
+    created() {
+        if (this.monthPicked !== '') {
+            this.updateWeeklyPrices();
         }
     },
     computed: {
@@ -118,7 +123,7 @@ export default {
             else return month
         },
         pickMonth(month) {
-            this.chartData.changeMonth(month.number - 1)
+            this.chartData.changeMonth(month)
             this.monthPicked = month.number
             this.updateWeeklyPrices();
         },
@@ -164,11 +169,6 @@ export default {
         },
         onExpandStudent(studentId) {
             this.expandStudent = studentId === this.expandStudent ? '' : studentId
-        }
-    },
-    created() {
-        if (this.monthPicked !== '') {
-            this.updateWeeklyPrices();
         }
     },
     components: {
