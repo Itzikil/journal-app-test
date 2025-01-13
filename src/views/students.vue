@@ -9,39 +9,68 @@
         <input type="text" name="" id="" v-model="filterBy.name" @input="setFilter">
       </form>
     </div>
-    <button @click="activeStudents = true" :class="{ 'inactive-btn': !activeStudents }">Active ({{
-      activeStudentsList.length }})</button>
-    <button @click="activeStudents = false" :class="{ 'inactive-btn': activeStudents }">Inactive ({{
-      inactiveStudentsList.length }})</button>
+
+    <button @click="setActiveStudents('active')" :class="{ 'inactive-btn': activeStudents === 'active' }">
+      Active ({{ activeStudentsList.length }})</button>
+    <button @click="setActiveStudents('inactive')" :class="{ 'inactive-btn': activeStudents === 'inactive' }">
+      Inactive ({{ inactiveStudentsList.length }})</button>
+    <button @click="setActiveStudents('groups')" :class="{ 'inactive-btn': activeStudents === 'groups' }">
+      Groups ({{ groupsList.length }})</button>
+
     <!-- <button @click="activatatedStudents">activate all students</button> -->
     <div v-if="editCmp === 'student'" class="add-student-cmp">
       <button @click="editCmp = false">X</button>
       <addStudent @toggleEditCmp="toggleEditCmp" />
     </div>
     <transition name="adding-cmp">
-      <addStudentToGroup v-if="editCmp === 'group'" @makeGroup="makeGroup"
-       :activeStudents="activeStudentsList" @closeCmp="editCmp = false" />
+      <addStudentToGroup v-if="editCmp === 'group'" @makeGroup="makeGroup" :activeStudents="activeStudentsList"
+        @closeCmp="editCmp = false" />
     </transition>
     <div v-if="addCmp">
       <button @click="toggleEditCmp('student')">Add student</button>
       <button @click="toggleEditCmp('group')">Add group</button>
     </div>
+
     <div class="days-container">
       <ul v-for="(students, day) in groupedStudents" :key="day" class="students-list">
-        <p v-if="activeStudents" class="fs14">{{ day }}</p>
-        <TransitionGroup tag="ul" name="student-list" class="student-list" :key="day">
-          <li v-for="student in students" :key="student._id">
-            <router-link :to="`/student/${student._id}`">
-              <p class="student-name">{{ student.name }}</p>
-              <button v-if="!student.active" @click.prevent="activateStudent(student)"
-                class="activate-btn">Activate</button>
-              <button @click.prevent="deleteStudent = student" class="delete-btn">x</button>
-            </router-link>
-          </li>
+        <p v-if="activeStudents === 'active'" class="fs14">{{ day }}</p>
+        <TransitionGroup tag="ul" name="student-list" :key="day">
+
+          <div v-if="activeStudents !== 'groups'" class="student-list">
+            <li v-for="student in students" :key="student._id">
+              <router-link :to="`/student/${student._id}`">
+                <p class="student-name">{{ student.name }}</p>
+                <button v-if="!student.active" @click.prevent="activateStudent(student)"
+                  class="activate-btn">Activate</button>
+                <button @click.prevent="deleteStudent = student" class="delete-btn">x</button>
+              </router-link>
+            </li>
+          </div>
+
+          <div v-else class="student-list groups-container">
+            <li v-for="group in groupsList" :key="group.name">
+              <div class="group-name" @click="toggleGroup(group)">
+                <p class="fs18">{{ group.groupName }}</p>
+                <ul class="student-ingroup-list">
+                  <li v-for="student in group.student">
+                    <p class="fs14">{{ student.name }}</p>
+                  </li>
+                </ul>
+              </div>
+              <ul v-if="group.showStudents">
+                <li v-for="student in group.students" :key="student.id">
+                  <router-link :to="`/student/${student._id}`">
+                    <p class="student-name">{{ student.name }}</p>
+                  </router-link>
+                </li>
+              </ul>
+            </li>
+          </div>
+
         </TransitionGroup>
       </ul>
-
     </div>
+
     <div v-if="deleteStudent" class="delete-student-container">
       <p>Are you sure you want to delete {{ deleteStudent.name }}?</p>
       <div class="btns-delete-container">
@@ -71,7 +100,7 @@ export default {
       editCmp: false,
       addCmp: false,
       deleteStudent: null,
-      activeStudents: true,
+      activeStudents: 'active',
       filterBy: {
         name: ''
       },
@@ -88,14 +117,15 @@ export default {
       return this.$store.getters.students;
     },
     groupedStudents() {
+      if (this.activeStudents === 'groups') return this.groupsList
       var sortedStudents = this.daysOfWeek.reduce((acc, day) => {
-        const studentsForDay = (this.activeStudents ? this.activeStudentsList : this.inactiveStudentsList).filter(student => student?.lessonsInfo[0]?.day === day);
+        const studentsForDay = (this.activeStudents === 'active' ? this.activeStudentsList : this.inactiveStudentsList).filter(student => student?.lessonsInfo[0]?.day === day);
         if (studentsForDay.length) {
           acc[day] = studentsForDay;
         }
         return acc;
       }, {})
-      sortedStudents.Singles = this.students.filter(student => !student.lessonsInfo[0] && student.active === this.activeStudents)
+      sortedStudents.Singles = this.students.filter(student => !student.lessonsInfo[0] && student.active === (this.activeStudents === 'active'))
       if (!sortedStudents.Singles.length) delete sortedStudents.Singles
       return sortedStudents
     },
@@ -105,8 +135,16 @@ export default {
     inactiveStudentsList() {
       return this.students.filter(student => student.active === false);
     },
+    groupsList() {
+      return this.loggedInUser.groups
+    },
   },
   methods: {
+    setActiveStudents(type) {
+      this.activeStudents = type
+      console.log(type);
+
+    },
     toggleEditCmp(whatToAdd) {
       this.editCmp = whatToAdd
       this.addCmp = false
@@ -171,9 +209,13 @@ export default {
         showErrorMsg(`Cannot change ${studentClone} `);
       }
     },
-    async makeGroup() {
+    async makeGroup(group) {
+      var user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId: this.loggedInUser._id });
+      console.log(group);
+      if (!user.groups) user.groups = []
+      user.groups.push(group)
       try {
-        await this.$store.dispatch({ type: "setFilter", filterBy: { ...this.filterBy } });
+        await this.$store.dispatch({ type: "updateUser", user });
       } catch (err) {
         showErrorMsg(`Cannot change ${studentClone} `);
       }

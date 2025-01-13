@@ -75,7 +75,7 @@ async function signup(userCred) {
 async function logout() {
     // sessionStorage.removeItem(STORAGE_KEY_LOGGEDIN_USER)
     var user = await getLoggedinUser()
-    storageService.remove(STORAGE_KEY_LOGGEDIN_USER , user._id)
+    storageService.remove(STORAGE_KEY_LOGGEDIN_USER, user._id)
     socketService.logout()
     // return await httpService.post('auth/logout')
 }
@@ -90,7 +90,7 @@ async function changeScore(by) {
 
 
 function saveLocalUser(user) {
-    user = { _id: user._id, username: user.username, imgUrl: user.imgUrl }
+    user = { _id: user._id, username: user.username, imgUrl: user.imgUrl, groups: user.groups }
     // sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     storageService.post('loggedinUser', user)
     return user

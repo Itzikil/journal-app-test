@@ -76,8 +76,6 @@ export default {
         const userId = this.$store.getters.loggedinUser?._id;
         if (userId) this.user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId })
         this.loading = false
-        console.log(this.day);
-
     },
     watch: {
         day(newValue, oldValue) {
@@ -107,7 +105,7 @@ export default {
             return this.day.students.reduce((acc, student) => student.price + acc, 0)
         },
         revenue() {
-            return this.day.students.reduce((acc, student) => (!student.status || student.status === 'hevriz') ? acc : student.price + acc, 0)
+            return this.day.students.reduce((acc, student) => (student.status === 'paid' || student.status === 'arrived') ? student.price + acc : acc, 0)
         }
     },
     methods: {
@@ -175,8 +173,7 @@ export default {
 
                     // Clone the student to avoid direct mutation
                     const studentClone = utilService.deepClone(studentData);
-                    console.log(studentClone);
-                    
+
                     const todayClass = {
                         ...todayClassTemplate,
                         _id: studentClone._id,

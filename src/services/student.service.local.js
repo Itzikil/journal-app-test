@@ -30,7 +30,6 @@ async function query(filterBy = { name: '' }) {
         if (filterBy.name) {
             const regex = new RegExp(filterBy.name, 'i')
             students = students.filter(student => regex.test(student.name))
-            console.log(students);
         }
         students = utilService.sortByName(students)
     return students
@@ -60,6 +59,8 @@ async function save(student) {
         // student.owner = userService.getLoggedinUser()
         savedStudent = await storageService.post(STORAGE_KEY, student)
     }
+    console.log(savedStudent);
+    
     return savedStudent
 }
 

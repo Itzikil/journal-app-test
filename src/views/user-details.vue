@@ -53,7 +53,7 @@
     <div>
       <button @click="doLogout">Logout</button>
     </div>
-    <dragableInputs/>
+    <!-- <dragableInputs/> -->
   </section>
 </template>
 

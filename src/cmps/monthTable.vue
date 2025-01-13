@@ -8,7 +8,7 @@
         </div>
         <div class="table-container">
             <table>
-                <thead>
+                <!-- <thead>
                     <tr>
                         <th></th>
                         <th v-if="!monthPicked" v-for="month in fourMonths" :key="month">
@@ -18,9 +18,11 @@
                             <p>{{ week }}</p>
                         </th>
                     </tr>
-                </thead>
+                </thead> -->
+                <tableHeader :isMonthPicked="monthPicked" :fourMonths="fourMonths" :weeks="[1, 2, 3, 4, 5]"
+                    @monthSelected="pickMonth" />
                 <tbody>
-                    <tr v-for="student in studentsByMonth" :key="student._id">
+                    <!-- <tr v-for="student in studentsByMonth" :key="student._id">
                         <td class="student-name" :class="{ expanded: expandStudent === student._id }"
                             @click="onExpandStudent(student._id)">
                             <p>{{ student.name }}</p>
@@ -33,7 +35,11 @@
                         <td v-else v-for="(lessons, idx) in weeklyPrice(student)">
                             <p v-for="lesson in lessons" class="fs14">{{ lesson.price }}</p>
                         </td>
-                    </tr>
+                    </tr> -->
+                    <tableRow v-for="student in studentsByMonth" :key="student._id" :student="student"
+                        :isMonthPicked="monthPicked" :fourMonths="fourMonths" :weeklyData="weeklyPrice(student)"
+                        :expandStudent="expandStudent" :chartData="chartData" :monthOrYear="monthOrYear"
+                        @toggleExpand="onExpandStudent" />
                     <tr class="total-line">
                         <td>
                             <p>Total</p>
@@ -48,12 +54,14 @@
                 </tbody>
             </table>
         </div>
-        <button v-if="monthPicked" @click="monthPicked = ''">Back to 4 months</button>
+        <button v-if="monthPicked" @click="monthPicked = 0">Back to 4 months</button>
     </section>
 </template>
 
 <script>
 import { utilService } from '../services/util.service';
+import tableHeader from './tableHeader.vue';
+import tableRow from './tableRow.vue';
 
 export default {
     props: {
@@ -65,7 +73,7 @@ export default {
     },
     data() {
         return {
-            monthPicked: '',
+            monthPicked: 0,
             weeks: [0, 0, 0, 0, 0],
             expandStudent: '',
         }
@@ -81,8 +89,12 @@ export default {
             const isWithinMonthRange = (lesson) => {
                 const lessonMonth = utilService.extractDatePart(lesson.date, 'month');
                 const lessonYear = utilService.extractDatePart(lesson.date, 'year');
-                const monthDifference = (lessonYear - this.chartData.currentYear) * 12 + (lessonMonth - (this.chartData.currentMonth + 1));
-                return monthDifference <= 0 && monthDifference >= -3;
+                if (this.monthPicked > 0) {
+                    return lessonMonth === this.chartData.currentMonth + 1 && lessonYear === this.chartData.currentYear
+                } else {
+                    const monthDifference = (lessonYear - this.chartData.currentYear) * 12 + (lessonMonth - (this.chartData.currentMonth + 1));
+                    return monthDifference <= 0 && monthDifference >= -3;
+                }
             };
 
             return this.students.filter(student => {
@@ -116,7 +128,7 @@ export default {
             } else {
                 this.chartData.prevMonth();
             }
-            if (this.monthPicked !== '') {
+            if (this.monthPicked !== 0) {
                 if (num === 1 && this.monthPicked === 12) {
                     this.monthPicked = 0
                 } else if (num === -1 && this.monthPicked === 1) {
@@ -158,6 +170,10 @@ export default {
         if (this.monthPicked !== '') {
             this.updateWeeklyPrices();
         }
+    },
+    components: {
+        tableHeader,
+        tableRow
     }
 }
 </script>
