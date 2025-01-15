@@ -12,7 +12,8 @@ html {
     line-height: 1.6;
     color: $clr2;
     background-color: #e1eceb;
-    -webkit-tap-highlight-color: transparent
+    -webkit-tap-highlight-color: transparent;
+    // direction: rtl;
 }
 
 body {

@@ -227,7 +227,9 @@ export default {
         if (lesson.status === status) return
         lesson.status = status
       } else {
+        console.log(lesson);
         lesson = this.lessonNote || this.lessonToEdit
+        console.log(lesson);
       }
       const existingIndex = this.student.classes.findIndex((c) => c.date === lesson.date);
       this.student.classes.splice(existingIndex, 1, lesson);

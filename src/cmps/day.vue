@@ -26,6 +26,8 @@
             <div class="hour-label">{{ hour }}:00</div>
             <button class="student-slot student" v-for="(lesson, idx) in studentsByHour[hour]" :key="lesson.id"
                 :style="calculateStudentStyle(lesson, idx)" @click="showLesson(lesson)">
+                <img v-if="lesson.note" :src="greenNoteImage" alt="note" class="note-img">
+                <!-- <img :src="lesson.note ? greenNoteImage : noteImage" alt="note"> -->
                 <p>{{ lesson.name }}</p>
                 <div class="btns-container">
                     <button @click.stop="addClass(lesson, 'hevriz')">
@@ -40,9 +42,12 @@
                 </div>
             </button>
         </div>
-        <div v-if="lessonShown" class="lesson-info" @click="closeLesson()">
+        <div v-if="lessonShown" class="lesson-info">
+            <button @click="closeLesson()" class="close--lesson-btn">X</button>
             <p>{{ lessonShown.name }}</p>
             <p>{{ lessonShown.time }} - {{ calculateEndTime(lessonShown.time, lessonShown.duration) }}</p>
+            <textarea class="note-input" rows="2" v-model="lessonNote" placeholder="note"></textarea>
+            <button @click.stop="addClass()">Save Note</button>
         </div>
     </section>
     <section v-else class="main-loader">
@@ -56,6 +61,8 @@
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service'
 import { studentService } from '../services/student.service.local';
 import { utilService } from '../services/util.service'
+import greenNoteImg from '@/assets/imgs/green-note.svg'
+
 
 export default {
     props: {
@@ -69,7 +76,8 @@ export default {
             lessonShown: '',
             user: null,
             students: this.$store.getters.students,
-            loading: true
+            loading: true,
+            lessonNote: ''
         }
     },
     async created() {
@@ -106,7 +114,10 @@ export default {
         },
         revenue() {
             return this.day.students.reduce((acc, student) => (student.status === 'paid' || student.status === 'arrived') ? student.price + acc : acc, 0)
-        }
+        },
+        greenNoteImage() {
+            return greenNoteImg
+        },
     },
     methods: {
         calculateStudentStyle(student) {
@@ -121,90 +132,101 @@ export default {
             }
         },
         async addClass(student, status) {
-            var todayClass = { date: this.day.fullDate, status, price: student.price, _id: student._id, time: student.time, duration: student.duration }
+            if (!student) {
+                var student = this.lessonShown
+                if (!student.status || student.stauts === 'pending') var status = 'pending'
+                else var status = student.status
+                var note = this.lessonNote
+                var hereForChangeNote = true
+            }
+            var todayClass = {
+                date: this.day.fullDate, status, price: student.price, _id: student._id,
+                time: student.time, duration: student.duration,
+            }
+            if (note) todayClass.note = note
             let currStudent = await studentService.getById(student._id)
             var studentClone = utilService.deepClone(currStudent)
 
             const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date)
-            if (existingIndex !== -1 && studentClone.classes[existingIndex].status === todayClass.status) {
+            if (existingIndex !== -1 && studentClone.classes[existingIndex].status === todayClass.status && !hereForChangeNote) {
                 return console.log('same')
             }
-            else if (existingIndex !== -1) {
-                studentClone.classes.splice(existingIndex, 1, todayClass)
-            } else {
-                studentClone.classes.push(todayClass)
-            }
+            else if(existingIndex !== -1) {
+    studentClone.classes.splice(existingIndex, 1, todayClass)
+} else {
+    studentClone.classes.push(todayClass)
+}
+try {
+    await this.$store.dispatch({ type: "updateStudent", student: studentClone })
+    showSuccessMsg(student.name + " " + status)
+} catch (err) {
+    console.log(err)
+    showErrorMsg(`Cannot change ${student} ${status}`)
+}
+        },
+activeStatus(lesson, status) {
+    if (lesson.status === status) return 'active-status'
+},
+showLesson(student) {
+    if (this.lessonShown._id === student._id) {
+        this.lessonShown = ''
+    } else {
+        this.lessonShown = student
+        var matchedStudent = this.students.find(s => s._id === student._id)
+        let currLesson = matchedStudent.classes.find(cls => cls.date === this.day.fullDate && cls.time === student.time)
+        this.lessonNote = currLesson?.note ?? ''
+    }
+    console.log(this.day);
 
-            try {
-                await this.$store.dispatch({ type: "updateStudent", student: studentClone })
-                showSuccessMsg(student.name + " " + status)
-            } catch (err) {
-                console.log(err)
-                showErrorMsg(`Cannot change ${student} ${status}`)
-            }
-        },
-        activeStatus(lesson, status) {
-            if (lesson.status === status) return 'active-status'
-        },
-        showLesson(student) {
-            this.lessonShown = this.lessonShown._id === student._id ? '' : student
-        },
-        closeLesson() {
-            this.lessonShown = ''
-        },
-        calculateEndTime(startTime, duration) {
-            const [startHour, startMinute] = startTime.split(':').map(Number)
-            let endHour = startHour + Math.floor((startMinute + duration) / 60)
-            let endMinute = (startMinute + duration) % 60
-            const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`
-            return endTime
-        },
+},
+closeLesson() {
+    this.lessonShown = ''
+},
+calculateEndTime(startTime, duration) {
+    const [startHour, startMinute] = startTime.split(':').map(Number)
+    let endHour = startHour + Math.floor((startMinute + duration) / 60)
+    let endMinute = (startMinute + duration) % 60
+    const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`
+    return endTime
+},
         async markAllLessons(status) {
-            const todayClassTemplate = {
-                date: this.day.fullDate,
-                status
+    const todayClassTemplate = {
+        date: this.day.fullDate,
+        status
+    };
+    try {
+        const updatedStudents = await Promise.all(this.day.students.map(async (student) => {
+            let studentData = student.classes ? student : await studentService.getById(student._id);
+            const studentClone = utilService.deepClone(studentData);
+            const todayClass = {
+                ...todayClassTemplate,
+                _id: studentClone._id,
+                price: studentClone.lessonsInfo[0].price,
+                time: studentClone.lessonsInfo[0].time,
+                duration: studentClone.lessonsInfo[0].duration,
             };
 
-            try {
-                // Prepare updated student data, ensuring we fetch missing student data if needed
-                const updatedStudents = await Promise.all(this.day.students.map(async (student) => {
-                    // Check if the student already has full data (including classes)
-                    let studentData = student.classes ? student : await studentService.getById(student._id);
+            const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
 
-                    // Clone the student to avoid direct mutation
-                    const studentClone = utilService.deepClone(studentData);
-
-                    const todayClass = {
-                        ...todayClassTemplate,
-                        _id: studentClone._id,
-                        price: studentClone.lessonsInfo[0].price,
-                        time: studentClone.lessonsInfo[0].time,
-                        duration: studentClone.lessonsInfo[0].duration,
-                    };
-
-                    const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
-
-                    if (existingIndex !== -1) {
-                        if (studentClone.classes[existingIndex].status !== todayClass.status) {
-                            studentClone.classes.splice(existingIndex, 1, todayClass);
-                        }
-                    } else {
-                        studentClone.classes.push(todayClass);
-                    }
-
-                    return studentClone;
-                }));
-
-                // Dispatch the batch update to the store
-                await this.$store.dispatch({ type: "updateMultipleStudents", students: updatedStudents });
-                showSuccessMsg("All lessons updated successfully!");
-            } catch (err) {
-                console.error("Error updating lessons:", err);
-                showErrorMsg("Failed to update all lessons.");
+            if (existingIndex !== -1) {
+                if (studentClone.classes[existingIndex].status !== todayClass.status) {
+                    studentClone.classes.splice(existingIndex, 1, todayClass);
+                }
+            } else {
+                studentClone.classes.push(todayClass);
             }
-        }
 
+            return studentClone;
+        }));
 
+        // Dispatch the batch update to the store
+        await this.$store.dispatch({ type: "updateMultipleStudents", students: updatedStudents });
+        showSuccessMsg("All lessons updated successfully!");
+    } catch (err) {
+        console.error("Error updating lessons:", err);
+        showErrorMsg("Failed to update all lessons.");
+    }
+}
     }
 }
 </script>

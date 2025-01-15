@@ -39,6 +39,28 @@ export default {
                 students
             }
         },
+        syncLessons() {
+            var singleLesson = this.students.flatMap(student =>
+                student.classes
+                    .filter(lesson => lesson.date === this.fullDate)
+                    .map(lesson => ({ ...lesson, _id: student._id, name: student.name }))
+            );
+
+            var todayStudents = this.getStudentsByDate
+            console.log(todayStudents);
+            singleLesson.forEach(lesson => {
+                const existingIndex = todayStudents.findIndex(existingLesson =>
+                    existingLesson._id === lesson._id && existingLesson.time === lesson.time
+                );
+                if (existingIndex !== -1) {
+                    todayStudents[existingIndex].status = lesson.status;
+                    // if (todayStudents[existingIndex].note) 
+                    todayStudents[existingIndex].note = lesson.note;
+                }
+                else todayStudents.push(lesson);
+            });
+            return todayStudents
+        },
         getStudentsByDate() {
             return this.students.reduce((acc, student) => {
                 if (student.lessonsInfo) {
@@ -55,22 +77,6 @@ export default {
                 }
                 return acc;
             }, []);
-        },
-        syncLessons() {
-            var singleLesson = this.students.flatMap(student =>
-                student.classes
-                    .filter(lesson => lesson.date === this.fullDate)
-                    .map(lesson => ({ ...lesson, _id: student._id, name: student.name }))
-            );
-            var todayStudents = this.getStudentsByDate
-            singleLesson.forEach(lesson => {
-                const existingIndex = todayStudents.findIndex(existingLesson =>
-                    existingLesson._id === lesson._id && existingLesson.time === lesson.time
-                );
-                if (existingIndex !== -1) todayStudents[existingIndex].status = lesson.status;
-                else todayStudents.push(lesson);
-            });
-            return todayStudents
         },
     },
     methods: {
