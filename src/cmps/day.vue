@@ -131,41 +131,89 @@ export default {
                 height: `${height}%`
             }
         },
-        async addClass(student, status) {
-            var hereForChangeNote = false
-            if (!student) {
-                var student = this.lessonShown
-                if (!student.status || student.stauts === 'pending') var status = 'pending'
-                else var status = student.status
-                var note = this.lessonNote
-                hereForChangeNote = true
-            }
-            var todayClass = {
-                date: this.day.fullDate, status, price: student.price, _id: student._id,
-                time: student.time, duration: student.duration,
-            }
-            if (note) todayClass.note = note
-            let currStudent = await studentService.getById(student._id)
-            var studentClone = utilService.deepClone(currStudent)
+        // async addClass(student, status) {
+        //     var hereForChangeNote = false
+        //     if (!student) {
+        //         var student = this.lessonShown
+        //         if (!student.status || student.stauts === 'pending') var status = 'pending'
+        //         else var status = student.status
+        //         var note = this.lessonNote
+        //         hereForChangeNote = true
+        //     }
+        //     var todayClass = {
+        //         date: this.day.fullDate, status, price: student.price, _id: student._id,
+        //         time: student.time, duration: student.duration,
+        //     }
+        //     if (note) todayClass.note = note
+        //     let currStudent = await studentService.getById(student._id)
+        //     var studentClone = utilService.deepClone(currStudent)
 
-            const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date)
-            if (existingIndex !== -1 && studentClone.classes[existingIndex].status === todayClass.status && !hereForChangeNote) {
-                return console.log('same')
+        //     const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date)
+        //     if (existingIndex !== -1 && studentClone.classes[existingIndex].status === todayClass.status && !hereForChangeNote) {
+        //         return console.log('same')
+        //     }
+        //     else if (existingIndex !== -1) {
+        //         studentClone.classes.splice(existingIndex, 1, todayClass)
+        //     } else {
+        //         studentClone.classes.push(todayClass)
+        //     }
+        //     try {
+        //         await this.$store.dispatch({ type: "updateStudent", student: studentClone })
+        //         showSuccessMsg(student.name + " " + status)
+        //         if (this.lessonShown) this.lessonShown = ''
+        //     } catch (err) {
+        //         console.log(err)
+        //         showErrorMsg(`Cannot change ${student} ${status}`)
+        //     }
+        // },
+        async addClass(student, status) {
+            let hereForChangeNote = false;
+            let note; // Declare note here
+
+            if (!student) {
+                student = this.lessonShown;
+                status = !student.status || student.status === 'pending' ? 'pending' : student.status;
+                note = this.lessonNote;
+                hereForChangeNote = true;
             }
-            else if (existingIndex !== -1) {
-                studentClone.classes.splice(existingIndex, 1, todayClass)
-            } else {
-                studentClone.classes.push(todayClass)
-            }
+
+            const todayClass = {
+                date: this.day.fullDate,
+                status,
+                price: student.price,
+                _id: student._id,
+                time: student.time,
+                duration: student.duration,
+            };
+
+            if (note) todayClass.note = note;
+
             try {
-                await this.$store.dispatch({ type: "updateStudent", student: studentClone })
-                showSuccessMsg(student.name + " " + status)
-                if (this.lessonShown) this.lessonShown = ''
+                const currStudent = await studentService.getById(student._id);
+                const studentClone = utilService.deepClone(currStudent);
+
+                const existingIndex = studentClone.classes.findIndex(c => c.date === todayClass.date);
+
+                if (existingIndex !== -1 && studentClone.classes[existingIndex].status === todayClass.status && !hereForChangeNote) {
+                    console.log('same');
+                    return;
+                }
+
+                if (existingIndex !== -1) {
+                    studentClone.classes[existingIndex] = todayClass;
+                } else {
+                    studentClone.classes.push(todayClass);
+                }
+
+                await this.$store.dispatch({ type: "updateStudent", student: studentClone });
+                showSuccessMsg(`${student.name} ${status}`);
+                if (this.lessonShown) this.lessonShown = '';
             } catch (err) {
-                console.log(err)
-                showErrorMsg(`Cannot change ${student} ${status}`)
+                console.error(err);
+                showErrorMsg(`Cannot change ${student.name} ${status}`);
             }
         },
+
         activeStatus(lesson, status) {
             if (lesson.status === status) return 'active-status'
         },
