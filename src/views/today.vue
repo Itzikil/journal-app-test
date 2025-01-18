@@ -47,14 +47,12 @@ export default {
             );
 
             var todayStudents = this.getStudentsByDate
-            console.log(todayStudents);
             singleLesson.forEach(lesson => {
                 const existingIndex = todayStudents.findIndex(existingLesson =>
                     existingLesson._id === lesson._id && existingLesson.time === lesson.time
                 );
                 if (existingIndex !== -1) {
                     todayStudents[existingIndex].status = lesson.status;
-                    // if (todayStudents[existingIndex].note) 
                     todayStudents[existingIndex].note = lesson.note;
                 }
                 else todayStudents.push(lesson);

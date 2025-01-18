@@ -23,15 +23,15 @@ async function query(filterBy = { name: '' }) {
 
     // students = students.filter(student => regex.test(student.name) || regex.test(student.description))
     // if (filterBy.price) {
-        //     students = students.filter(student => student.price <= filterBy.price)
-        // }
-        var teacher = await userService.getLoggedinUser()
-        students = students.filter(student => student?.teacher?._id === teacher?._id)
-        if (filterBy.name) {
-            const regex = new RegExp(filterBy.name, 'i')
-            students = students.filter(student => regex.test(student.name))
-        }
-        students = utilService.sortByName(students)
+    //     students = students.filter(student => student.price <= filterBy.price)
+    // }
+    var teacher = await userService.getLoggedinUser()
+    students = students.filter(student => student?.teacher?._id === teacher?._id)
+    if (filterBy.name) {
+        const regex = new RegExp(filterBy.name, 'i')
+        students = students.filter(student => regex.test(student.name))
+    }
+    students = utilService.sortByName(students)
     return students
 }
 
@@ -51,7 +51,7 @@ async function remove(studentId) {
 
 async function save(student) {
     var savedStudent
-    
+
     if (student._id) {
         savedStudent = await storageService.put(STORAGE_KEY, student)
     } else {
@@ -59,8 +59,6 @@ async function save(student) {
         // student.owner = userService.getLoggedinUser()
         savedStudent = await storageService.post(STORAGE_KEY, student)
     }
-    console.log(savedStudent);
-    
     return savedStudent
 }
 
