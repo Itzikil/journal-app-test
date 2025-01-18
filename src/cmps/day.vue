@@ -132,12 +132,13 @@ export default {
             }
         },
         async addClass(student, status) {
+            var hereForChangeNote = false
             if (!student) {
                 var student = this.lessonShown
                 if (!student.status || student.stauts === 'pending') var status = 'pending'
                 else var status = student.status
                 var note = this.lessonNote
-                var hereForChangeNote = true
+                hereForChangeNote = true
             }
             var todayClass = {
                 date: this.day.fullDate, status, price: student.price, _id: student._id,
@@ -151,82 +152,83 @@ export default {
             if (existingIndex !== -1 && studentClone.classes[existingIndex].status === todayClass.status && !hereForChangeNote) {
                 return console.log('same')
             }
-            else if(existingIndex !== -1) {
-    studentClone.classes.splice(existingIndex, 1, todayClass)
-} else {
-    studentClone.classes.push(todayClass)
-}
-try {
-    await this.$store.dispatch({ type: "updateStudent", student: studentClone })
-    showSuccessMsg(student.name + " " + status)
-} catch (err) {
-    console.log(err)
-    showErrorMsg(`Cannot change ${student} ${status}`)
-}
-        },
-activeStatus(lesson, status) {
-    if (lesson.status === status) return 'active-status'
-},
-showLesson(student) {
-    if (this.lessonShown._id === student._id) {
-        this.lessonShown = ''
-    } else {
-        this.lessonShown = student
-        var matchedStudent = this.students.find(s => s._id === student._id)
-        let currLesson = matchedStudent.classes.find(cls => cls.date === this.day.fullDate && cls.time === student.time)
-        this.lessonNote = currLesson?.note ?? ''
-    }
-    console.log(this.day);
-
-},
-closeLesson() {
-    this.lessonShown = ''
-},
-calculateEndTime(startTime, duration) {
-    const [startHour, startMinute] = startTime.split(':').map(Number)
-    let endHour = startHour + Math.floor((startMinute + duration) / 60)
-    let endMinute = (startMinute + duration) % 60
-    const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`
-    return endTime
-},
-        async markAllLessons(status) {
-    const todayClassTemplate = {
-        date: this.day.fullDate,
-        status
-    };
-    try {
-        const updatedStudents = await Promise.all(this.day.students.map(async (student) => {
-            let studentData = student.classes ? student : await studentService.getById(student._id);
-            const studentClone = utilService.deepClone(studentData);
-            const todayClass = {
-                ...todayClassTemplate,
-                _id: studentClone._id,
-                price: studentClone.lessonsInfo[0].price,
-                time: studentClone.lessonsInfo[0].time,
-                duration: studentClone.lessonsInfo[0].duration,
-            };
-
-            const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
-
-            if (existingIndex !== -1) {
-                if (studentClone.classes[existingIndex].status !== todayClass.status) {
-                    studentClone.classes.splice(existingIndex, 1, todayClass);
-                }
+            else if (existingIndex !== -1) {
+                studentClone.classes.splice(existingIndex, 1, todayClass)
             } else {
-                studentClone.classes.push(todayClass);
+                studentClone.classes.push(todayClass)
             }
+            try {
+                await this.$store.dispatch({ type: "updateStudent", student: studentClone })
+                showSuccessMsg(student.name + " " + status)
+                if (this.lessonShown) this.lessonShown = ''
+            } catch (err) {
+                console.log(err)
+                showErrorMsg(`Cannot change ${student} ${status}`)
+            }
+        },
+        activeStatus(lesson, status) {
+            if (lesson.status === status) return 'active-status'
+        },
+        showLesson(student) {
+            if (this.lessonShown._id === student._id) {
+                this.lessonShown = ''
+            } else {
+                this.lessonShown = student
+                var matchedStudent = this.students.find(s => s._id === student._id)
+                let currLesson = matchedStudent.classes.find(cls => cls.date === this.day.fullDate && cls.time === student.time)
+                this.lessonNote = currLesson?.note ?? ''
+            }
+            console.log(this.day);
 
-            return studentClone;
-        }));
+        },
+        closeLesson() {
+            this.lessonShown = ''
+        },
+        calculateEndTime(startTime, duration) {
+            const [startHour, startMinute] = startTime.split(':').map(Number)
+            let endHour = startHour + Math.floor((startMinute + duration) / 60)
+            let endMinute = (startMinute + duration) % 60
+            const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`
+            return endTime
+        },
+        async markAllLessons(status) {
+            const todayClassTemplate = {
+                date: this.day.fullDate,
+                status
+            };
+            try {
+                const updatedStudents = await Promise.all(this.day.students.map(async (student) => {
+                    let studentData = student.classes ? student : await studentService.getById(student._id);
+                    const studentClone = utilService.deepClone(studentData);
+                    const todayClass = {
+                        ...todayClassTemplate,
+                        _id: studentClone._id,
+                        price: studentClone.lessonsInfo[0].price,
+                        time: studentClone.lessonsInfo[0].time,
+                        duration: studentClone.lessonsInfo[0].duration,
+                    };
 
-        // Dispatch the batch update to the store
-        await this.$store.dispatch({ type: "updateMultipleStudents", students: updatedStudents });
-        showSuccessMsg("All lessons updated successfully!");
-    } catch (err) {
-        console.error("Error updating lessons:", err);
-        showErrorMsg("Failed to update all lessons.");
-    }
-}
+                    const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
+
+                    if (existingIndex !== -1) {
+                        if (studentClone.classes[existingIndex].status !== todayClass.status) {
+                            studentClone.classes.splice(existingIndex, 1, todayClass);
+                        }
+                    } else {
+                        studentClone.classes.push(todayClass);
+                    }
+
+                    return studentClone;
+                }));
+
+                // Dispatch the batch update to the store
+                await this.$store.dispatch({ type: "updateMultipleStudents", students: updatedStudents });
+                showSuccessMsg("All lessons updated successfully!");
+            } catch (err) {
+                console.error("Error updating lessons:", err);
+                showErrorMsg("Failed to update all lessons.");
+            }
+        }
     }
 }
 </script>
