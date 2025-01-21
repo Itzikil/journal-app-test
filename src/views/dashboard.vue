@@ -123,7 +123,7 @@ export default {
       currentYear: new Date().getFullYear(),
       monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       fullUser: null,
-      showTable: true,
+      showTable: false,
     }
   },
   async created() {
@@ -170,16 +170,6 @@ export default {
       }
       return stats
     },
-    // monthlyMax() {
-    //   // count all the weekly active students, not inactive nor singles
-    //   return this.studentsByMonth.reduce((sum, student) => {
-    //     const studentRevenue = student.lessonsInfo?.reduce((acc, lesson) => {
-    //       const lessonDays = utilService.getWeekdayCountInMonth(this.currentYear, this.currentMonth, lesson.day);
-    //       return acc + (lessonDays * lesson.price);
-    //     }, 0) ?? 0; // If studentRevenue is undefined, default to 0
-    //     return sum + studentRevenue; // Add each student's revenue to the total
-    //   }, 0); // Initial value for outer accumulator is 0
-    // },
     monthlyMax() {
       return this.studentsByMonth.reduce((sum, student) => {
         if (student.lessonsInfo.length) {

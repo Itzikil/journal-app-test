@@ -1,6 +1,6 @@
 <template>
     <section class="today-container container">
-        <!-- <h2>Today</h2> -->
+        <h2>Today</h2>
         <day :day="getStudentsForDay" />
     </section>
 </template>
@@ -8,6 +8,7 @@
 <script>
 import day from '../cmps/day.vue'
 import { utilService } from '../services/util.service';
+
 export default {
     data() {
         return {
@@ -31,8 +32,8 @@ export default {
             return this.daysOfWeek[this.currentDate.getDay()]
         },
         getStudentsForDay() {
-            var students = this.students.filter(student => { return student.day === this.dayName && utilService.biggerDate(student.start, this.fullDate) });
-            students = this.syncLessons
+            // var students = this.students.filter(student => { return student.day === this.dayName && utilService.biggerDate(student.start, this.fullDate) });
+            var students = this.syncLessons
             return {
                 fullDate: this.fullDate,
                 dayName: this.dayName,
