@@ -31,9 +31,10 @@
         <h3>Last months</h3>
         <button @click="changeMonth(-1)">></button>
       </div>
+      
       <div class="lessons-list">
         <transition-group v-if="student.classes" tag="ul" name="lesson-list" class="lessons-group" :key="student._id">
-          <li v-for="(lessons, idx) in slicedClasses" :key="idx + '1'">
+          <li v-for="(lessons, idx) in slicedClasses" :key="idx + '1'" class="monthly-lesson">
             <div class="monthly-header">
               <h4 class="text-center">{{ getMonthName(lessons[0].date) }}</h4>
               <button @click.stop="updateMonthlyLessons(lessons[0].date)" class="pay-all-btn">

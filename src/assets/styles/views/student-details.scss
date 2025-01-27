@@ -26,7 +26,7 @@
 
     .last-lessons {
         background-color: white;
-        padding: 10px;
+        padding: 15px;
         border-radius: 10px;
         display: flex;
         flex-direction: column;
@@ -34,7 +34,7 @@
         .btn-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            // margin-bottom: 10px;
 
             h3 {
                 margin-bottom: 0;
@@ -43,11 +43,12 @@
         }
 
         .lessons-list {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-direction: column;
-            position: relative;
+
+            // display: flex;
+            // gap: 30px;
+            // justify-content: center;
+            // flex-direction: column;
+            // position: relative;
 
             .monthly-header {
                 display: flex;
@@ -55,7 +56,7 @@
                 width: 100%;
 
                 h4 {
-                    margin-top: 10px;
+                    margin-top: 20px;
                     // justify-self: end;
                     align-self: center;
                 }
@@ -68,6 +69,7 @@
                     margin: 0;
                     position: absolute;
                     right: 0;
+                    top: 10px;
 
                     img {
                         width: 100%;
@@ -107,7 +109,7 @@
 
             .btns-container {
                 display: flex;
-                gap: 10px;
+                gap: 8px;
                 height: 100%;
                 justify-content: center;
                 align-items: center;
