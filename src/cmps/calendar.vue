@@ -1,9 +1,9 @@
 <template>
     <section class="calendar-container">
         <div class="calendar-header">
-            <button @click="prevMonth"><img src="../assets/imgs/left-arrow.svg" alt=""></button>
-            <h2>{{ monthNames[currentMonth] }} {{ currentYear }}</h2>
-            <button @click="nextMonth"><img src="../assets/imgs/right-arrow.svg" alt=""></button>
+            <button @click="parentData.prevMonth()"><img src="../assets/imgs/left-arrow.svg" alt=""></button>
+            <h2>{{ monthNames[parentData.currentMonth] }} {{ parentData.currentYear }}</h2>
+            <button @click="parentData.nextMonth()"><img src="../assets/imgs/right-arrow.svg" alt=""></button>
         </div>
 
         <table class="calendar">
@@ -25,20 +25,15 @@
 
 export default {
     props: {
-        syncLessons: {
-            type: Function,
-            required: true
-        },
-        fullDate: {
-            type: Function,
-            required: true
+        parentData: {
+            type: Object,
+            required: true,
         },
     },
     data() {
-        const currentDate = new Date();
         return {
-            currentYear: currentDate.getFullYear(),
-            currentMonth: currentDate.getMonth(),
+            currentYear: this.parentData.currentYear,
+            currentMonth: this.parentData.currentMonth,
             daysOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             dayShown: '',
@@ -66,7 +61,7 @@ export default {
                     } else {
                         const date = day;
                         const dayName = dayNames[(day + firstDayOfMonth - 1) % 7];
-                        var studentsForDay = this.syncLessons(dayName, date);
+                        var studentsForDay = this.parentData.syncLessons(dayName, date);
                         const clonedStudents = studentsForDay.map(student => ({ ...student }));
                         week.push({ date, dayName, students: clonedStudents });
                         day++;
@@ -81,36 +76,22 @@ export default {
         },
     },
     methods: {
+        emptyCell(day) {
+            return !day.date
+        },
         isToday(day) {
             const today = new Date();
             return day.date === today.getDate() && this.currentMonth === today.getMonth() && this.currentYear === today.getFullYear();
         },
-        emptyCell(day) {
-            return !day.date
-        },
-        prevMonth() {
-            this.currentMonth -= 1;
-            if (this.currentMonth < 0) {
-                this.currentMonth = 11;
-                this.currentYear -= 1;
-            }
-        },
-        nextMonth() {
-            this.currentMonth += 1;
-            if (this.currentMonth > 11) {
-                this.currentMonth = 0;
-                this.currentYear += 1;
-            }
+        chosenDay(day) {
+            if (!day.date) return
+            return this.parentData.fullDate({ day: day.date }) === this.dayShown.fullDate
         },
         showDay(day) {
             if (!day.date) return
-            day.fullDate = this.fullDate({ day: day.date })
-            this.$emit('showDay', day)
+            day.fullDate = this.parentData.fullDate({ day: day.date })
+            this.parentData.showDay(day)
             this.dayShown = day
-        },
-        chosenDay(day) {
-            if (!day.date) return
-            return this.fullDate({ day: day.date }) === this.dayShown.fullDate
         },
     },
 };

@@ -142,8 +142,6 @@ export default {
   methods: {
     setActiveStudents(type) {
       this.activeStudents = type
-      console.log(type);
-
     },
     toggleEditCmp(whatToAdd) {
       this.editCmp = whatToAdd
@@ -206,7 +204,7 @@ export default {
       try {
         await this.$store.dispatch({ type: "setFilter", filterBy: { ...this.filterBy } });
       } catch (err) {
-        showErrorMsg(`Cannot change ${studentClone} `);
+        showErrorMsg(`Cannot filter`);
       }
     },
     async makeGroup(group) {

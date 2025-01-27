@@ -1,6 +1,6 @@
 <template>
   <section class="journal-container container">
-    <calendar @showDay="showDay" :sync-lessons="syncLessons" :fullDate="fullDate"/>
+    <calendar :parentData="parentData" />
     <day v-if="selectedDay" :day="getStudentsForDay" />
   </section>
 </template>
@@ -12,9 +12,11 @@ import { utilService } from '../services/util.service';
 
 export default {
   data() {
+    const currentDate = new Date()
     return {
       selectedDay: null,
-      currentDate: new Date(),
+      currentYear: currentDate.getFullYear(),
+      currentMonth: currentDate.getMonth(),
     };
   },
   computed: {
@@ -28,32 +30,57 @@ export default {
       return this.selectedDay?.dayName || this.daysOfWeek[this.currentDate.getDay()];
     },
     getStudentsForDay() {
-      const date = this.selectedDay?.fullDate || this.fullDate();
-      const students = this.syncLessons(this.dayName, date);
+      const students = this.syncLessons(this.dayName, this.selectedDay?.date);
       return {
-        fullDate: date,
+        fullDate: this.selectedDay?.fullDate,
         dayName: this.dayName,
         students,
       };
     },
+    parentData() {
+      return {
+        currentYear: this.currentYear,
+        currentMonth: this.currentMonth,
+        showDay: this.showDay,
+        syncLessons: this.syncLessons,
+        prevMonth: this.prevMonth,
+        nextMonth: this.nextMonth,
+        fullDate: this.fullDate,
+      }
+    }
   },
   methods: {
     showDay(day) {
       this.selectedDay = day;
     },
+    prevMonth() {
+      this.currentMonth -= 1;
+      if (this.currentMonth < 0) {
+        this.currentMonth = 11;
+        this.currentYear -= 1;
+      }
+    },
+    nextMonth() {
+      this.currentMonth += 1;
+      if (this.currentMonth > 11) {
+        this.currentMonth = 0;
+        this.currentYear += 1;
+      }
+    },
     fullDate({ day, month, year } = {}) {
       if (!day && !month && !year) {
-        return this.selectedDay?.fullDate || `${this.currentDate.getDate()}.${this.currentDate.getMonth() + 1}.${this.currentDate.getFullYear()}`;
+        return this.selectedDay?.fullDate ||
+          `${this.currentDate.getDate()}.${this.currentDate.getMonth() + 1}.${this.currentDate.getFullYear()}`;
       }
       day = day || this.currentDate.getDate();
-      month = month || this.currentDate.getMonth() + 1;
-      year = year || this.currentDate.getFullYear();
+      month = month || this.currentMonth + 1;
+      year = year || this.currentYear;
       return `${day}.${month}.${year}`;
     },
     syncLessons(dayName, date) {
       const singleLesson = this.students.flatMap(student =>
         student.classes
-          .filter(lesson => lesson.date === date)
+          .filter(lesson => lesson.date === this.fullDate({ day: date }))
           .map(lesson => ({ ...lesson, _id: student._id, name: student.name }))
       );
       const todayStudents = this.getStudentsByDate(dayName, date);
