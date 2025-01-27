@@ -34,6 +34,7 @@
         <p class="fs10"><span class="fs8">₪</span>{{ monthlyMax }}</p>
         <p class="fs12">Max Revenue</p>
       </div>
+
       <div class="students-list">
         <h3>Students <span class="fs14">({{ studentsByMonth.length }})</span></h3>
         <ul>
@@ -43,6 +44,7 @@
           </li>
         </ul>
       </div>
+
       <div class="student-info">
         <ul v-if="currStudent">
           <li>
@@ -60,12 +62,15 @@
               :classesSum="sumPaidThisMonth(currStudent)" />
           </li>
         </ul>
+        <p v-else>Choose student</p>
       </div>
+
       <div class="stats">
         <h3>statistics</h3>
         <button @click="showTable = true">For more deep stats -></button>
         <statistic :fourMonths="fourMonths" style="height: 130px; width: 100px;" />
       </div>
+
       <div class="some">
         <h4>Didnt pay yet</h4>
         <ul>
@@ -86,6 +91,7 @@
         </ul>
       </div>
     </section>
+
     <section v-else class="charts-stats-container ">
       <div>
         <button @click="showTable = false">Back to dashboard</button>
@@ -128,7 +134,7 @@ export default {
   },
   async created() {
     await this.$store.dispatch({ type: "loadStudents" });
-    this.currStudent = this.students[0]
+    // this.currStudent = this.students[0]
     const userId = this.$store.getters.loggedinUser?._id;
     if (userId) this.fullUser = await this.$store.dispatch({ type: 'loadAndWatchUser', userId })
   },

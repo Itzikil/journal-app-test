@@ -16,8 +16,8 @@
       Inactive ({{ inactiveStudentsList.length }})</button>
     <!-- <button @click="setActiveStudents('groups')" :class="{ 'inactive-btn': activeStudents === 'groups' }">
       Groups ({{ groupsList.length }})</button> -->
-
     <!-- <button @click="activatatedStudents">activate all students</button> -->
+
     <div v-if="editCmp === 'student'" class="add-student-cmp">
       <button @click="editCmp = false">X</button>
       <addStudent @toggleEditCmp="toggleEditCmp" />
@@ -104,18 +104,22 @@ export default {
       filterBy: {
         name: ''
       },
+      allStudents: this.$store.getters.students,
+      students: '',
     };
   },
   created() {
     this.$store.dispatch({ type: "loadStudents" });
+    this.students = this.$store.getters.students;
   },
   computed: {
     loggedInUser() {
       return this.$store.getters.loggedinUser;
     },
-    students() {
-      return this.$store.getters.students;
-    },
+    // students() {
+    //   // return this.$store.getters.students;
+    //   this.students = this.$store.getters.students;
+    // },
     groupedStudents() {
       if (this.activeStudents === 'groups') return this.groupsList
       var sortedStudents = this.daysOfWeek.reduce((acc, day) => {
@@ -201,11 +205,13 @@ export default {
       }
     },
     async setFilter() {
-      try {
-        await this.$store.dispatch({ type: "setFilter", filterBy: { ...this.filterBy } });
-      } catch (err) {
-        showErrorMsg(`Cannot filter`);
-      }
+      const regex = new RegExp(this.filterBy.name, 'i')
+      this.students = this.allStudents.filter(student => regex.test(student.name))
+      // try {
+      //   await this.$store.dispatch({ type: "setFilter", filterBy: { ...this.filterBy } });
+      // } catch (err) {
+      //   showErrorMsg(`Cannot filter`);
+      // }
     },
     async makeGroup(group) {
       var user = await this.$store.dispatch({ type: 'loadAndWatchUser', userId: this.loggedInUser._id });

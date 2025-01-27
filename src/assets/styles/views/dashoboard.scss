@@ -63,6 +63,7 @@
     .students-list {
         grid-area: list;
         overflow-y: scroll;
+
         ul {
             display: flex;
             flex-wrap: wrap;
@@ -142,7 +143,7 @@
             align-self: center;
 
             .stat-fill {
-                background-color:  rgb(66, 202, 202);
+                background-color: rgb(66, 202, 202);
                 height: 8px;
                 border-radius: 8px;
                 width: 20%;
@@ -187,7 +188,7 @@
         grid-area: some;
         overflow-y: scroll;
 
-        ul{
+        ul {
             display: flex;
             flex-direction: column;
             gap: 5px;
@@ -200,6 +201,7 @@
         flex-direction: column;
 
         .students-list {
+            max-height: 450px;
             ul {
                 li {
                     max-width: 50%;
@@ -209,6 +211,12 @@
 
         .stats {
             height: 250px;
+        }
+        .some{
+            max-height: 450px;
+            ul{
+                gap: 8px;
+            }
         }
     }
 }
