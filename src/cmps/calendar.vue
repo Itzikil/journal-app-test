@@ -22,7 +22,6 @@
 </template>
 
 <script>
-
 export default {
     props: {
         parentData: {
@@ -32,8 +31,6 @@ export default {
     },
     data() {
         return {
-            currentYear: this.parentData.currentYear,
-            currentMonth: this.parentData.currentMonth,
             daysOfWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             dayShown: '',
@@ -45,8 +42,8 @@ export default {
             return this.$store.getters.students;
         },
         calendar() {
-            const firstDayOfMonth = new Date(this.currentYear, this.currentMonth, 1).getDay();
-            const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+            const firstDayOfMonth = new Date(this.parentData.currentYear, this.parentData.currentMonth, 1).getDay();
+            const daysInMonth = new Date(this.parentData.currentYear, this.parentData.currentMonth + 1, 0).getDate();
             const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let calendar = [];
             let day = 1;
@@ -81,7 +78,7 @@ export default {
         },
         isToday(day) {
             const today = new Date();
-            return day.date === today.getDate() && this.currentMonth === today.getMonth() && this.currentYear === today.getFullYear();
+            return day.date === today.getDate() && this.parentData.currentMonth === today.getMonth() && this.parentData.currentYear === today.getFullYear();
         },
         chosenDay(day) {
             if (!day.date) return
