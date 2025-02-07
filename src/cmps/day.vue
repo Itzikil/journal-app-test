@@ -4,13 +4,16 @@
             <!-- <h2>Today</h2> -->
             <p class="day-header"><span class="fs14">{{ day.dayName }}</span> {{ day.fullDate }}</p>
         </div>
-        <div class="flex gap20 align-center">
-            <p class="fs16">Revenue</p>
-            <div class="flex align-center">
-                <p class="fs10">{{ revenue }}</p>
-                <p class="fs12"> /{{ maxRevenue }}</p>
+
+        <div class="flex gap20 align-center justify-space">
+            <div class="flex gap10">
+                <p class="fs16">Revenue</p>
+                <div class="flex align-center">
+                    <p class="fs10">{{ revenue }}</p>
+                    <p class="fs12"> /{{ maxRevenue }}</p>
+                </div>
             </div>
-            <!-- <div class="btns-container">
+            <div class="btns-container">
                 <button @click.stop="markAllLessons('hevriz')">
                     <img src="../assets/imgs/hevriz.svg" alt="didnt come" class="">
                 </button>
@@ -20,8 +23,9 @@
                 <button @click.stop="markAllLessons('paid')">
                     <img src="../assets/imgs/paid-white.svg" alt="paid" class="">
                 </button>
-            </div> -->
+            </div>
         </div>
+
         <div class="hour" v-for="hour in hours" :key="hour">
             <div class="hour-label">{{ hour }}:00</div>
             <button class="student-slot student" v-for="(lesson, idx) in studentsByHour[hour]" :key="lesson.id"
@@ -205,44 +209,46 @@ export default {
             const endTime = `${String(endHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`
             return endTime
         },
-        // async markAllLessons(status) {
-        //     const todayClassTemplate = {
-        //         date: this.day.fullDate,
-        //         status
-        //     };
-        //     try {
-        //         const updatedStudents = await Promise.all(this.day.students.map(async (student) => {
-        //             let studentData = student.classes ? student : await studentService.getById(student._id);
-        //             const studentClone = utilService.deepClone(studentData);
-        //             const todayClass = {
-        //                 ...todayClassTemplate,
-        //                 _id: studentClone._id,
-        //                 price: studentClone.lessonsInfo[0].price,
-        //                 time: studentClone.lessonsInfo[0].time,
-        //                 duration: studentClone.lessonsInfo[0].duration,
-        //             };
+        async markAllLessons(status) {
+            this.day.students.forEach(student => this.addClass(student, status))
+            return
+            const todayClassTemplate = {
+                date: this.day.fullDate,
+                status
+            };
+            try {
+                const updatedStudents = this.day.students.map(async (student) => {
+                    let studentData = student.classes ? student : await studentService.getById(student._id);
+                    const studentClone = utilService.deepClone(studentData);
+                    const todayClass = {
+                        ...todayClassTemplate,
+                        _id: studentClone._id,
+                        price: studentClone.lessonsInfo[0].price,
+                        time: studentClone.lessonsInfo[0].time,
+                        duration: studentClone.lessonsInfo[0].duration,
+                    };
 
-        //             const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
+                    const existingIndex = studentClone.classes.findIndex((c) => c.date === todayClass.date);
 
-        //             if (existingIndex !== -1) {
-        //                 if (studentClone.classes[existingIndex].status !== todayClass.status) {
-        //                     studentClone.classes.splice(existingIndex, 1, todayClass);
-        //                 }
-        //             } else {
-        //                 studentClone.classes.push(todayClass);
-        //             }
+                    if (existingIndex !== -1) {
+                        if (studentClone.classes[existingIndex].status !== todayClass.status) {
+                            studentClone.classes.splice(existingIndex, 1, todayClass);
+                        }
+                    } else {
+                        studentClone.classes.push(todayClass);
+                    }
 
-        //             return studentClone;
-        //         }));
+                    return studentClone;
+                });
 
-        //         // Dispatch the batch update to the store
-        //         await this.$store.dispatch({ type: "updateMultipleStudents", students: updatedStudents });
-        //         showSuccessMsg("All lessons updated successfully!");
-        //     } catch (err) {
-        //         console.error("Error updating lessons:", err);
-        //         showErrorMsg("Failed to update all lessons.");
-        //     }
-        // }
+                // Dispatch the batch update to the store
+                await this.$store.dispatch({ type: "updateMultipleStudents", students: updatedStudents });
+                showSuccessMsg("All lessons updated successfully!");
+            } catch (err) {
+                console.error("Error updating lessons:", err);
+                showErrorMsg("Failed to update all lessons.");
+            }
+        }
     }
 }
 </script>

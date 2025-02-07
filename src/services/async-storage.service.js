@@ -30,16 +30,36 @@ function post(entityType, newEntity) {
     })
 }
 
+//had problem with marking too fast didnt work for all, we had to delay it
+let updateQueue = Promise.resolve();
+
 function put(entityType, updatedEntity) {
-    updatedEntity = JSON.parse(JSON.stringify(updatedEntity))
-    return query(entityType).then(entities => {
-        const idx = entities.findIndex(entity => entity._id === updatedEntity._id)
-        if (idx < 0) throw new Error(`Update failed, cannot find entity with id: ${updatedEntity._id} in: ${entityType}`)
-        entities.splice(idx, 1, updatedEntity)
-        _save(entityType, entities)
-        return updatedEntity
-    })
+    updatedEntity = JSON.parse(JSON.stringify(updatedEntity));
+
+    updateQueue = updateQueue.then(() => {
+        return query(entityType).then(entities => {
+            const idx = entities.findIndex(entity => entity._id === updatedEntity._id);
+            if (idx < 0) throw new Error(`Update failed, cannot find entity with id: ${updatedEntity._id} in: ${entityType}`);
+
+            entities.splice(idx, 1, updatedEntity);
+            _save(entityType, entities);
+            return updatedEntity;
+        });
+    });
+
+    return updateQueue; // Ensures updates are processed one after another.
 }
+
+// function put(entityType, updatedEntity) {
+//     updatedEntity = JSON.parse(JSON.stringify(updatedEntity))
+//     return query(entityType).then(entities => {
+//         const idx = entities.findIndex(entity => entity._id === updatedEntity._id)
+//         if (idx < 0) throw new Error(`Update failed, cannot find entity with id: ${updatedEntity._id} in: ${entityType}`)
+//         entities.splice(idx, 1, updatedEntity)
+//         _save(entityType, entities)
+//         return updatedEntity
+//     })
+// }
 
 function remove(entityType, entityId) {
     return query(entityType).then(entities => {

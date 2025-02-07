@@ -283,19 +283,6 @@ export default {
       this.$store.dispatch({ type: 'logout' })
       this.$router.push('/')
     },
-    // openWhatsApp(student) {
-    //   var phoneNumber = this.formatPhoneNumber(student.phone || '0543060864')
-    //   let userPref = this.fullUser.pref
-    //   if (userPref.msg[0] || userPref.msg[1] || userPref.msg[2]) {
-    //     var message = `${userPref.msg[0]} ${this.arrivedThisMonth(student).length} ${userPref.msg[1]} ${this.sumArrivedThisMonth(student)} ${userPref.msg[2]}`
-    //   }
-    //   else var message = `We had ${this.arrivedThisMonth(student).length} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${this.sumArrivedThisMonth(student)}`;
-    //   console.log(message);
-    //   var isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    //   var urlStart = isMobileDevice ? 'https://api.whatsapp.com/send?phone=' : 'https://web.whatsapp.com/send?phone='
-    //   var whatsappUrl = urlStart + phoneNumber + '&text=' + encodeURIComponent(message);
-    //   window.open(whatsappUrl);
-    // },
     openWhatsApp(student) {
       var phoneNumber = this.formatPhoneNumber(student.phone || '0543060864');
       let userPref = this.fullUser.pref;
@@ -303,8 +290,6 @@ export default {
       var message = userPref.msg[0] || userPref.msg[1] || userPref.msg[2]
         ? `${userPref.msg[0]} ${this.arrivedThisMonth(student).length} ${userPref.msg[1]} ${this.sumArrivedThisMonth(student)} ${userPref.msg[2]}`
         : `We had ${this.arrivedThisMonth(student).length} lessons this ${this.monthNames[this.currentMonth]} in sum of ₪${this.sumArrivedThisMonth(student)}`;
-
-      console.log(message);
 
       var isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
