@@ -18,20 +18,6 @@
 
             <div class="monthly-statistics">
                 <h4>Monthly</h4>
-                <div class="stat-container">
-                    <div class="flex justify-space align-end">
-                        <p class="fs14 bold">Hours</p>
-                        <div class="flex align-end">
-                            <p>{{ convertMinutesToHours(hoursAWeek) }}<span class="fs12">hrs</span></p>
-                            <p class="fs12">/{{ convertMinutesToHours(monthlyMaxDuration) }}</p>
-                        </div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-fill"
-                            :style="{ width: `${fillColor(hoursAWeek, monthlyMaxDuration) * 100}%` }"></div>
-                    </div>
-                    <p class="fs14">{{ precentage(hoursAWeek, monthlyMaxDuration) }}%</p>
-                </div>
 
                 <div class="stat-container">
                     <div class="flex justify-space align-end">
@@ -65,6 +51,21 @@
                     <p class="fs14">{{ precentage(chartData.monthlySum(), chartData.monthlyMax) }}%</p>
                 </div>
 
+                <div class="stat-container">
+                    <div class="flex justify-space align-end">
+                        <p class="fs14 bold">Hours</p>
+                        <div class="flex align-end">
+                            <p>{{ convertMinutesToHours(hoursAWeek) }}<span class="fs12">hrs</span></p>
+                            <p class="fs12">/{{ convertMinutesToHours(monthlyMaxDuration) }}</p>
+                        </div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-fill"
+                            :style="{ width: `${fillColor(hoursAWeek, monthlyMaxDuration) * 100}%` }"></div>
+                    </div>
+                    <p class="fs14">{{ precentage(hoursAWeek, monthlyMaxDuration) }}%</p>
+                </div>
+
             </div>
         </div>
     </section>
@@ -93,18 +94,17 @@ export default {
             return this.currMonthStudents.reduce((acc, student) => student.lessonsInfo.length > 0 ? student.lessonsInfo[0].duration + acc : acc, 0)
         },
         hoursAWeek() {
-            return this.allLessonsInMonth.reduce((acc, lesson) => lesson.duration + acc, 0)
+            return this.allLessonsInMonth.reduce((acc, lesson) => {
+                return this.isValidLesson(lesson) ? lesson.duration + acc : acc;
+            }, 0);
         },
         maxWeeklyRevenue() {
             return this.currMonthStudents.reduce((acc, student) => student.lessonsInfo.length > 0 ? student.lessonsInfo[0].price + acc : acc, 0)
         },
         allLessonsInMonth() {
-            let lessons = this.currMonthStudents.map(student => this.chartData.classesInMonth(student, '', true))
-            var allMonthlyLessons = []
-            lessons.forEach(arr => {
-                arr.length > 0 ? allMonthlyLessons.push(...arr) : ''
-            });
-            return allMonthlyLessons
+            return this.currMonthStudents
+                .flatMap(student => this.chartData.classesInMonth(student, '', true))
+                .filter(this.isValidLesson);
         },
         // monthlyMaxDuration() {
         //     // count all the weekly active students, not inactive nor singles
@@ -162,6 +162,9 @@ export default {
         }
     },
     methods: {
+        isValidLesson(lesson) {
+            return lesson.status === 'arrived' || lesson.status === 'paid';
+        },
         convertMinutesToHours(minutes) {
             const hours = Math.floor(minutes / 60);
             const remainingMinutes = minutes % 60;
