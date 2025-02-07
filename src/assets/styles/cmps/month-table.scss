@@ -82,7 +82,7 @@
 
         .total-line {
             position: sticky;
-            bottom: 0;
+            bottom: -2px;
             background-color: $clr4 !important;
             color: white;
             z-index: 1; // Ensures the "Total" row stays above other rows while scrolling

@@ -43,7 +43,7 @@
         </div>
         <div v-if="lessonShown" class="lesson-info">
             <button @click="closeLesson()" class="close--lesson-btn">X</button>
-            <p>{{ lessonShown.name }}</p>
+            <router-link :to="`/student/${lessonShown._id}`">{{ lessonShown.name }}</router-link>
             <p>{{ lessonShown.time }} - {{ calculateEndTime(lessonShown.time, lessonShown.duration) }}</p>
             <textarea class="note-input" rows="2" v-model="lessonNote" placeholder="note"></textarea>
             <button @click.stop="addClass()">Save Note</button>
