@@ -86,7 +86,7 @@ export const studentStore = {
         },
         async updateMultipleStudents({ commit }, { students }) {
             try {
-                const updatedStudents = students.map(student => studentService.save(student));
+                const updatedStudents = await Promise.all(students.map(student => studentService.save(student)));
                 updatedStudents.forEach(student => {
                     commit("setStudent", student);
                 });

@@ -2,9 +2,12 @@
     <thead>
         <tr>
             <th></th>
-            <th v-if="!isMonthPicked" v-for="month in fourMonths" :key="month.number">
-                <button @click="$emit('monthSelected', month)">{{ month.name }}</button>
-            </th>
+            <template v-if="!isMonthPicked">
+                <th v-for="month in fourMonths" :key="month.number">
+                    <button @click="$emit('monthSelected', month)">{{ month.name }}</button>
+                </th>
+                <th>sum</th>
+            </template>
             <th v-else v-for="week in weeks" :key="week">
                 <p>{{ week }}</p>
             </th>

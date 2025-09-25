@@ -2,10 +2,6 @@
     box-sizing: border-box;
 }
 
-// ::selection {
-//     background-color: $clr1;
-//     color: $clr6;
-// }
 
 html {
     font-family: montserrat;
@@ -14,6 +10,19 @@ html {
     background-color: #e1eceb;
     -webkit-tap-highlight-color: transparent;
     // direction: rtl;
+}
+
+*::-webkit-scrollbar {
+    width: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 body {

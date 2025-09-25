@@ -1,11 +1,18 @@
 .student-details-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    flex-wrap: wrap;
-    // flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-template-areas:
+        "card notes btn"
+        "lessons notes edit"
+        "lessons reports edit"
+        "lessons reports edit"
+        "lessons reports edit"
+    ;
+    gap: 30px;
 
     .student-card {
+        grid-area: card;
         display: flex;
         flex-direction: column;
         color: $clr6;
@@ -25,6 +32,7 @@
     }
 
     .last-lessons {
+        grid-area: lessons;
         background-color: white;
         padding: 15px;
         border-radius: 10px;
@@ -161,22 +169,54 @@
     }
 
     .notes-container {
-        background-color: white;
-        padding: 10px;
-        border-radius: 10px;
         display: flex;
         flex-direction: column;
+        padding: 15px;
+        border-radius: 15px;
+        overflow-y: auto;
+        background-color: white;
 
         h3 {
             align-self: center;
         }
 
-        button {
-            padding: 10px;
+        ul {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            li {
+                button {
+                    width: 100%;
+                    padding: 10px;
+                    margin: 0;
+                }
+            }
         }
     }
 
+    .add-btn {
+        grid-area: btn;
+    }
+
+    .notes {
+        grid-area: notes;
+    }
+
+    .reports {
+        grid-area: reports;
+    }
+
+    .edit {
+        grid-area: edit;
+    }
+
     @media (max-width:650px) {
+        display: flex;
+        // justify-content: space-between;
+        flex-direction: column;
+        // align-items: baseline;
+        // flex-wrap: wrap;
         margin-bottom: 30px;
         flex-direction: column;
         gap: 20px;

@@ -116,10 +116,6 @@ export default {
     loggedInUser() {
       return this.$store.getters.loggedinUser;
     },
-    // students() {
-    //   // return this.$store.getters.students;
-    //   this.students = this.$store.getters.students;
-    // },
     groupedStudents() {
       if (this.activeStudents === 'groups') return this.groupsList
       var sortedStudents = this.daysOfWeek.reduce((acc, day) => {

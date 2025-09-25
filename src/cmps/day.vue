@@ -51,6 +51,7 @@
             <p>{{ lessonShown.time }} - {{ calculateEndTime(lessonShown.time, lessonShown.duration) }}</p>
             <textarea class="note-input" rows="2" v-model="lessonNote" placeholder="note"></textarea>
             <button @click.stop="addClass()">Save Note</button>
+            <button @click.stop="hideLesson(lessonShown)">Hide</button>
         </div>
     </section>
     <section v-else class="main-loader">
@@ -141,6 +142,37 @@ export default {
                 height: `${height}%`
             }
         },
+        async hideLesson(currLesson) {
+            // return console.log(currLesson);
+
+            const currStudent = await studentService.getById(this.lessonShown._id);
+            const studentClone = utilService.deepClone(currStudent);
+            const todayClass = {
+                date: this.day.fullDate,
+                status: currLesson.status ? currLesson.status : '',
+                price: currLesson.price,
+                _id: currLesson._id,
+                time: currLesson.time,
+                duration: currLesson.duration,
+                hide: true,
+            };
+            const existingIndex = studentClone.classes.findIndex(c => c.date === this.day.fullDate && c.time === currLesson.time);
+
+            if (existingIndex !== -1) {
+                studentClone.classes[existingIndex] = todayClass;
+            } else {
+                studentClone.classes.push(todayClass);
+            }
+
+            try {
+                await this.$store.dispatch({ type: "updateStudent", student: studentClone });
+                showSuccessMsg(`${studentClone.name} is hidden`);
+                if (this.lessonShown) this.lessonShown = '';
+            } catch (err) {
+                console.error(err);
+                showErrorMsg(`Cannot hide ${studentClone.name} ${status}`);
+            }
+        },
         async addClass(student, status) {
             let hereForChangeNote = false;
             let note; // Declare note here
@@ -210,14 +242,15 @@ export default {
             return endTime
         },
         async markAllLessons(status) {
-            this.day.students.forEach(student => this.addClass(student, status))
-            return
+            // this.day.students.forEach(student => this.addClass(student, status))
+            // return
             const todayClassTemplate = {
                 date: this.day.fullDate,
                 status
             };
             try {
-                const updatedStudents = this.day.students.map(async (student) => {
+                showSuccessMsg("update all lessons...");
+                const updatedStudents = await Promise.all(this.day.students.map(async (student) => {
                     let studentData = student.classes ? student : await studentService.getById(student._id);
                     const studentClone = utilService.deepClone(studentData);
                     const todayClass = {
@@ -239,7 +272,7 @@ export default {
                     }
 
                     return studentClone;
-                });
+                }));
 
                 // Dispatch the batch update to the store
                 await this.$store.dispatch({ type: "updateMultipleStudents", students: updatedStudents });

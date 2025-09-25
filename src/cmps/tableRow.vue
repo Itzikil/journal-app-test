@@ -4,12 +4,25 @@
             @click="$emit('toggleExpand', student._id)">
             <p>{{ student.name }}</p>
         </td>
-        <td v-if="!isMonthPicked" v-for="month in fourMonths" :key="month.number">
-            <p class="fs14">
-                {{ chartData.sumPaidThisMonth(student, monthOrYear(month.number)) +
-                    chartData.sumArrivedThisMonth(student, monthOrYear(month.number)) }}
-            </p>
-        </td>
+        <template v-if="!isMonthPicked">
+            <td v-for="month in fourMonths" :key="month.number">
+                <p class="fs14">
+                    {{ chartData.sumPaidThisMonth(student, monthOrYear(month.number)) +
+                        chartData.sumArrivedThisMonth(student, monthOrYear(month.number)) }}
+                </p>
+            </td>
+            <td> <!-- NEW -->
+                <p class="fs14">
+                    {{
+                        fourMonths.reduce((acc, month) =>
+                            acc +
+                            chartData.sumPaidThisMonth(student, monthOrYear(month.number)) +
+                            chartData.sumArrivedThisMonth(student, monthOrYear(month.number))
+                            , 0)
+                    }}
+                </p>
+            </td>
+        </template>
         <td v-else v-for="(lessons, idx) in weeklyData" :key="idx">
             <p v-for="lesson in lessons" class="fs14">{{ lesson.price }}</p>
         </td>

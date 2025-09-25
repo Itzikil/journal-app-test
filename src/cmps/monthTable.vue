@@ -44,9 +44,16 @@
                         <td>
                             <p>Total</p>
                         </td>
-                        <td v-if="!monthPicked" v-for="month in fourMonths" :key="month">
-                            <p class="fs16">{{ month.earning }}</p>
-                        </td>
+                        <template v-if="!monthPicked">
+                            <td v-for="month in fourMonths" :key="month">
+                                <p class="fs16">{{ month.earning }}</p>
+                            </td>
+                            <td> <!-- NEW -->
+                                <p class="fs16">
+                                    {{fourMonths.reduce((acc, m) => acc + m.earning, 0)}}
+                                </p>
+                            </td>
+                        </template>
                         <td v-else v-for="(week, idx) in weeks" :key="idx">
                             <p class="fs16">{{ week }}</p>
                         </td>

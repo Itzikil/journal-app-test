@@ -20,10 +20,10 @@
           <p>₪{{ lesson.price }}</p>
         </div>
       </div>
-      <button @click="toggleEditCmp">Edit</button>
+      <button @click="toggleEditCmp">{{editCmp ? 'Close edit' : 'Edit'}}</button>
     </div>
 
-    <addStudent v-if="editCmp" :editStudent="student" @toggleEditCmp="toggleEditCmp" />
+    <addStudent v-if="editCmp" class="edit" :editStudent="student" @toggleEditCmp="toggleEditCmp" />
 
     <div class="last-lessons">
       <div class="btn-container">
@@ -31,7 +31,7 @@
         <h3>Last months</h3>
         <button @click="changeMonth(-1)">></button>
       </div>
-      
+
       <div class="lessons-list">
         <transition-group v-if="student.classes" tag="ul" name="lesson-list" class="lessons-group" :key="student._id">
           <li v-for="(lessons, idx) in slicedClasses" :key="idx + '1'" class="monthly-lesson">
@@ -80,7 +80,7 @@
       </div>
     </div>
 
-    <div class="notes-container">
+    <div class="notes-container notes">
       <h3>Notes</h3>
       <ul v-if="allNotes.length">
         <li v-for="note in allNotes">
@@ -91,12 +91,12 @@
       <p v-else>No notes yet</p>
     </div>
 
-    <div class="reports-container notes-container">
+    <div class="reports-container notes-container reports">
       <h3>Reports</h3>
       <p>Here you can recive reports as much as you want in the future</p>
     </div>
 
-    <div class="add-student-container" v-if="lessonNote">
+    <div class="add-student-container edit" v-if="lessonNote">
       <p>Lesson note</p>
       <p>{{ lessonNote.date }} - {{ lessonNote.time }}</p>
       <form @submit.prevent="updateNoteLesson">
@@ -105,19 +105,23 @@
         <button @click="lessonNote = ''" type="button">Close</button>
       </form>
     </div>
-    <div class="add-student-container" v-if="lessonToEdit">
+    <div class="add-student-container edit" v-if="lessonToEdit">
       <form @submit.prevent="updateLesson">
         <p class="text-center">Edit lesson</p>
         <label for="">Day<input type="text" v-model="lessonToEdit.date"></label>
         <label for="">Time<input type="text" v-model="lessonToEdit.time"></label>
         <label for="">Duration<input type="number" v-model="lessonToEdit.duration"></label>
         <label for="">Price<input type="number" v-model="lessonToEdit.price"></label>
+        <div>
+          <button v-if="!lessonToEdit.hide" @click="hideLessonToggle(lessonToEdit, true)">Hide from calendar</button>
+          <button v-else @click="hideLessonToggle(lessonToEdit, false)">Return to calendar</button>
+        </div>
         <button>Save</button>
         <button @click="lessonToEdit = ''" type="button">Close</button>
       </form>
     </div>
-    <button @click="toggleAddSingle">{{ !addSingleOpen ? 'Add' : 'Close' }} single lesson</button>
-    <singleClass :editStudent="student" v-if="addSingleOpen" @toggleAddSingle="toggleAddSingle" />
+    <button @click="toggleAddSingle" class="add-btn">{{ !addSingleOpen ? 'Add' : 'Close' }} single lesson</button>
+    <singleClass class="edit" :editStudent="student" v-if="addSingleOpen" @toggleAddSingle="toggleAddSingle" />
   </section>
 
   <section v-else class="main-loader">
@@ -220,7 +224,7 @@ export default {
       monthlyLessons.forEach(lesson => {
         lesson.status = 'paid'
       })
-      this.updateStudentToStore(this.student, "All arrived " + this.monthNames[monthWanted - 1] + " lessons are paid ",
+      this.updateStudentToStore("All arrived " + this.monthNames[monthWanted - 1] + " lessons are paid ",
         `Cannot pay all ${this.student} for ${this.monthNames[monthWanted - 1]}`)
     },
     async updateLesson(lesson, status) {
@@ -228,23 +232,27 @@ export default {
         if (lesson.status === status) return
         lesson.status = status
       } else {
-        console.log(lesson);
         lesson = this.lessonNote || this.lessonToEdit
-        console.log(lesson);
       }
       const existingIndex = this.student.classes.findIndex((c) => c.date === lesson.date);
       this.student.classes.splice(existingIndex, 1, lesson);
-      this.updateStudentToStore(this.student, this.student.name + " " + (status ? status : 'updated'), `Cannot change ${this.student} to ${status}`)
+      this.updateStudentToStore(this.student.name + " " + (status ? status : 'updated'), `Cannot change ${this.student} to ${status}`)
       this.resetOtherStates()
     },
     async deleteLesson(lesson) {
       const existingIndex = this.student.classes.findIndex((c) => c.date === lesson.date);
       this.student.classes.splice(existingIndex, 1);
-      this.updateStudentToStore(this.student, lesson.date + ' lesson has been deleted', `Cannot change ${this.student}`)
+      this.updateStudentToStore(lesson.date + ' lesson has been deleted', `Cannot change ${this.student}`)
     },
-    async updateStudentToStore(student, successMsg, errorMsg) {
+    async hideLessonToggle(lesson, hide) {
+      lesson.hide = hide
+      const existingIndex = this.student.classes.findIndex((c) => c.date === lesson.date);
+      this.student.classes.splice(existingIndex, 1, lesson);
+      this.updateStudentToStore(lesson.date + ' lesson has been ' + (hide ? 'hidden' : 'unhidden'), `Cannot hide ${this.student}`)
+    },
+    async updateStudentToStore(successMsg, errorMsg) {
       try {
-        await this.$store.dispatch({ type: "updateStudent", student });
+        await this.$store.dispatch({ type: "updateStudent", student: this.student });
         showSuccessMsg(successMsg);
       } catch (err) {
         console.log(err);

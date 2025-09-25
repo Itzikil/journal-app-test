@@ -62,7 +62,7 @@
 
     .students-list {
         grid-area: list;
-        overflow-y: scroll;
+        overflow-y: auto;
 
         ul {
             display: flex;
@@ -186,7 +186,7 @@
 
     .some {
         grid-area: some;
-        overflow-y: scroll;
+        overflow-y: auto;
 
         ul {
             display: flex;

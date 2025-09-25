@@ -52,12 +52,18 @@ export default {
                 const existingIndex = todayStudents.findIndex(existingLesson =>
                     existingLesson._id === lesson._id && existingLesson.time === lesson.time
                 );
+                if (lesson.hide) {
+                    todayStudents.splice(existingIndex, 1)
+                    return
+                }
+
                 if (existingIndex !== -1) {
                     todayStudents[existingIndex].status = lesson.status;
                     todayStudents[existingIndex].note = lesson.note;
                 }
                 else todayStudents.push(lesson);
             });
+            console.log(todayStudents);
             return todayStudents
         },
         getStudentsByDate() {

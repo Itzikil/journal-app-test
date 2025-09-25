@@ -83,11 +83,16 @@ export default {
           .filter(lesson => lesson.date === this.fullDate({ day: date }))
           .map(lesson => ({ ...lesson, _id: student._id, name: student.name }))
       );
+
       const todayStudents = this.getStudentsByDate(dayName, date);
       singleLesson.forEach(lesson => {
         const existingIndex = todayStudents.findIndex(existingLesson =>
           existingLesson._id === lesson._id && existingLesson.time === lesson.time
         );
+        if (lesson.hide) {
+          todayStudents.splice(existingIndex, 1)
+          return
+        }
         if (existingIndex !== -1) {
           todayStudents[existingIndex].status = lesson.status;
           todayStudents[existingIndex].note = lesson.note;
