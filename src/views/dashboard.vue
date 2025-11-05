@@ -39,7 +39,7 @@
         <h3>Students <span class="fs14">({{ studentsByMonth.length }})</span></h3>
         <ul>
           <li v-for="student in studentsByMonth" :key="student._id" >
-            <button @click="openStudentDetails(student)" :class="{ 'currStudent': this.currStudent._id === student._id }">{{ student.name }}</button>
+            <button @click="openStudentDetails(student)" :class="{ 'currStudent': this.currStudent?._id === student?._id }">{{ student.name }}</button>
             <router-link :to="`/student/${student._id}`" ></router-link>
           </li>
         </ul>
