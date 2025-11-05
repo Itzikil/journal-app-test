@@ -38,9 +38,9 @@
       <div class="students-list">
         <h3>Students <span class="fs14">({{ studentsByMonth.length }})</span></h3>
         <ul>
-          <li v-for="student in studentsByMonth" :key="student._id">
-            <button @click="openStudentDetails(student)">{{ student.name }}</button>
-            <router-link :to="`/student/${student._id}`"></router-link>
+          <li v-for="student in studentsByMonth" :key="student._id" >
+            <button @click="openStudentDetails(student)" :class="{ 'currStudent': this.currStudent._id === student._id }">{{ student.name }}</button>
+            <router-link :to="`/student/${student._id}`" ></router-link>
           </li>
         </ul>
       </div>
@@ -257,6 +257,8 @@ export default {
     },
     openStudentDetails(student) {
       this.currStudent = student
+      console.log(this.currStudent);
+      
     },
     totalMonthEarn(selectedDate) {
       return this.students.reduce((acc, student) => {

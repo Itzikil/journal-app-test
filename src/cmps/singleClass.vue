@@ -80,13 +80,16 @@ export default {
             if (ref) { flatpickr(ref, { dateFormat: 'j.n.Y' }) }
         },
         async submitLesson(student) {
+            
             this.lessonsInfo.forEach((lesson, idx) => {
                 lesson.date = lesson.day
                 delete lesson.day
                 delete lesson.start
+                delete lesson.hide
                 lesson.status = 'pending'
                 this.studentClone.classes.push(lesson)
             })
+            console.log(this.lessonsInfo);
             try {
                 await this.$store.dispatch({ type: "updateStudent", student: this.studentClone })
                 showSuccessMsg("You added single class to " + this.studentClone.name)

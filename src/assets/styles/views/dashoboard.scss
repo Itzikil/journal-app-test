@@ -68,18 +68,20 @@
             display: flex;
             flex-wrap: wrap;
             width: 100%;
-
             li {
                 flex: 1 1 20%;
                 padding: 5px;
                 max-width: 25%;
-
+                
                 button {
                     margin: 0;
                     width: 100%;
                     min-width: 100px;
                     padding: 15px;
                 }
+            }
+            .currStudent{
+                background-color: rgb(62, 192, 164);
             }
         }
     }
