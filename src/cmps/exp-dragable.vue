@@ -1,22 +1,19 @@
 <template>
   <div>
-    <h3>Order Message Inputs (Enhanced Drag & Drop)</h3>
+    <h3>Order Message Inputs (Mobile + Desktop)</h3>
 
     <div
       v-for="(f, i) in fields"
       :key="f.id"
       class="row"
-      :class="{ 'drag-over': i === dragOverIndex }"
-      @dragover.prevent="dragOver(i)"
-      @drop="drop(i)"
-      @touchstart="touchStart(i, $event)"
-      @touchend="touchEnd"
+      :class="{ dragging: i === dragIndex, 'drag-over': i === dragOverIndex }"
+      @pointermove="onPointerMove(i, $event)"
+      @pointerup="onPointerUp"
     >
       <!-- DRAG HANDLE -->
       <span
         class="handle"
-        draggable="true"
-        @dragstart="dragStart(i, $event)"
+        @pointerdown="onPointerDown(i, $event)"
       >
         ☰
       </span>
@@ -33,74 +30,68 @@
 export default {
   data() {
     return {
-      dragIndex: null,
-      dragOverIndex: null,
-      longPressTimer: null,
-
-      fields: JSON.parse(localStorage.getItem("msg_fields")) || [
+      fields: [
         { id: 1, label: "Number of Lessons" },
         { id: 2, label: "Price" },
         { id: 3, label: "Month" },
-      ]
+      ],
+
+      dragIndex: null,
+      dragOverIndex: null,
+      isDragging: false,
+
+      startY: 0,
+      currentY: 0,
     };
   },
 
   methods: {
-    // -----------------------
-    // DESKTOP DRAG START
-    // -----------------------
-    dragStart(index, event) {
+    // Start dragging (when pressing the handle)
+    onPointerDown(index, event) {
       this.dragIndex = index;
+      this.isDragging = true;
+      this.startY = event.clientY || event.touches?.[0]?.clientY;
 
-      // remove ghost
-      const emptyImg = new Image();
-      emptyImg.src = "";
-      event.dataTransfer.setDragImage(emptyImg, 0, 0);
+      event.target.setPointerCapture(event.pointerId);
     },
 
-    dragOver(index) {
+    // Moving while dragging
+    onPointerMove(index, event) {
+      if (!this.isDragging) return;
+
+      this.currentY = event.clientY || event.touches?.[0]?.clientY;
+      const deltaY = this.currentY - this.startY;
+
+      // Detect if drag passes into another row
+      if (deltaY > 30 && index < this.fields.length - 1) {
+        this.swap(index, index + 1);
+        this.startY = this.currentY;
+      }
+      if (deltaY < -30 && index > 0) {
+        this.swap(index, index - 1);
+        this.startY = this.currentY;
+      }
+
       this.dragOverIndex = index;
     },
 
-    drop(dropIndex) {
-      const arr = [...this.fields];
-      const dragged = arr.splice(this.dragIndex, 1)[0];
-      arr.splice(dropIndex, 0, dragged);
-
-      this.fields = arr;
-      this.save();
+    // When releasing finger/mouse
+    onPointerUp(event) {
+      this.isDragging = false;
       this.dragIndex = null;
       this.dragOverIndex = null;
     },
 
-    // -----------------------
-    // MOBILE LONG-PRESS ACTIVATION
-    // -----------------------
-    touchStart(index, event) {
-      this.longPressTimer = setTimeout(() => {
-        this.dragIndex = index;
-        // simulate dragstart feel
-        event.target.style.opacity = "0.4";
-      }, 200);
-    },
-
-    touchEnd(event) {
-      clearTimeout(this.longPressTimer);
-      event.target.style.opacity = "1";
-      this.dragIndex = null;
-    },
-
-    // -----------------------
-    // UTIL
-    // -----------------------
-    save() {
-      localStorage.setItem("msg_fields", JSON.stringify(this.fields));
+    swap(i1, i2) {
+      const arr = [...this.fields];
+      [arr[i1], arr[i2]] = [arr[i2], arr[i1]];
+      this.fields = arr;
     },
 
     buildMessage() {
       return this.fields.map(f => f.label).join(" | ");
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -112,13 +103,7 @@ export default {
   background: #eee;
   border-radius: 8px;
   margin-bottom: 8px;
-  transition: transform 0.2s, background 0.2s;
-}
-
-/* SMOOTH ANIMATION WHEN MOVING */
-.row.drag-over {
-  background: #d9e8ff;
-  transform: scale(1.03);
+  transition: 0.15s ease;
 }
 
 .handle {
@@ -126,5 +111,14 @@ export default {
   font-size: 20px;
   cursor: grab;
   user-select: none;
+}
+
+.dragging {
+  background: #ffe8a3;
+  transform: scale(1.03);
+}
+
+.drag-over {
+  background: #d9e8ff;
 }
 </style>
