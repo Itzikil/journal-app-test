@@ -1,7 +1,7 @@
 <template>
   <section class="user-detail-container container">
     <div>
-      <p @click="togglePref('info')">Your info</p>
+      <!-- <p @click="togglePref('info')">Your info</p> -->
       <div v-if="user" class="content" :class="{ active: openPref === 'info' }">
         <p>{{ user.username }}</p>
         <img :src="user.imgUrl" alt="your img" style="height: 100px; border-radius: 5px;">
@@ -23,10 +23,9 @@
       </div>
       <!-- </transition> -->
     </div>
-    <div>
+    <!-- <div>
       <p @click="togglePref('hours')">Work hours</p>
       <transition name="expand">
-        <!-- <div v-if="openPref === 'hours'" class="content" :class="{active: openPref === 'hours'}"> -->
         <div class="content" :class="{ active: openPref === 'hours' }">
           <form @submit.prevent="updateHours()">
             <p class="fs12">choose the hours in a day you want to work (0-24)</p>
@@ -36,7 +35,7 @@
           </form>
         </div>
       </transition>
-    </div>
+    </div> -->
     <div>
       <!-- <dragableInputs/> -->
       <expDragable />
