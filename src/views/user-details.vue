@@ -37,6 +37,9 @@
         </div>
       </transition>
     </div>
+    <div>
+      <dragableInputs/>
+    </div>
     <!-- <div>
       <p @click="togglePref('days')">Work days</p>
       <transition name="expand" :class="{ active: openPref === 'days' }">

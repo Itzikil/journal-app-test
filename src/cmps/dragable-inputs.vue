@@ -22,8 +22,9 @@ export default {
     data() {
         return {
             inputs: [
-                { id: 1, value: 'hi' },
-                { id: 2, value: '' },
+                { id: 1, value: 'number of lessons' },
+                { id: 2, value: 'sum the price' },
+                { id: 3, value: 'month name' },
             ],
             draggingIndex: null, // Index of the item being dragged
             touchTargetIndex: null, // Index of the item currently being hovered over during touch
