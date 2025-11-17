@@ -1,15 +1,18 @@
 <template>
   <div>
-    <h3>Order Message Inputs (Native Drag & Drop)</h3>
+    <h3>Order Message Inputs (Enhanced Drag & Drop)</h3>
 
     <div
       v-for="(f, i) in fields"
       :key="f.id"
       class="row"
-      @dragover.prevent
+      :class="{ 'drag-over': i === dragOverIndex }"
+      @dragover.prevent="dragOver(i)"
       @drop="drop(i)"
+      @touchstart="touchStart(i, $event)"
+      @touchend="touchEnd"
     >
-      <!-- HANDLE: only this starts dragging -->
+      <!-- DRAG HANDLE -->
       <span
         class="handle"
         draggable="true"
@@ -31,23 +34,32 @@ export default {
   data() {
     return {
       dragIndex: null,
+      dragOverIndex: null,
+      longPressTimer: null,
 
-      fields: [
+      fields: JSON.parse(localStorage.getItem("msg_fields")) || [
         { id: 1, label: "Number of Lessons" },
         { id: 2, label: "Price" },
         { id: 3, label: "Month" },
       ]
-    }
+    };
   },
 
   methods: {
+    // -----------------------
+    // DESKTOP DRAG START
+    // -----------------------
     dragStart(index, event) {
       this.dragIndex = index;
 
-      // 🔥 remove the ghost image
+      // remove ghost
       const emptyImg = new Image();
       emptyImg.src = "";
       event.dataTransfer.setDragImage(emptyImg, 0, 0);
+    },
+
+    dragOver(index) {
+      this.dragOverIndex = index;
     },
 
     drop(dropIndex) {
@@ -56,14 +68,40 @@ export default {
       arr.splice(dropIndex, 0, dragged);
 
       this.fields = arr;
+      this.save();
       this.dragIndex = null;
+      this.dragOverIndex = null;
+    },
+
+    // -----------------------
+    // MOBILE LONG-PRESS ACTIVATION
+    // -----------------------
+    touchStart(index, event) {
+      this.longPressTimer = setTimeout(() => {
+        this.dragIndex = index;
+        // simulate dragstart feel
+        event.target.style.opacity = "0.4";
+      }, 200);
+    },
+
+    touchEnd(event) {
+      clearTimeout(this.longPressTimer);
+      event.target.style.opacity = "1";
+      this.dragIndex = null;
+    },
+
+    // -----------------------
+    // UTIL
+    // -----------------------
+    save() {
+      localStorage.setItem("msg_fields", JSON.stringify(this.fields));
     },
 
     buildMessage() {
       return this.fields.map(f => f.label).join(" | ");
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -74,6 +112,13 @@ export default {
   background: #eee;
   border-radius: 8px;
   margin-bottom: 8px;
+  transition: transform 0.2s, background 0.2s;
+}
+
+/* SMOOTH ANIMATION WHEN MOVING */
+.row.drag-over {
+  background: #d9e8ff;
+  transform: scale(1.03);
 }
 
 .handle {
