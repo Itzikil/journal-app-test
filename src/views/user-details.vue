@@ -38,7 +38,8 @@
       </transition>
     </div>
     <div>
-      <dragableInputs/>
+      <!-- <dragableInputs/> -->
+      <expDragable />
     </div>
     <!-- <div>
       <p @click="togglePref('days')">Work days</p>
@@ -64,6 +65,7 @@
 import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service';
 import { utilService } from '../services/util.service';
 import dragableInputs from '../cmps/dragable-inputs.vue';
+import expDragable from '../cmps/exp-dragable.vue';
 
 export default {
   data() {
@@ -154,7 +156,8 @@ export default {
     },
   },
   components: {
-    dragableInputs
+    dragableInputs,
+    expDragable
   }
 }
 </script>
