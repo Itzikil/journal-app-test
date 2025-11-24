@@ -20,7 +20,7 @@
           <p>₪{{ lesson.price }}</p>
         </div>
       </div>
-      <button @click="toggleEditCmp">{{editCmp ? 'Close edit' : 'Edit'}}</button>
+      <button @click="toggleEditCmp">{{ editCmp ? 'Close edit' : 'Edit' }}</button>
     </div>
 
     <addStudent v-if="editCmp" class="edit" :editStudent="student" @toggleEditCmp="toggleEditCmp" />
@@ -108,10 +108,10 @@
     <div class="add-student-container edit" v-if="lessonToEdit">
       <form @submit.prevent="updateLesson">
         <p class="text-center">Edit lesson</p>
-        <label for="">Day<input type="text" v-model="lessonToEdit.date"></label>
-        <label for="">Time<input type="text" v-model="lessonToEdit.time"></label>
-        <label for="">Duration<input type="number" v-model="lessonToEdit.duration"></label>
-        <label for="">Price<input type="number" v-model="lessonToEdit.price"></label>
+        <label>Day<input type="text" v-model="lessonToEdit.date" ref="lessonDayInput"></label>
+        <label>Time<input type="text" v-model="lessonToEdit.time"></label>
+        <label>Duration<input type="number" v-model="lessonToEdit.duration"></label>
+        <label>Price<input type="number" v-model="lessonToEdit.price"></label>
         <div>
           <button v-if="!lessonToEdit.hide" @click="hideLessonToggle(lessonToEdit, true)">Hide from calendar</button>
           <button v-else @click="hideLessonToggle(lessonToEdit, false)">Return to calendar</button>
@@ -136,6 +136,8 @@ import noteImg from '@/assets/imgs/note.svg'
 import greenNoteImg from '@/assets/imgs/green-note.svg'
 import addStudent from '../cmps/addStudent.vue'
 import singleClass from '../cmps/singleClass.vue';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 export default {
   data() {
@@ -194,6 +196,22 @@ export default {
     }
   },
   methods: {
+    initFlatpickr() {
+      // use $nextTick to ensure input exists
+      this.$nextTick(() => {
+        if (!this.$refs.lessonDayInput) return
+        console.log('sd');
+
+        flatpickr(this.$refs.lessonDayInput, {
+          dateFormat: 'j.n.Y',
+          defaultDate: this.lessonToEdit.date || null,
+          onChange: (selectedDates, dateStr) => {
+            // update v-model when user picks a date
+            this.lessonToEdit.date = dateStr
+          }
+        })
+      })
+    },
     ScrollDown() {
       setTimeout(() =>
         window.scrollTo({
@@ -277,6 +295,7 @@ export default {
         this.lessonToEdit = lesson;
         this.ScrollDown();
       }
+      this.initFlatpickr()
       this.resetOtherStates('lessonToEdit');
     },
     toggleAddSingle() {
