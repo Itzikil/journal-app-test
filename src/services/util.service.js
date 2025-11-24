@@ -74,6 +74,7 @@ function loadFromStorage(key) {
 }
 
 function sortByDate(lessons, backwards) {
+    
     return lessons.sort((a, b) => {
         const dateA = parseDate(a.date);
         const dateB = parseDate(b.date);
@@ -107,6 +108,7 @@ function returnYearFromDate(dateString) {
 };
 
 function parseDate(dateString) {
+    if (!dateString) return
     const [day, month, year] = dateString.split('.').map(Number);
     return new Date(year, month - 1, day);
 };
@@ -121,7 +123,7 @@ function getFormattedDate() {
 }
 
 function extractDatePart(dateString, part) {
-    // return console.log(dateString);
+    return console.log(dateString);
     
     const [day, month, year] = dateString.split('.').map(Number);
     switch (part) {
