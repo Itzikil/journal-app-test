@@ -37,7 +37,7 @@ export default {
         dragStart(index) {
             this.draggingIndex = index;
             console.log(this.inputs[this.draggingIndex]);
-            
+
         },
         swap(targetIndex) {
             if (this.draggingIndex !== null && this.draggingIndex !== targetIndex) {

@@ -52,6 +52,8 @@ export default {
         this.endHour = user.pref.hours?.to
             ? `${user.pref.hours.to < 10 ? '0' : ''}${user.pref.hours.to}:00`
             : '20:00';
+        console.log(this.lessonsInfo);
+
     },
     mounted() {
         this.addLesson(this.lastLesson)
@@ -80,16 +82,22 @@ export default {
             if (ref) { flatpickr(ref, { dateFormat: 'j.n.Y' }) }
         },
         async submitLesson(student) {
-            
-            this.lessonsInfo.forEach((lesson, idx) => {
+
+            for (let idx = 0; idx < this.lessonsInfo.length; idx++) {
+                const lesson = this.lessonsInfo[idx]
+                if (!lesson.day) {
+                    showErrorMsg(`Please select a date for lesson ${idx + 1}`)
+                    return   // STOP the whole submit
+                }
                 lesson.date = lesson.day
                 delete lesson.day
                 delete lesson.start
                 delete lesson.hide
                 lesson.status = 'pending'
+
                 this.studentClone.classes.push(lesson)
-            })
-            console.log(this.lessonsInfo);
+            }
+
             try {
                 await this.$store.dispatch({ type: "updateStudent", student: this.studentClone })
                 showSuccessMsg("You added single class to " + this.studentClone.name)

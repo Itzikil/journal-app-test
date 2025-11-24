@@ -123,7 +123,7 @@ function getFormattedDate() {
 }
 
 function extractDatePart(dateString, part) {
-    return console.log(dateString);
+    // return console.log(dateString);
     
     const [day, month, year] = dateString.split('.').map(Number);
     switch (part) {
