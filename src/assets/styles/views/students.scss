@@ -1,11 +1,5 @@
 .students-container {
 
-    &.no-scroll {
-        overflow: hidden !important;
-        height: 100%;
-        overscroll-behavior: none !important;
-    }
-
     .students-header {
         display: flex;
         // align-items: center;

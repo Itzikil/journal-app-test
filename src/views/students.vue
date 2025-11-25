@@ -1,5 +1,5 @@
 <template>
-  <section class="students-container container" :class="{ 'no-scroll': addCmp }">
+  <section class="students-container container">
     <div class="students-header">
       <div class="sub-students-header">
         <h3>{{ activeStudentsList.length }} <span class="fs14">Students</span></h3>
@@ -31,13 +31,18 @@
               <button class="close-btn" @click="closeAll">X</button>
 
               <button class="option-btn" @click="toggleEditCmp('student')">
-                <img src="../assets/imgs/header/students.svg" />
+                <img src="../assets/imgs/student.svg" />
                 Add student
               </button>
 
               <button class="option-btn" @click="toggleEditCmp('group')">
                 <img src="../assets/imgs/header/students.svg" />
                 Add group
+              </button>
+
+              <button class="option-btn" @click="toggleEditCmp('group')">
+                <img src="../assets/imgs/group.svg" />
+                Add group lesson
               </button>
             </div>
 
