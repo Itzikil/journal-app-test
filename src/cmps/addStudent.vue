@@ -6,7 +6,7 @@
       <label>Phone<input type="text" name="phone" placeholder="xxx-xxxxxxx" v-model="studentToAdd.phone"></label>
       <label>Category<input type="text" name="category" placeholder="student/gig etc" ></label>
       
-      <h4>Lesson info</h4>
+      <p>Lesson info</p>
       <div class="flex btn-container">
         <button @click="changeMode('weekly')" type="button" :class="{ 'not-active': lessonMode === 'single' }">Weekly
           lessons</button>
@@ -130,7 +130,7 @@ export default {
         await this.$store.dispatch({ type: this.studentToAdd._id ? "updateStudent" : "addStudent", student: this.studentToAdd });
         var msg = this.studentToAdd._id ? " updated" : " added"
         showSuccessMsg(this.studentToAdd.name + msg);
-        this.$emit('toggleEditCmp')
+        this.$emit('closeAll')
         this.studentToAdd = studentService.getEmptyStudent();
       } catch (err) {
         console.log(err);

@@ -1,5 +1,5 @@
 <template>
-  <section class="students-container container">
+  <section class="students-container container" :class="{ 'no-scroll': addCmp }">
     <div class="students-header">
       <div class="sub-students-header">
         <h3>{{ activeStudentsList.length }} <span class="fs14">Students</span></h3>
@@ -17,30 +17,6 @@
     <!-- <button @click="setActiveStudents('groups')" :class="{ 'inactive-btn': activeStudents === 'groups' }">
       Groups ({{ groupsList.length }})</button> -->
     <!-- <button @click="activatatedStudents">activate all students</button> -->
-
-    <!-- <div v-if="addCmp" class="adding-cmp-container">
-      <div class="add-student-cmp">
-        <div v-if="!editCmp">
-          <button @click="addCmp = false">X</button>
-          <button @click="toggleEditCmp('student')">
-            <img src="../assets/imgs/header/students.svg" alt="students">
-            Add student
-          </button>
-          <button @click="toggleEditCmp('group')">
-            <img src="../assets/imgs/header/students.svg" alt="students">
-            Add group
-          </button>
-        </div>
-        <div v-if="editCmp === 'student'">
-          <button @click="editCmp = false">X</button>
-          <addStudent @toggleEditCmp="toggleEditCmp" />
-        </div>
-        <transition name="adding-cmp">
-          <addStudentToGroup v-if="editCmp === 'group'" @makeGroup="makeGroup" :activeStudents="activeStudentsList"
-            @closeCmp="editCmp = false" />
-        </transition>
-      </div>
-    </div> -->
 
     <!-- Overlay -->
     <transition name="overlay-fade">
@@ -69,7 +45,7 @@
             <transition name="bottom-sheet">
               <div v-if="editCmp === 'student'" class="menu-screen">
                 <button class="close-btn" @click="editCmp = false">X</button>
-                <addStudent @toggleEditCmp="toggleEditCmp" />
+                <addStudent @closeAll="closeAll" />
               </div>
             </transition>
 
@@ -77,8 +53,7 @@
             <transition name="bottom-sheet">
               <div v-if="editCmp === 'group'" class="menu-screen">
                 <button class="close-btn" @click="editCmp = false">X</button>
-                <addStudentToGroup @makeGroup="makeGroup" 
-                  :activeStudents="activeStudentsList" />
+                <addStudentToGroup @makeGroup="makeGroup" :activeStudents="activeStudentsList" />
               </div>
             </transition>
 
@@ -168,6 +143,11 @@ export default {
   created() {
     this.$store.dispatch({ type: "loadStudents" });
     this.students = this.$store.getters.students;
+  },
+  watch: {
+    addCmp(isOpen) {
+      document.body.classList.toggle('no-scroll', isOpen);
+    }
   },
   computed: {
     loggedInUser() {

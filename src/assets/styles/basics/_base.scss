@@ -32,6 +32,11 @@ body {
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
         Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 
+    &.no-scroll {
+        overflow: hidden;
+        height: 100%;
+    }
+
     @media(min-width:650px) {
         overflow: hidden;
     }
