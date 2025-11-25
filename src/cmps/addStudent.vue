@@ -4,6 +4,9 @@
     <form @submit.prevent="addStudent()">
       <label>Name <input type="text" name="name" v-model="studentToAdd.name" placeholder="name" required /></label>
       <label>Phone<input type="text" name="phone" placeholder="xxx-xxxxxxx" v-model="studentToAdd.phone"></label>
+      <label>Category<input type="text" name="category" placeholder="student/gig etc" ></label>
+      
+      <h4>Lesson info</h4>
       <div class="flex btn-container">
         <button @click="changeMode('weekly')" type="button" :class="{ 'not-active': lessonMode === 'single' }">Weekly
           lessons</button>
@@ -75,7 +78,12 @@ export default {
   },
   mounted() {
     if (!this.lessonsInfo.length) this.addLesson()
-    this.addFlatPickr('joinedDatePicker0')
+    // this.addFlatPickr('joinedDatePicker0')
+
+    this.$nextTick(() => {
+      const el = this.$refs['joinedDatePicker0']
+      if (el) this.addFlatPickr(el)
+    })
   },
   computed: {
     addEdit() {
@@ -98,18 +106,6 @@ export default {
     },
     addFlatPickr(ref) {
       if (ref) flatpickr(ref, { dateFormat: 'j.n.Y' })
-      // let example = this.editStudent?.lessonsInfo.date
-      // fpInstance.setDate(example, false, 'j.n.Y');
-
-      // const fpInstance = flatpickr(ref, { 
-      // dateFormat: 'j.n.Y',
-      // onReady: (selectedDates, dateStr, instance) => {
-      //   // If input already has a value, set it in the flatpickr instance
-      //   if (example) {
-      //     instance.setDate(example, false, 'j.n.Y');
-      //   }
-      // }
-      // });
     },
     changeMode(mode) {
       this.lessonMode = mode

@@ -18,18 +18,21 @@
       Groups ({{ groupsList.length }})</button> -->
     <!-- <button @click="activatatedStudents">activate all students</button> -->
 
-    <div v-if="editCmp === 'student'" class="add-student-cmp">
-      <button @click="editCmp = false">X</button>
-      <addStudent @toggleEditCmp="toggleEditCmp" />
+    <div v-if="addCmp" class="add-student-cmp">
+      <div>
+        <button @click="addCmp = false">X</button>
+        <button @click="toggleEditCmp('student')">Add student</button>
+        <button @click="toggleEditCmp('group')">Add group</button>
+      </div>
+      <div v-if="editCmp === 'student'">
+        <button @click="editCmp = false">X</button>
+        <addStudent @toggleEditCmp="toggleEditCmp" />
+      </div>
     </div>
     <transition name="adding-cmp">
       <addStudentToGroup v-if="editCmp === 'group'" @makeGroup="makeGroup" :activeStudents="activeStudentsList"
         @closeCmp="editCmp = false" />
     </transition>
-    <div v-if="addCmp">
-      <button @click="toggleEditCmp('student')">Add student</button>
-      <button @click="toggleEditCmp('group')">Add group</button>
-    </div>
 
     <div class="days-container">
       <ul v-for="(students, day) in groupedStudents" :key="day" class="students-list">
@@ -145,7 +148,7 @@ export default {
     },
     toggleEditCmp(whatToAdd) {
       this.editCmp = whatToAdd
-      this.addCmp = false
+      // this.addCmp = false
     },
     toggleAddCmp() {
       this.addCmp = this.editCmp === false ? true : false
