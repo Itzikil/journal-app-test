@@ -2,7 +2,7 @@
     <section class="add-to-group-container">
         <div class="cmp-header">
             <h3>Add student to group</h3>
-            <button @click="closeCmp">-</button>
+            <!-- <button @click="closeCmp">-</button> -->
         </div>
         <input type="text" name="" id="" placeholder="Group name" class="input" v-model="groupName">
         <p>{{ selectedStudents.length }}</p>
@@ -52,9 +52,9 @@ export default {
             this.selectedStudents.splice(index, 1)
             this.students.push(student);
         },
-        closeCmp() {
-            this.$emit('closeCmp')
-        },
+        // closeCmp() {
+        //     this.$emit('closeCmp')
+        // },
         makeGroup() {
             var studentsId = this.selectedStudents.map(student => ({ _id: student._id, name: student.name }))
             var group = { groupName: this.groupName, student: studentsId }

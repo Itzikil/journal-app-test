@@ -1,11 +1,6 @@
 .add-to-group-container {
     background-color: rgb(228, 228, 228);
-    position: fixed;
-    bottom: 0;
-    z-index: 100;
-    width: 100%;
-    left: 0;
-    height: 95%;
+    // width: 100%;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
     display: flex;
@@ -13,7 +8,7 @@
     flex-direction: column;
     padding: 15px;
     gap: 15px;
-    overflow-y: scroll;
+    // overflow-y: scroll;
 
     .cmp-header {
         display: flex;

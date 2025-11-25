@@ -3,7 +3,7 @@
     <div class="students-header">
       <div class="sub-students-header">
         <h3>{{ activeStudentsList.length }} <span class="fs14">Students</span></h3>
-        <button @click="toggleAddCmp">{{ editCmp ? '-' : '+' }}</button>
+        <button @click="openAddCmp">+</button>
       </div>
       <form action="" @submit.prevent="">
         <input type="text" name="" id="" v-model="filterBy.name" @input="setFilter">
@@ -18,20 +18,74 @@
       Groups ({{ groupsList.length }})</button> -->
     <!-- <button @click="activatatedStudents">activate all students</button> -->
 
-    <div v-if="addCmp" class="add-student-cmp">
-      <div>
-        <button @click="addCmp = false">X</button>
-        <button @click="toggleEditCmp('student')">Add student</button>
-        <button @click="toggleEditCmp('group')">Add group</button>
+    <!-- <div v-if="addCmp" class="adding-cmp-container">
+      <div class="add-student-cmp">
+        <div v-if="!editCmp">
+          <button @click="addCmp = false">X</button>
+          <button @click="toggleEditCmp('student')">
+            <img src="../assets/imgs/header/students.svg" alt="students">
+            Add student
+          </button>
+          <button @click="toggleEditCmp('group')">
+            <img src="../assets/imgs/header/students.svg" alt="students">
+            Add group
+          </button>
+        </div>
+        <div v-if="editCmp === 'student'">
+          <button @click="editCmp = false">X</button>
+          <addStudent @toggleEditCmp="toggleEditCmp" />
+        </div>
+        <transition name="adding-cmp">
+          <addStudentToGroup v-if="editCmp === 'group'" @makeGroup="makeGroup" :activeStudents="activeStudentsList"
+            @closeCmp="editCmp = false" />
+        </transition>
       </div>
-      <div v-if="editCmp === 'student'">
-        <button @click="editCmp = false">X</button>
-        <addStudent @toggleEditCmp="toggleEditCmp" />
+    </div> -->
+
+    <!-- Overlay -->
+    <transition name="overlay-fade">
+      <div v-if="addCmp" class="adding-cmp-overlay" @click="closeAll">
+
+        <!-- Bottom sheet -->
+        <transition name="bottom-sheet">
+          <div class="adding-cmp-container" @click.stop>
+
+            <!-- First menu -->
+            <div v-if="!editCmp" class="menu-screen">
+              <button class="close-btn" @click="closeAll">X</button>
+
+              <button class="option-btn" @click="toggleEditCmp('student')">
+                <img src="../assets/imgs/header/students.svg" />
+                Add student
+              </button>
+
+              <button class="option-btn" @click="toggleEditCmp('group')">
+                <img src="../assets/imgs/header/students.svg" />
+                Add group
+              </button>
+            </div>
+
+            <!-- Student form -->
+            <transition name="bottom-sheet">
+              <div v-if="editCmp === 'student'" class="menu-screen">
+                <button class="close-btn" @click="editCmp = false">X</button>
+                <addStudent @toggleEditCmp="toggleEditCmp" />
+              </div>
+            </transition>
+
+            <!-- Group form -->
+            <transition name="bottom-sheet">
+              <div v-if="editCmp === 'group'" class="menu-screen">
+                <button class="close-btn" @click="editCmp = false">X</button>
+                <addStudentToGroup @makeGroup="makeGroup" 
+                  :activeStudents="activeStudentsList" />
+              </div>
+            </transition>
+
+          </div>
+        </transition>
+
       </div>
-    </div>
-    <transition name="adding-cmp">
-      <addStudentToGroup v-if="editCmp === 'group'" @makeGroup="makeGroup" :activeStudents="activeStudentsList"
-        @closeCmp="editCmp = false" />
     </transition>
 
     <div class="days-container">
@@ -100,8 +154,8 @@ export default {
     return {
       studentToAdd: studentService.getEmptyStudent(),
       daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      editCmp: false,
       addCmp: false,
+      editCmp: null,
       deleteStudent: null,
       activeStudents: 'active',
       filterBy: {
@@ -150,9 +204,12 @@ export default {
       this.editCmp = whatToAdd
       // this.addCmp = false
     },
-    toggleAddCmp() {
-      this.addCmp = this.editCmp === false ? true : false
-      this.editCmp = false
+    openAddCmp() {
+      this.addCmp = true
+    },
+    closeAll() {
+      this.editCmp = null
+      this.addCmp = false
     },
     loadImage(status) {
       var imgs = { arrived, paid, hevriz }
