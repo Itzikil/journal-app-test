@@ -2,10 +2,10 @@
   <section v-if="!loading && student" class="student-details-container container">
     <div class="student-card">
       <h1>Student Details - {{ student.name }}</h1>
-      <div>
+      <!-- <div>
         <p>teacher </p>
         <p>{{ student.teacher.name }}</p>
-      </div>
+      </div> -->
       <div v-for="lesson in student.lessonsInfo" class="flex column">
         <div>
           <p>time </p>
@@ -23,7 +23,7 @@
       <button @click="toggleEditCmp">{{ editCmp ? 'Close edit' : 'Edit' }}</button>
     </div>
 
-    <addStudent v-if="editCmp" class="edit" :editStudent="student" @toggleEditCmp="toggleEditCmp" />
+    <addStudent v-if="editCmp" class="edit" :editStudent="student" @closeAll="toggleEditCmp" />
 
     <div class="last-lessons">
       <div class="btn-container">
@@ -109,7 +109,7 @@
       <form @submit.prevent="updateLesson">
         <p class="text-center">Edit lesson</p>
         <label>Day<input type="text" v-model="lessonToEdit.date" ref="lessonDayInput"></label>
-        <label>Time<input type="text" v-model="lessonToEdit.time"></label>
+        <label>Time<input type="time" v-model="lessonToEdit.time"></label>
         <label>Duration<input type="number" v-model="lessonToEdit.duration"></label>
         <label>Price<input type="number" v-model="lessonToEdit.price"></label>
         <div>
@@ -200,7 +200,6 @@ export default {
       // use $nextTick to ensure input exists
       this.$nextTick(() => {
         if (!this.$refs.lessonDayInput) return
-        console.log('sd');
 
         flatpickr(this.$refs.lessonDayInput, {
           dateFormat: 'j.n.Y',

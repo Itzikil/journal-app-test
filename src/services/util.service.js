@@ -84,6 +84,11 @@ function sortByDate(lessons, backwards) {
 }
 
 function biggerDate(a, b) {
+    console.log(a);
+    console.log(b);
+    // if (!a || !b) {
+    //     return
+    // }
     
     if (a.split('.').length === 2) {
         a = `1.${a}`

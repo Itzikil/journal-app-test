@@ -5,13 +5,19 @@
                 <p class="text-center fs12" v-if="idx === 0">Add single lesson</p>
                 <label>Lesson day <input type="text" :ref="'lessonDatePicker' + idx" class="custom-date-input"
                         v-model="lesson.day" required :id="'lessonDay' + idx"></label>
-                <label>Time <input modern-time-input type="time" name="time" :min="startHour" :max="endHour"
-                        v-model="lesson.time" required :id="'lessonTime' + idx"></label>
+                <!-- <label>Time <input modern-time-input type="time" name="time" :min="startHour" :max="endHour"
+                        v-model="lesson.time" required :id="'lessonTime' + idx"></label> -->
                 <label>Duration <input type="number" name="duration" v-model="lesson.duration" placeholder="Minutes"
                         required :id="'lessonDuration' + idx"></label>
-                <label>Price <input type="number" name="price" v-model="lesson.price" placeholder="100 / 200"
-                        required :id="'lessonPrice' + idx"></label>
+                <label>Price <input type="number" name="price" v-model="lesson.price" placeholder="100 / 200" required
+                        :id="'lessonPrice' + idx"></label>
+                <label>
+                    Time
+                    <input type="text" class="custom-time-input" :ref="'timePicker' + idx" v-model="lesson.time"
+                        required />
+                </label>
             </div>
+
             <div class="btn-container">
                 <button @click="addLesson" type="button">Add Lesson</button>
                 <button @click="removeLesson" type="button">Remove Lesson</button>
@@ -39,7 +45,6 @@ export default {
             lessonsInfo: [],
             daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
             startHour: '',
-            endHour: '',
             endHour: '',
             studentClone: this.editStudent
         };
@@ -71,15 +76,39 @@ export default {
         addLesson(lastLesson) {
             this.lessonsInfo.push(lastLesson ? lastLesson : studentService.getEmptyClass())
             const index = this.lessonsInfo.length - 1;
+            // this.$nextTick(() => {
+            //     ['joinedDatePicker', 'lessonDatePicker'].forEach(ref => {
+            //         var currRef = this.$refs[ref + index];
+            //         if (currRef) this.addFlatPickr(currRef)
+            //     })
+            // })
             this.$nextTick(() => {
-                ['joinedDatePicker', 'lessonDatePicker'].forEach(ref => {
-                    var currRef = this.$refs[ref + index];
-                    if (currRef) this.addFlatPickr(currRef)
-                })
+                this.addFlatPickr(this.$refs['lessonDatePicker' + index], 'date')
+                this.addFlatPickr(this.$refs['timePicker' + index], 'time')
             })
+
         },
-        addFlatPickr(ref) {
-            if (ref) { flatpickr(ref, { dateFormat: 'j.n.Y' }) }
+        // addFlatPickr(ref) {
+        //     if (ref) { flatpickr(ref, { dateFormat: 'j.n.Y' }) }
+        // },
+        addFlatPickr(ref, type = 'date') {
+            if (!ref) return
+
+            const options =
+                type === 'time'
+                    ? {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: 'H:i',
+                        time_24hr: true,
+                        minTime: this.startHour,
+                        maxTime: this.endHour,
+                    }
+                    : {
+                        dateFormat: 'j.n.Y',
+                    }
+
+            flatpickr(ref, options)
         },
         async submitLesson(student) {
 

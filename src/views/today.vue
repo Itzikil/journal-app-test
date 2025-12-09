@@ -63,7 +63,6 @@ export default {
                 }
                 else todayStudents.push(lesson);
             });
-            console.log(todayStudents);
             return todayStudents
         },
         getStudentsByDate() {

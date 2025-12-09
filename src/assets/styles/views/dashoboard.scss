@@ -220,7 +220,11 @@
             max-height: 450px;
 
             ul {
-                gap: 8px;
+                gap: 12px;
+                .arrival-btn{
+                    width: 30px;
+                    height: 30px;
+                }
             }
         }
     }

@@ -1,7 +1,7 @@
 <template>
   <section class="user-detail-container container">
     <div>
-      <!-- <p @click="togglePref('info')">Your info</p> -->
+      <p @click="togglePref('info')">Your info</p>
       <div v-if="user" class="content" :class="{ active: openPref === 'info' }">
         <p>{{ user.username }}</p>
         <img :src="user.imgUrl" alt="your img" style="height: 100px; border-radius: 5px;">
@@ -38,7 +38,7 @@
     </div> -->
     <div>
       <!-- <dragableInputs/> -->
-      <expDragable />
+      <!-- <expDragable /> -->
     </div>
     <!-- <div>
       <p @click="togglePref('days')">Work days</p>

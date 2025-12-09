@@ -79,7 +79,7 @@
           </li>
           <li v-for="student in students.filter(s => arrivedThisMonth(s).length)" :key="student.id">
             <div class="flex justify-space">
-              <div class="flex">
+              <div class="flex gap10">
                 <button @click.stop="updateMonthlyLessons(student)" class="arrival-btn">
                   <img src="../assets/imgs/paid.svg" alt="paid">
                 </button>

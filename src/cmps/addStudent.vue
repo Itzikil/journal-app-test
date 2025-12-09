@@ -4,16 +4,16 @@
     <form @submit.prevent="addStudent()">
       <label>Name <input type="text" name="name" v-model="studentToAdd.name" placeholder="name" required /></label>
       <label>Phone<input type="text" name="phone" placeholder="xxx-xxxxxxx" v-model="studentToAdd.phone"></label>
-      <label>Category<input type="text" name="category" placeholder="student/gig etc" ></label>
-      
+      <label>Category<input type="text" name="category" placeholder="student/gig etc"></label>
+
       <p>Lesson info</p>
       <div class="flex btn-container">
-        <button @click="changeMode('weekly')" type="button" :class="{ 'not-active': lessonMode === 'single' }">Weekly
-          lessons</button>
-        <button v-if="!atStudentDetails" @click="changeMode('single')" type="button"
-          :class="{ 'not-active': lessonMode === 'weekly' }">single
-          lesson</button>
+        <button @click="changeMode('weekly')" type="button" :class="{ 'not-active': lessonMode === 'single' }">
+          Weekly lessons</button>
+        <button @click="changeMode('single')" type="button" :class="{ 'not-active': lessonMode === 'weekly' }">
+          single lesson</button>
       </div>
+
       <div v-for="(lesson, idx) in lessonsInfo" class="lessons-info-container">
         <label v-if="lessonMode === 'weekly'">Day
           <div class="select-wrapper">
@@ -30,14 +30,20 @@
             required></label>
         <label>Price <input type="number" name="price" v-model="lesson.price" placeholder="100 / 200" required></label>
         <label> {{ !studentToAdd._id ? 'Joined at' : 'changed at' }}
-          <input type="text" :ref="'joinedDatePicker' + idx" class="custom-date-input" v-model="lesson.start" />
+          <input type="text" :ref="'joinedDatePicker' + idx" class="custom-date-input" v-model="lesson.start"
+            required />
+        </label>
+        <!-- //try to make time input work -->
+        <label>
+          Time
+          <input type="text" class="custom-time-input" :ref="'timePicker' + idx" v-model="lesson.time" required />
         </label>
       </div>
       <div class="btn-container">
         <button @click="addLesson" type="button">Add Lesson</button>
         <button @click="removeLesson" type="button">Remove Lesson</button>
       </div>
-      <button type="submit">{{ addEdit }}</button>
+      <button type="submit" class="submit-btn">{{ addEdit }}</button>
     </form>
   </section>
 </template>
@@ -60,7 +66,7 @@ export default {
       lessonsInfo: this.editStudent?.lessonsInfo || [],
       daysOfWeek: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
       teacher: this.$store.getters.loggedinUser,
-      lessonMode: 'weekly',
+      lessonMode: this.editStudent?.lessonsInfo[0] ? 'weekly' : 'single',
       startHour: '',
       endHour: '',
       atStudentDetails: this.$route.name === 'student-details'
@@ -75,15 +81,17 @@ export default {
     this.endHour = user.pref.hours?.to
       ? `${user.pref.hours.to < 10 ? '0' : ''}${user.pref.hours.to}:00`
       : '20:00';
+    console.log(this.editStudent);
   },
   mounted() {
     if (!this.lessonsInfo.length) this.addLesson()
-    // this.addFlatPickr('joinedDatePicker0')
 
     this.$nextTick(() => {
       const el = this.$refs['joinedDatePicker0']
       if (el) this.addFlatPickr(el)
     })
+    console.log(this.lessonsInfo);
+
   },
   computed: {
     addEdit() {
