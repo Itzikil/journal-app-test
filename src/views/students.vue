@@ -76,6 +76,7 @@
           <div v-if="activeStudents !== 'groups'" class="student-list">
             <li v-for="student in students" :key="student._id">
               <router-link :to="`/student/${student._id}`">
+                <img src="../assets/imgs/student-color.svg" alt="">
                 <p class="student-name">{{ student.name }}</p>
                 <button v-if="!student.active" @click.prevent="activateStudent(student)"
                   class="activate-btn">Activate</button>

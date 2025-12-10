@@ -68,9 +68,17 @@
 
                     a {
                         display: flex;
-                        flex-direction: column;
+                        // flex-direction: column;
                         position: relative;
                         color: white;
+                        align-items: center;
+                        gap: 10px;
+
+                        img {
+                            width: 30px;
+                            height: 30px;
+                            color: white;
+                        }
 
                         .student-name {
                             font-size: 1.3rem;

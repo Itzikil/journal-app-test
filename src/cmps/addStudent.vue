@@ -1,7 +1,7 @@
 <template>
   <section class="add-student-container">
     <h3>Student info</h3>
-    <form @submit.prevent="addStudent()">
+    <form @submit.prevent="checkBeforeSave()">
       <label>Name <input type="text" name="name" v-model="studentToAdd.name" placeholder="name" required /></label>
       <label>Phone<input type="text" name="phone" placeholder="xxx-xxxxxxx" v-model="studentToAdd.phone"></label>
       <label>Category<input type="text" name="category" placeholder="student/gig etc"></label>
@@ -33,11 +33,10 @@
           <input type="text" :ref="'joinedDatePicker' + idx" class="custom-date-input" v-model="lesson.start"
             required />
         </label>
-        <!-- //try to make time input work -->
-        <label>
-          Time
-          <input type="text" class="custom-time-input" :ref="'timePicker' + idx" v-model="lesson.time" required />
-        </label>
+        <!-- <label v-if="lessonMode === 'weekly'"> {{ !studentToAdd._id ? 'Joined at' : 'changed at' }}
+          <input type="text" :ref="'joinedDatePicker' + idx" class="custom-date-input" v-model="lesson.start"
+            required />
+        </label> -->
       </div>
       <div class="btn-container">
         <button @click="addLesson" type="button">Add Lesson</button>
@@ -45,6 +44,25 @@
       </div>
       <button type="submit" class="submit-btn">{{ addEdit }}</button>
     </form>
+    <div v-if="showConfirm" class="confirm-backdrop">
+      <div class="confirm-modal">
+        <h3>Delete weekly lessons?</h3>
+
+        <p>
+          Switching to single lessons will remove weekly lesson information After that the student will become single
+          lesson.
+        </p>
+
+        <div class="actions">
+          <button class="danger" @click="saveStudent()">
+            Yes, delete
+          </button>
+          <button @click="showConfirm = false">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -69,7 +87,8 @@ export default {
       lessonMode: this.editStudent?.lessonsInfo[0] ? 'weekly' : 'single',
       startHour: '',
       endHour: '',
-      atStudentDetails: this.$route.name === 'student-details'
+      atStudentDetails: this.$route.name === 'student-details',
+      showConfirm: false,
     };
   },
   async created() {
@@ -81,7 +100,6 @@ export default {
     this.endHour = user.pref.hours?.to
       ? `${user.pref.hours.to < 10 ? '0' : ''}${user.pref.hours.to}:00`
       : '20:00';
-    console.log(this.editStudent);
   },
   mounted() {
     if (!this.lessonsInfo.length) this.addLesson()
@@ -90,8 +108,6 @@ export default {
       const el = this.$refs['joinedDatePicker0']
       if (el) this.addFlatPickr(el)
     })
-    console.log(this.lessonsInfo);
-
   },
   computed: {
     addEdit() {
@@ -124,9 +140,17 @@ export default {
         })
       }
     },
-    async addStudent() {
+    checkBeforeSave() {
+      if (this.lessonMode === 'single' && this.studentToAdd.lessonsInfo.length) {
+        this.showConfirm = true
+      } else {
+        this.saveStudent()
+      }
+    },
+    async saveStudent() {
       if (this.lessonMode === 'weekly') this.studentToAdd.lessonsInfo = this.lessonsInfo
       else {
+        if (this.studentToAdd.lessonsInfo.length) this.studentToAdd.lessonsInfo = []
         var lesson = this.lessonsInfo[0]
         lesson.date = lesson.day
         lesson.status = ''

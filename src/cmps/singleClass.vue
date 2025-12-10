@@ -6,16 +6,16 @@
                 <label>Lesson day <input type="text" :ref="'lessonDatePicker' + idx" class="custom-date-input"
                         v-model="lesson.day" required :id="'lessonDay' + idx"></label>
                 <!-- <label>Time <input modern-time-input type="time" name="time" :min="startHour" :max="endHour"
-                        v-model="lesson.time" required :id="'lessonTime' + idx"></label> -->
-                <label>Duration <input type="number" name="duration" v-model="lesson.duration" placeholder="Minutes"
-                        required :id="'lessonDuration' + idx"></label>
-                <label>Price <input type="number" name="price" v-model="lesson.price" placeholder="100 / 200" required
-                        :id="'lessonPrice' + idx"></label>
+                    v-model="lesson.time" required :id="'lessonTime' + idx"></label> -->
                 <label>
                     Time
                     <input type="text" class="custom-time-input" :ref="'timePicker' + idx" v-model="lesson.time"
                         required />
                 </label>
+                <label>Duration <input type="number" name="duration" v-model="lesson.duration" placeholder="Minutes"
+                        required :id="'lessonDuration' + idx"></label>
+                <label>Price <input type="number" name="price" v-model="lesson.price" placeholder="100 / 200" required
+                        :id="'lessonPrice' + idx"></label>
             </div>
 
             <div class="btn-container">

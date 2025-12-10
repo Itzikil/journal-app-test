@@ -10,11 +10,14 @@
 }
 
 .flatpickr-calendar {
-    // width: 150px !important;
     border-radius: 15px !important;
 }
 .numInput{
     border-radius: 15px !important;
+    
+}
+.flatpickr-calendar.hasTime  {
+    width: 150px !important;
 
 }
 // /* Hour / minute inputs */
@@ -158,13 +161,13 @@
 
 
 
-select {
-    border: none !important;
-    padding: 20px;
-    font-family: varela !important;
-    color: whitesmoke !important;
-    cursor: pointer !important;
-}
+// select {
+//     border: none !important;
+//     padding: 20px;
+//     font-family: varela !important;
+//     color: whitesmoke !important;
+//     cursor: pointer !important;
+// }
 
 .flatpickr-monthDropdown-month {
     border: 1px solid gray !important;
